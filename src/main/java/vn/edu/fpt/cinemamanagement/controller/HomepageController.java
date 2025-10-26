@@ -10,8 +10,12 @@ import vn.edu.fpt.cinemamanagement.entities.Movie;
 import vn.edu.fpt.cinemamanagement.entities.Voucher;
 import vn.edu.fpt.cinemamanagement.services.MovieService;
 import vn.edu.fpt.cinemamanagement.services.VoucherService;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
+import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -23,15 +27,18 @@ public class HomepageController {
     private VoucherService voucherService;
 
     //Huynh Anh add
-    @GetMapping("")
-    public String homepage(
-            @CookieValue(value = "user_name", required = false) String username,
-            @CookieValue(value = "user_role", required = false) String role,Model model) {
-        List<Movie> nowShowing = movieService.getNowShowingMovies();
-        model.addAttribute("nowShowing", nowShowing);
-        //  Đưa username & role ra để Thymeleaf hiển thị
-        model.addAttribute("username", username);
-        model.addAttribute("role", role);
+    @GetMapping({"", "/"})
+    public String homepage(Model model, Principal principal) {
+        if (principal != null) {
+            String username = principal.getName();
+            model.addAttribute("username", username);
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String role = auth.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(", "));
+            model.addAttribute("role", role);
+        }
         return "homepage/homepage";
     }
 

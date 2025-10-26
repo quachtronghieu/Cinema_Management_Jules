@@ -6,32 +6,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.core.Authentication;
 
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
 
     @GetMapping("")
-    public String dashboard(HttpServletRequest request) {
-        // ===== LẤY ROLE TỪ COOKIE =====
-        String role = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("user_role".equals(cookie.getName())) {
-                    role = cookie.getValue();
-                    break;
-                }
-            }
-        }
+    public String dashboard(Authentication authentication) {
+        // Check if the user has the 'ADMIN' role
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        // ===== KIỂM TRA ROLE =====
-        if (role == null || !role.toLowerCase().contains("admin")) {
-            // Nếu không có cookie hoặc không phải admin -> chặn truy cập
+        if (!isAdmin) {
+            // If the user doesn't have the 'ADMIN' role, redirect to an access-denied page
             return "redirect:/access-denied";
         }
 
-        // Nếu là admin thì cho vào dashboard
-        return "dashboard/dashboard";
+        // If the user has the 'ADMIN' role, allow access to the dashboard
+        return "dashboard/dashboard";  // Render the dashboard view
     }
 
     @GetMapping("/seat")

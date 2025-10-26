@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -55,9 +56,7 @@
                 <!-- Loop Movie -->
                 <article class="movie-card" th:each="movie : ${nowShowing}">
                     <div class="movie-card__top">
-<!--                        <img th:src="@{'/assets/img/posters/' + ${movie.movieID} + '.jpg'}"-->
                         <img th:src="@{${movie.img}}"
-
                              th:alt="${movie.title} + ' poster'" class="movie-card__poster">
                         <div class="movie-card__rating">
                             T<span th:text="${movie.ageRating}"></span>
@@ -97,18 +96,22 @@
     </div>
 </div>
 
-<!-- Hiển thị thông báo chào mừng nếu username có giá trị -->
-<div th:if="${username != null}" class="welcome-message">
-    <span>Welcome, <span th:text="${username}"></span></span>
+<!-- ✅ FIXED SECTION BELOW -->
+<!-- Hiển thị thông báo chào mừng nếu đã đăng nhập -->
+<div sec:authorize="isAuthenticated()" class="welcome-message">
+    <span>Welcome, <span sec:authentication="name"></span></span>
 </div>
 
-<!-- Hiển thị các liên kết dựa trên vai trò người dùng -->
-<div th:if="${role == 'admin'}">
-    <a th:href="@{/admin/dashboard}">Admin Dashboard</a>
+<!-- Chỉ admin thấy -->
+<div sec:authorize="hasAuthority('ROLE_ADMIN')">
+    <a th:href="@{/dashboard}">Admin Dashboard</a>
 </div>
-<div th:if="${role == 'staff'}">
+
+<!-- Nhân viên Cashier Staff hoặc Redemtion Staff thấy -->
+<div sec:authorize="hasAnyAuthority('ROLE_CASHIER STAFF','ROLE_REDEMTION STAFF')">
     <a th:href="@{/staff_home}">Staff Home</a>
 </div>
+<!-- ✅ END FIX -->
 
 <!-- JS -->
 <script th:src="@{/assets/js/hero.js}"></script>
@@ -132,7 +135,6 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
-
 
 </body>
 </html>

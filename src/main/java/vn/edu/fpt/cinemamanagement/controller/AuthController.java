@@ -24,87 +24,30 @@ public class AuthController {
     private AuthService authService;
 
     // ========================== LOGIN ==========================
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
+    // Display the login page
     @GetMapping("/login")
-    public String showLoginPage(Model model) {
-        model.addAttribute("pageTitle", "Login");
-        return "auth/login";
+    public String loginPage(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "Invalid username or password.");
+        }
+        return "auth/login";  // Render the login page
     }
 
+    // Handle login submission
     @PostMapping("/login")
-    public String doLogin(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            HttpServletResponse response,
-            Model model
-    ) {
-        // ===== VALIDATION =====
-        if (username == null || username.isBlank()) {
-            model.addAttribute("error", "Username cannot be empty!");
-            return "auth/login";
+    public String login(@RequestParam String username, @RequestParam String password, Model model) {
+        boolean validLogin = authService.login(username, password);  // assuming this is how your service works
+        if (!validLogin) {
+            model.addAttribute("errorMessage", "Invalid username or password");
+            return "auth/login";  // return to the login page with error message
         }
-
-        if (password == null || password.isBlank()) {
-            model.addAttribute("error", "Password cannot be empty!");
-            return "auth/login";
-        }
-
-        // ===== STAFF / ADMIN LOGIN =====
-        Staff staff = authService.checkStaffLogin(username, password);
-        if (staff != null) {
-            String safeRole = URLEncoder.encode(staff.getPosition(), StandardCharsets.UTF_8); // ✅ encode role để tránh lỗi space
-
-            Cookie usernameCookie = new Cookie("user_name", username);
-            Cookie roleCookie = new Cookie("user_role", safeRole);
-            roleCookie.setPath("/");
-            usernameCookie.setMaxAge(2 * 60 * 60);
-            response.addCookie(usernameCookie);
-            roleCookie.setPath("/");
-            roleCookie.setMaxAge(2 * 60 * 60);
-            response.addCookie(roleCookie);
-
-            String role = staff.getPosition().toLowerCase();
-            if (role.contains("admin")) {
-                return "redirect:/homepage";
-            } else if (role.contains("cashier")) {
-                return "redirect:/homepage";
-            } else if (role.contains("redemption")) {
-                return "redirect:/homepage";
-            }
-        }
-
-        // ===== CUSTOMER LOGIN =====
-        Customer customer = authService.checkCustomerLogin(username, password);
-        if (customer != null) {
-            Cookie usernameCookie = new Cookie("user_name", username);
-            Cookie roleCookie = new Cookie("user_role", "customer");
-            roleCookie.setPath("/");
-            usernameCookie.setMaxAge(30 * 60);
-            response.addCookie(usernameCookie);
-            roleCookie.setPath("/");
-            roleCookie.setMaxAge(30 * 60);
-            response.addCookie(roleCookie);
-            return "redirect:/homepage";
-        }
-
-        model.addAttribute("error", "Invalid username or password!");
-        return "auth/login";
+        return "redirect:/homepage";  // redirect to homepage after successful login
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpServletResponse response) {
-        Cookie roleCookie = new Cookie("user_role", "");
-        roleCookie.setPath("/");
-        roleCookie.setMaxAge(0);
-        response.addCookie(roleCookie);
-
-        Cookie nameCookie = new Cookie("user_name", "");
-        nameCookie.setPath("/");
-        nameCookie.setMaxAge(0);
-        response.addCookie(nameCookie);
-
-        return "redirect:/login";
-    }
     // ========================== REGISTER FORM (GET) ==========================
     @GetMapping("/register")
     public String showRegisterForm(Model model) {

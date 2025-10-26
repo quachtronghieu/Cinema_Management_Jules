@@ -45,20 +45,26 @@
 <!-- ================= LOGIN SECTION ================= -->
 <div class="d-flex justify-content-center align-items-center vh-100">
     <div class="login-card text-center bg-secondary p-4 rounded-4 shadow-lg" style="max-width: 400px; width: 100%;">
+
         <h2 class="login-title mb-3 text-white">Welcome Back</h2>
         <p class="text-light mb-4">Log in to continue your movie journey</p>
 
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- ✅ HIỂN THỊ THÔNG BÁO LOGIN FAIL / LOGOUT -->
+        <div th:if="${param.error}" class="alert alert-danger text-center mb-3">
+            Invalid username or password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success text-center mb-3">
+            You have been logged out successfully.
+        </div>
 
         <form th:action="@{/login}" method="post">
-            <!-- Username -->
             <div class="mb-3 text-start">
                 <label for="username" class="form-label text-white">Username</label>
-                <input type="text" id="username" name="username" class="form-control bg-dark border-0 text-white"
+                <input type="text" id="username" name="username"
+                       class="form-control bg-dark border-0 text-white"
                        placeholder="Enter username" required>
             </div>
 
-            <!-- Password -->
             <div class="mb-3 text-start position-relative">
                 <label for="password" class="form-label text-white">Password</label>
                 <div class="position-relative">
