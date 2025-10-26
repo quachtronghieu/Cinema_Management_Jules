@@ -61,7 +61,7 @@ public class MovieController {
         return "movies/movie_detail";
     }
 
-    @RequestMapping(value = "create")
+    @RequestMapping(value = "createMovie")
     public String createMovie(Model model) {
         Movie movie = new Movie();
         movie.setMovieID(movieService.generateMovieID());
@@ -86,10 +86,9 @@ public class MovieController {
         return "movies/movie_update";
     }
 
-@PostMapping(value = "save")
-public String save(@ModelAttribute("movie") Movie movie, Model model) {
-    boolean isUpdate = movieService.existsByMovieID(movie.getMovieID());
-    var errors = movieService.saveOrUpdateMovie(movie, isUpdate);
+@PostMapping(value = "create")
+public String create(@ModelAttribute("movie") Movie movie, Model model) {
+    var errors = movieService.createMovie(movie);
 
     if (!errors.isEmpty()) {
         model.addAttribute("movie", movie); // ⚠️ cần có dòng này
@@ -97,11 +96,27 @@ public String save(@ModelAttribute("movie") Movie movie, Model model) {
         model.addAttribute("imgPaths", movieService.getImgPaths());
         model.addAttribute("genres", movieService.getGenres());
 
-        return isUpdate ? "movies/movie_update" : "movies/movie_create";
+        return  "movies/movie_create";
     }
 
     return "redirect:/movies";
 }
+
+    @PostMapping(value = "update")
+    public String update(@ModelAttribute("movie") Movie movie, Model model) {
+        var errors = movieService.updateMovie(movie);
+
+        if (!errors.isEmpty()) {
+            model.addAttribute("movie", movie); // ⚠️ cần có dòng này
+            model.addAttribute("errors", errors);
+            model.addAttribute("imgPaths", movieService.getImgPaths());
+            model.addAttribute("genres", movieService.getGenres());
+
+            return "movies/movie_update";
+        }
+
+        return "redirect:/movies";
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteMovie(@PathVariable("id") String id) {

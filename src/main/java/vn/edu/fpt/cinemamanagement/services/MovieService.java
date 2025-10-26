@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
@@ -48,7 +47,6 @@ public class MovieService {
 
         if (!TITLE_PATTERN.matcher(title).matches()) {
             errors.put("title", "The title can only contain letters, numbers, spaces, and basic punctuation marks.");
-            return;
         }
     }
 
@@ -120,17 +118,24 @@ public class MovieService {
 
         int year = releaseDate.getYear();
         if (year < 1000 || year > 9999) {
-            errors.put("releaseDate", "Year must be 4 digits");
+            errors.put("releaseDate", "Year must be 4 digits.");
+            return;
         }
 
-        if (releaseDate.isAfter(today.plusYears(1))) {
-            errors.put("releaseDate", "The release date cannot be more than one year from today.");
-        }
+        // === Cấu hình giới hạn thời gian cho tạo mới ===
+        LocalDate minAllowed = today.plusWeeks(2); // ít nhất 2 tuần sau
+        LocalDate maxAllowed = today.plusMonths(5);
+
+        // Nếu sau khi cộng 5 tháng mà ngày vượt quá số ngày trong tháng mới,
+        // LocalDate đã tự động cắt về cuối tháng — nên không cần xử lý thủ công
+
 
         if (!isUpdate) {
-            // Khi tạo mới: phải ít nhất là ngày hôm sau
-            if (!releaseDate.isAfter(today)) {
-                errors.put("releaseDate", "The release date must be at least one day after today.");
+            // Khi tạo mới
+            if (releaseDate.isBefore(minAllowed)) {
+                errors.put("releaseDate", "The release date must be at least 2 weeks after today (" + minAllowed + ").");
+            } else if (releaseDate.isAfter(maxAllowed)) {
+                errors.put("releaseDate", "The release date cannot be more than 5 months from today (" + maxAllowed + ").");
             }
         } else {
             // Khi update
@@ -148,9 +153,11 @@ public class MovieService {
                     errors.put("releaseDate", "Cannot modify release date after the movie has already been released.");
                 }
             } else {
-                // Nếu chưa chiếu → vẫn cho đổi, nhưng vẫn phải >= hôm sau
+                // Nếu chưa chiếu → cho đổi nhưng vẫn tuân quy tắc >= hôm nay và <= 5 tháng
                 if (!releaseDate.isAfter(today)) {
                     errors.put("releaseDate", "The updated release date must be after today.");
+                } else if (releaseDate.isAfter(maxAllowed)) {
+                    errors.put("releaseDate", "The updated release date cannot be more than 5 months from today (" + maxAllowed + ").");
                 }
             }
         }
@@ -166,14 +173,12 @@ public class MovieService {
     private void validateImage(String img, Map<String, String> errors) {
         if (img == null || img.trim().isEmpty()) {
             errors.put("img", "The movie poster image is required.");
-            return;
         }
     }
 
     private void validateGenre(String genre, Map<String, String> errors) {
         if (genre == null || genre.trim().isEmpty()) {
             errors.put("genre", "The movie genre is required.");
-            return;
         }
     }
 
@@ -199,14 +204,52 @@ public class MovieService {
 
 
     @Transactional
-    public Map<String, String> saveOrUpdateMovie(Movie movie, boolean isUpdate) {
+    public Map<String, String> createMovie(Movie movie) {
         Map<String, String> errors = new HashMap<>();
 
         // 1️⃣ VALIDATE FORMAT
         validateTitle(movie.getTitle(), errors);
         validateGenre(movie.getGenre(), errors);
         validateDuration(movie.getDuration(), errors);
-        validateReleaseDate(movie.getReleaseDate(), errors, isUpdate, movie.getMovieID());
+        validateReleaseDate(movie.getReleaseDate(), errors, false, movie.getMovieID());
+        validateAgeRating(movie.getAgeRating(), errors);
+        validateSummary(movie.getSummary(), errors);
+        validateImage(movie.getImg(), errors);
+        validateTrailer(movie.getTrailer(), errors);
+
+        // Nếu có lỗi format thì return luôn
+        if (!errors.isEmpty()) {
+            return errors;
+        }
+        String img = movie.getImg();
+        if (img == null || img.trim().isEmpty()) {
+            errors.put("img", "Image cannot be empty");
+        }
+        System.out.println("Checking duplicate for title: " + movie.getTitle());
+        System.out.println("existsByTitleIgnoreCase result: " + movieRepository.existsByTitleIgnoreCase(movie.getTitle().toUpperCase()));
+
+        validateDuplicateTitle(movie.getTitle(), errors);
+
+        // Nếu có lỗi business rule thì return luôn
+        if (!errors.isEmpty()) {
+            return errors;
+        }
+        movie.setTitle(movie.getTitle().toUpperCase());
+
+        // 3️⃣ SAVE
+        movieRepository.save(movie);
+        return errors; // Trống = thành công
+    }
+
+    @Transactional
+    public Map<String, String> updateMovie(Movie movie) {
+        Map<String, String> errors = new HashMap<>();
+
+        // 1️⃣ VALIDATE FORMAT
+        validateTitle(movie.getTitle(), errors);
+        validateGenre(movie.getGenre(), errors);
+        validateDuration(movie.getDuration(), errors);
+        validateReleaseDate(movie.getReleaseDate(), errors, true, movie.getMovieID());
         validateAgeRating(movie.getAgeRating(), errors);
         validateSummary(movie.getSummary(), errors);
         validateImage(movie.getImg(), errors);
@@ -224,25 +267,19 @@ public class MovieService {
         System.out.println("Checking duplicate for title: " + movie.getTitle());
         System.out.println("existsByTitleIgnoreCase result: " + movieRepository.existsByTitleIgnoreCase(movie.getTitle().toUpperCase()));
 
-        // 2️⃣ VALIDATE BUSINESS RULES - Check duplicate title
-        boolean duplicate = movieRepository.existsByTitleIgnoreCase(movie.getTitle());
-
-        if (!isUpdate) {
-            validateDuplicateTitle(movie.getTitle(), errors);
+        Movie existing = movieRepository.findById(movie.getMovieID()).orElse(null);
+        if (existing == null) {
+            errors.put("movieID", "Movie not found for update.");
         } else {
-            Movie existing = movieRepository.findById(movie.getMovieID()).orElse(null);
-            if (existing == null) {
-                errors.put("movieID", "Movie not found for update.");
-            } else {
-                // Nếu title mới khác title cũ, kiểm tra trùng
-                if (!movie.getTitle().equalsIgnoreCase(existing.getTitle())) {
-                    boolean duplicateTitle = movieRepository.existsByTitleIgnoreCase(movie.getTitle());
-                    if (duplicateTitle) {
-                        errors.put("title", "A movie with this title already exists.");
-                    }
+            // Nếu title mới khác title cũ, kiểm tra trùng
+            if (!movie.getTitle().equalsIgnoreCase(existing.getTitle())) {
+                boolean duplicateTitle = movieRepository.existsByTitleIgnoreCase(movie.getTitle());
+                if (duplicateTitle) {
+                    errors.put("title", "A movie with this title already exists.");
                 }
             }
         }
+
         // Nếu có lỗi business rule thì return luôn
         if (!errors.isEmpty()) {
             return errors;
@@ -302,7 +339,8 @@ public class MovieService {
 
         return filteredMovies;
     }
-//
+
+    //
     @Transactional
     public void deleteById(String id) {
         if (movieRepository.existsById(id)) {

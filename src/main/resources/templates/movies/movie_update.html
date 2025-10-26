@@ -28,7 +28,7 @@
 
                 <div class="container bg-secondary text-white rounded p-4" th:if="${movie != null}">
 
-                    <form th:action="@{/movies/save}" th:object="${movie}" method="post">
+                    <form th:action="@{/movies/update}" th:object="${movie}" method="post">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Movie ID:</label>
                             <input type="text" th:field="*{movieID}" class="form-control" readonly>

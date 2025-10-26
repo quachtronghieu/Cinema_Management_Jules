@@ -26,7 +26,7 @@
 
                 <div class="container bg-secondary text-white rounded p-4">
 
-                    <form th:action="@{/movies/save}" th:object="${movie}" method="post" id="movieForm">
+                    <form th:action="@{/movies/create}" th:object="${movie}" method="post" id="movieForm">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Movie ID:</label>
                             <input type="text" th:field="*{movieID}" class="form-control" readonly>
@@ -58,14 +58,6 @@
                             <div th:if="${errors['duration']}" class="text-danger" th:text="${errors['duration']}"></div>
 
                         </div>
-
-<!--                        <div class="mb-3">-->
-<!--                            <label class="form-label fw-bold">Release Date:</label>-->
-<!--                            <input type="date" th:field="*{releaseDate}" class="form-control" pattern="\d{4}-\d{2}-\d{2}" required>-->
-<!--                            <div th:if="${errors['releaseDate']}" class="text-danger" th:text="${errors['releaseDate']}"></div>-->
-<!--                            <div id="releaseDateError" class="form__error hidden"></div>-->
-<!--                        </div>-->
-
                         <div class="mb-3">
                             <label class="form-label fw-bold">Release Date:</label>
                             <input type="date" th:field="*{releaseDate}" class="form-control" required id="releaseDate">
