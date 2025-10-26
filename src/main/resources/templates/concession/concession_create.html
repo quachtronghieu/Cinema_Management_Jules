@@ -11,7 +11,9 @@
                 <a class="btn btn-outline-light" th:href="@{/concessions}">Back</a>
             </div>
 
-            <div th:if="${errors != null and errors._global != null}" class="alert alert-danger" th:text="${errors._global}"></div>
+            <div class="alert alert-danger"
+                 th:if="${errors != null and errors['_global'] != null}"
+                 th:text="${errors['_global']}"></div>
 
             <form th:action="@{/concessions/create}" method="post" class="row g-3" th:object="${concession}">
                 <div class="col-md-3">
@@ -21,44 +23,72 @@
                         <option value="PC">Popcorn</option>
                         <option value="DR">Drink</option>
                     </select>
+                    <div class="text-danger small"
+                         th:text="${errors != null ? errors['type'] : ''}"></div>
                     <div class="form-text">ID will be generated: Popcorn → <b>PCxxxx</b>, Drink → <b>DRxxxx</b>.</div>
                 </div>
 
                 <div class="col-md-5">
                     <label class="form-label">Name</label>
                     <input class="form-control" th:field="*{name}" required placeholder="Caramel Popcorn S / Coke 16oz"/>
-                    <div class="text-danger small" th:text="${errors?.name}"></div>
+                    <div class="text-danger small"
+                         th:text="${errors != null ? errors['name'] : ''}"></div>
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label">Price (VND)</label>
                     <input class="form-control" th:field="*{price}" type="number" step="1000" min="0" required/>
-                    <div class="text-danger small" th:text="${errors?.price}"></div>
+                    <div class="text-danger small"
+                         th:text="${errors != null ? errors['price'] : ''}"></div>
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Description</label>
                     <textarea class="form-control" rows="2" th:field="*{description}" placeholder="Short description" required></textarea>
-                    <div class="text-danger small" th:text="${errors?.description}"></div>
+                    <div class="text-danger small"
+                         th:text="${errors != null ? errors['description'] : ''}"></div>
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Select Image</label>
                     <input type="hidden" th:field="*{img}">
-                    <select class="form-select" name="imageFile" required>
+                    <select class="form-select" name="imageFile" id="imageSelect" required>
                         <option value="" disabled selected>-- Chọn một ảnh --</option>
                         <option th:each="f : ${imageFiles}" th:value="${f}" th:text="${f}"></option>
                     </select>
                     <small class="text-muted">Ảnh nằm trong <code>/assets/img/concessions/</code>.</small>
 
                     <div class="mt-2">
-                        <img th:src="${#strings.isEmpty(concession.img) ? '/img/placeholder.png' : concession.img}"
+                        <img id="imagePreview"
+                             th:src="${#strings.isEmpty(concession.img) ? '/img/placeholder.png' : concession.img}"
                              alt="preview"
                              style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #555;"
                              onerror="this.onerror=null; this.src='/img/placeholder.png';">
                     </div>
-                    <div class="text-danger small" th:text="${errors?.img}"></div>
+                    <div class="text-danger small" th:text="${errors != null ? errors['img'] : ''}"></div>
+
                 </div>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const select = document.getElementById("imageSelect");
+                        const preview = document.getElementById("imagePreview");
+
+                        select.addEventListener("change", function () {
+                            let fileName = select.value;
+                            if (fileName) {
+                                // Nếu fileName đã chứa 'assets/', không cần thêm nữa
+                                if (fileName.includes('assets/')) {
+                                    preview.src = "/" + fileName;
+                                } else {
+                                    preview.src = "/assets/img/concessions/" + fileName;
+                                }
+                            } else {
+                                preview.src = "/assets/img/placeholder.png";
+                            }
+                        });
+                    });
+                </script>
 
                 <div class="col-12 text-end">
                     <button type="submit" class="btn btn-danger">Save</button>

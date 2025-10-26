@@ -75,27 +75,56 @@
 
 <div></div>
 
-<div th:fragment = "navbar_homepage">
+<div th:fragment="navbar_homepage">
     <header class="header" role="banner">
         <div class="header__container container">
+            <!-- Logo -->
             <div class="header__left">
-                <a href="/homepage" class="header__logo" aria-label="CGV Home">
+                <a th:href="@{/homepage}" class="header__logo" aria-label="CGV Home">
                     <img th:src="@{/assets/img/logo.svg}" alt="CGV Movies Logo" width="120" height="40">
                 </a>
             </div>
+
+            <!-- Navigation -->
             <div class="header__center">
                 <nav class="nav" role="navigation">
                     <ul class="nav__list">
-                        <li class="nav__item nav-item dropdown"><a href="/movies"  class="nav__link">Now Showing</a></li>
-                        <li class="nav__item nav-item dropdown"><a href="/movies"  class="nav__link">Coming Soon</a></li>
-                        <li class="nav__item"><a th:href = "@{/homepage/vouchers}" class="nav__link">Vouchers</a></li>
+                        <!--edit link Now Showing  trên homepage-->
+                        <li class="nav__item"><a th:href="@{/homepage/movies_nowshowing}"class="nav__link">Now Showing</a></li>
+                        <li class="nav__item"><a th:href="@{/movies}" class="nav__link">Coming Soon</a></li>
+                        <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Promotions & Vouchers</a></li>
                     </ul>
                 </nav>
             </div>
-            <div class="header__right">
-                <a class="btn btn--outline" href="/login">Login</a>
-                <a class="btn" href="/register">Register</a>
-                <a class="btn" href="/forget_password">Forget Password (Temp)</a>
+
+            <!-- Login / Register buttons -->
+            <div th:if="${username == null}">
+                <a class="btn btn--outline" th:href="@{/login}">Login</a>
+                <a class="btn" th:href="@{/register}">Register</a>
+            </div>
+
+            <!-- User icon + dropdown -->
+            <div th:if="${username != null}" class="dropdown d-flex align-items-center">
+                <span class="text-light me-2">Welcome, <b th:text="${username}"></b></span>
+                <button class="btn btn-outline-light rounded-circle"
+                        id="userProfileDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span th:text="${username.substring(0, 1).toUpperCase()}"></span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
+                    <li><a class="dropdown-item" th:href="@{/profile}">Profile Settings</a></li>
+                    <!-- Dashboard cho admin -->
+                    <li th:if="${role != null and role.toLowerCase().contains('admin')}">
+                        <a class="dropdown-item" th:href="@{/dashboard}">Admin Dashboard</a>
+                    </li>
+                    <!-- Trang staff -->
+                    <li th:if="${role != null and (role.toLowerCase().contains('cashier') or role.toLowerCase().contains('redemption'))}">
+                        <a class="dropdown-item" th:href="@{/staff_home}">Staff Home</a>
+                    </li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Log Out</a></li>
+                </ul>
             </div>
         </div>
     </header>

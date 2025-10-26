@@ -25,22 +25,18 @@ public class Concession {
 
     public Concession() {}
 
-    public Concession(String concessionId, String name, BigDecimal price, String description, String img) {
-        this.concessionId = concessionId;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.img = img;
-    }
-
     public String getConcessionId() { return concessionId; }
     public void setConcessionId(String concessionId) { this.concessionId = concessionId; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
     public String getImg() { return img; }
     public void setImg(String img) { this.img = img; }
 }

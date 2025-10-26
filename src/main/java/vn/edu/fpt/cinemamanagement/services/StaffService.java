@@ -1,10 +1,12 @@
 package vn.edu.fpt.cinemamanagement.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model; // Cần import Model
 import vn.edu.fpt.cinemamanagement.entities.Staff;
 import vn.edu.fpt.cinemamanagement.repositories.StaffRepository;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,8 @@ public class StaffService {
 
     @Autowired
     private StaffRepository staffRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // --- Read All ---
     public List<Staff> getAllStaff() {
@@ -31,11 +35,17 @@ public class StaffService {
         if (staff.getStaffID() == null || staff.getStaffID().isEmpty()) {
             staff.setStaffID(generateNewStaffID());
         }
+        if (staff.getPassword() != null && !staff.getPassword().isEmpty()) {
+            staff.setPassword(encodePassword(staff.getPassword()));
+        }
         staffRepo.save(staff);
     }
 
     // --- Update ---
     public void updateStaff(Staff staff) {
+        if (staff.getPassword() != null && !staff.getPassword().isEmpty()) {
+            staff.setPassword(encodePassword(staff.getPassword()));
+        }
         if (staff.getStaffID() != null && staffRepo.existsById(staff.getStaffID())) {
             staffRepo.save(staff);
         }
@@ -60,7 +70,9 @@ public class StaffService {
         int number = Integer.parseInt(lastID.substring(2)) + 1;
         return String.format("ST%06d", number); // -> ST0010
     }
-
+    public String encodePassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);  // Use BCryptPasswordEncoder to hash the password
+    }
 
     // ------Validate--------
     public boolean validateStaff(Staff staff, Model model, boolean isUpdate) {

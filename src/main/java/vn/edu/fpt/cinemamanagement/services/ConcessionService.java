@@ -1,15 +1,17 @@
 package vn.edu.fpt.cinemamanagement.services;
 
-import jakarta.transaction.Transactional;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindException;
 import vn.edu.fpt.cinemamanagement.entities.Concession;
 import vn.edu.fpt.cinemamanagement.repositories.ConcessionRepository;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ConcessionService {
@@ -20,106 +22,164 @@ public class ConcessionService {
         this.repo = repo;
     }
 
-    public java.util.List<Concession> findAll() { return repo.findAll(); }
-
-    public Concession findById(String id) { return repo.findById(id).orElse(null); }
-
-    @Transactional
-    public Concession create(Concession input, String typePrefix, String imageFile) throws BindException {
-        // set ID + img trước khi validate
-        String id = generateId(typePrefix);
-        input.setConcessionId(id);
-        if (StringUtils.hasText(imageFile)) {
-            input.setImg("/assets/img/concessions/" + imageFile);
-        }
-
-        validateOrThrow(input, false);
-        return repo.save(input);
+    /* ======================= PAGINATION ======================= */
+    /** Controller truyền page (1-based) -> ở đây đổi sang 0-based cho Spring Data */
+    public Page<Concession> findPage(int page1Based, int pageSize) {
+        int pageIndex = Math.max(page1Based, 1) - 1;
+        return repo.findAll(Pageable.ofSize(pageSize).withPage(pageIndex));
     }
 
-    @Transactional
-    public Concession update(String id, Concession incoming, String imageFile) throws BindException {
-        Optional<Concession> opt = repo.findById(id);
-        if (opt.isEmpty()) {
-            BeanPropertyBindingResult br = new BeanPropertyBindingResult(incoming, "concession");
-            br.reject("", "Concession not found");
-            throw new BindException(br);
+    /* ======================= CRUD ======================= */
+    public Concession findById(String id) {
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Concession not found: " + id));
+    }
+
+    /** Tạo mới: gán prefix (PC/DR...), set img nếu truyền imageFile, validate tất cả, save */
+    public Map<String, String> createWithPrefix(String type, Concession c, String imageFile) {
+        Map<String, String> errors = new HashMap<>();
+
+        // type
+        if (!StringUtils.hasText(type)) {
+            errors.put("type", "Type is required");
         }
 
-        Concession c = opt.get();
-        c.setName(incoming.getName());
-        c.setPrice(incoming.getPrice());
-        c.setDescription(incoming.getDescription());
+        // set image nếu chọn từ list
         if (StringUtils.hasText(imageFile)) {
             c.setImg("/assets/img/concessions/" + imageFile);
         }
 
-        validateOrThrow(c, true);
-        return repo.save(c);
+        // validate dữ liệu (yêu cầu có ảnh khi tạo)
+        validateConcession(c, true, errors);
+
+        if (!errors.isEmpty()) return errors;
+
+        String newId = nextId(type.toUpperCase(Locale.ROOT));
+        c.setConcessionId(newId);
+        repo.save(c);
+        return errors; // rỗng = OK
     }
 
-    @Transactional
-    public void delete(String id) { repo.deleteById(id); }
+    /** Update: set id, giữ ảnh cũ nếu không đổi, validate, save */
+    public Map<String, String> update(String id, Concession incoming, String imageFile) {
+        Map<String, String> errors = new HashMap<>();
+        Concession old = findById(id);
 
-    // ================= Helpers =================
+        // merge các trường cho chắc (giữ nguyên những gì không đổi)
+        old.setName(incoming.getName());
+        old.setPrice(incoming.getPrice());
+        old.setDescription(incoming.getDescription());
+        if (StringUtils.hasText(imageFile)) {
+            old.setImg("/assets/img/concessions/" + imageFile);
+        }
+        // validate (update không bắt buộc đổi ảnh -> requireImage=false)
+        validateConcession(old, false, errors);
 
-    private String generateId(String typePrefix) {
-        String prefix = "PC";
-        if ("DR".equalsIgnoreCase(typePrefix)) prefix = "DR";
+        if (!errors.isEmpty()) return errors;
 
-        // Repo của bạn trả về Optional<Concession>
-        Optional<Concession> lastOpt =
-                repo.findTopByConcessionIdStartingWithOrderByConcessionIdDesc(prefix);
-        String last = lastOpt.map(Concession::getConcessionId).orElse(null);
+        repo.save(old);
+        return errors; // rỗng = OK
+    }
+
+    public void delete(String id) {
+        if (repo.existsById(id)) {
+            repo.deleteById(id);
+        }
+    }
+
+    /* ======================= IMAGE PICKER ======================= */
+    /** Liệt kê file ảnh dưới /static/assets/img/concessions (chạy dev). */
+    public List<String> listImageFiles() {
+        try {
+            ClassPathResource root = new ClassPathResource("static/assets/img/concessions");
+            File folder = root.getFile();
+            if (folder.exists() && folder.isDirectory()) {
+                return Arrays.stream(Objects.requireNonNull(folder.listFiles()))
+                        .filter(File::isFile)
+                        .map(File::getName)
+                        .sorted()
+                        .collect(Collectors.toList());
+            }
+        } catch (IOException ignored) {}
+        return Collections.emptyList();
+    }
+
+    /* ======================= VALIDATION (thuần Java, không regex) ======================= */
+    private void validateConcession(Concession c, boolean requireImage, Map<String, String> errors) {
+        // Name: chỉ chữ/số/khoảng trắng, 2–50
+        if (!StringUtils.hasText(c.getName())) {
+            errors.put("name", "Name is required");
+        } else if (!isAlnumSpace(c.getName(), 2, 50)) {
+            errors.put("name", "Name: 2–50 chars, only letters, numbers, spaces");
+        }
+
+        // Price: >= 0
+        if (c.getPrice() == null || c.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+            errors.put("price", "Price must be \u2265 0");
+        }
+
+        // Description: chữ/số/khoảng trắng/ , .
+        if (!StringUtils.hasText(c.getDescription())) {
+            errors.put("description", "Description is required");
+        } else if (!isAlnumSpaceCommaDot(c.getDescription(), 5, 200)) {
+            errors.put("description", "Description: 5–200 chars; only letters, numbers, spaces, comma, period");
+        }
+
+        // Image
+        if (requireImage && !StringUtils.hasText(c.getImg())) {
+            errors.put("img", "Please choose an image");
+        }
+    }
+
+    private boolean isAlnumSpace(String s, int min, int max) {
+        if (s == null) return false;
+        s = s.trim();
+        if (s.length() < min || s.length() > max) return false;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (!((ch >= 'A' && ch <= 'Z') ||
+                    (ch >= 'a' && ch <= 'z') ||
+                    (ch >= '0' && ch <= '9') ||
+                    ch == ' ')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isAlnumSpaceCommaDot(String s, int min, int max) {
+        if (s == null) return false;
+        s = s.trim();
+        if (s.length() < min || s.length() > max) return false;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (!((ch >= 'A' && ch <= 'Z') ||
+                    (ch >= 'a' && ch <= 'z') ||
+                    (ch >= '0' && ch <= '9') ||
+                    ch == ' ' || ch == ',' || ch == '.')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /* ======================= ID HELPER ======================= */
+    /**
+     * Lấy ID cuối theo prefix (PC/DR...) rồi +1 (format PREFIX + 6 số).
+     * Yêu cầu repo có method: Page<Concession> findByConcessionIdStartingWith(String prefix, Pageable pageable)
+     */
+    private String nextId(String prefix) {
+        Pageable top1Desc = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "concessionId"));
+        Page<Concession> page = repo.findByConcessionIdStartingWith(prefix, top1Desc);
 
         int next = 1;
-        if (last != null && last.length() == 6) {
-            try { next = Integer.parseInt(last.substring(2)) + 1; } catch (NumberFormatException ignored) {}
-        }
-        return String.format("%s%04d", prefix, next);
-    }
-
-    /** Gom validation về Service và ném BindException nếu có lỗi. */
-    private void validateOrThrow(Concession c, boolean isUpdate) throws BindException {
-        BeanPropertyBindingResult br = new BeanPropertyBindingResult(c, "concession");
-
-        if (isUpdate) {
-            if (!StringUtils.hasText(c.getConcessionId()) || !c.getConcessionId().matches("^[A-Z]{2}\\d{4}$")) {
-                br.rejectValue("concessionId", "", "Invalid ID format (expected: PC0001 / DR0001)");
+        if (!page.isEmpty()) {
+            String lastId = page.getContent().get(0).getConcessionId();
+            if (lastId != null && lastId.length() > prefix.length()) {
+                try {
+                    next = Integer.parseInt(lastId.substring(prefix.length())) + 1;
+                } catch (NumberFormatException ignored) {}
             }
         }
-
-        if (!StringUtils.hasText(c.getName())) {
-            br.rejectValue("name", "", "Name is required");
-        } else if (c.getName().length() > 100) {
-            br.rejectValue("name", "", "Name must be at most 100 characters");
-        }
-
-        BigDecimal p = c.getPrice();
-        if (p == null) {
-            br.rejectValue("price", "", "Price is required");
-        } else {
-            if (p.scale() > 2) br.rejectValue("price", "", "Price must have at most 2 decimals");
-            if (p.signum() <= 0) br.rejectValue("price", "", "Price must be greater than 0");
-            if (p.precision() - p.scale() > 8) br.rejectValue("price", "", "Price too large (max 8 digits before decimal)");
-        }
-
-        if (!StringUtils.hasText(c.getDescription())) {
-            br.rejectValue("description", "", "Description is required");
-        } else if (c.getDescription().length() > 255) {
-            br.rejectValue("description", "", "Description must be at most 255 characters");
-        }
-
-        String img = c.getImg();
-        if (!StringUtils.hasText(img)) {
-            br.rejectValue("img", "", "Image path is required");
-        } else {
-            if (img.length() > 255) br.rejectValue("img", "", "Image path must be at most 255 characters");
-            if (!img.startsWith("/assets/img/concessions/")) {
-                br.rejectValue("img", "", "Image must be under /assets/img/concessions/");
-            }
-        }
-
-        if (br.hasErrors()) throw new BindException(br);
+        return String.format("%s%06d", prefix, next);
     }
 }

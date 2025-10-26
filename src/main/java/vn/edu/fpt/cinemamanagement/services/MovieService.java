@@ -280,12 +280,29 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
-    //Huynh Anh add
+    //Huynh Anh add- sửa movies now showing
     @Transactional
     public List<Movie> getNowShowingMovies() {
-        return movieRepository.findByReleaseDateLessThanEqual(LocalDate.now());
-    }
+        LocalDate today = LocalDate.now();
+        LocalDate thirtyDaysAgo = today.minusDays(30);
 
+        // Lấy tất cả phim trong DB
+        List<Movie> allMovies = movieRepository.findAll();
+
+        // Lọc ra:
+        //  Phim đã hoặc đang chiếu: release_date <= hôm nay
+        //  Phim chưa quá 30 ngày kể từ ngày chiếu: release_date >= hôm nay - 30
+        List<Movie> filteredMovies = new ArrayList<>();
+        for (Movie m : allMovies) {
+            LocalDate release = m.getReleaseDate();
+            if ((release.isBefore(today) || release.isEqual(today)) && !release.isBefore(thirtyDaysAgo)) {
+                filteredMovies.add(m);
+            }
+        }
+
+        return filteredMovies;
+    }
+//
     @Transactional
     public void deleteById(String id) {
         if (movieRepository.existsById(id)) {

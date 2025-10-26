@@ -1,6 +1,7 @@
+
+<!-- movies_nowshowing.html-->
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -17,46 +18,26 @@
 <!-- ===== NAVBAR ===== -->
 <header th:replace="~{fragment/frag :: navbar_homepage}"></header>
 
-<!-- ===== HERO SECTION ===== -->
-<section class="hero" role="region" aria-label="Featured Movies">
-    <div class="hero__wrapper">
-        <div class="hero__slide is-active" style="background-image: url('/assets/img/slide-1.jpg');">
-            <div class="hero__content container">
-                <h2 class="hero__title">The Last Guardian</h2>
-                <a href="/booking/1" class="btn btn--hero">Book Ticket Now</a>
-            </div>
-        </div>
-
-        <div class="hero__slide" style="background-image: url('/assets/img/slide-2.jpg');">
-            <div class="hero__content container">
-                <h2 class="hero__title">Mortal Kombat</h2>
-                <a href="/booking/2" class="btn btn--hero">Buy Tickets</a>
-            </div>
-        </div>
-
-        <button class="hero__arrow hero__arrow--prev" aria-label="Previous Slide">&#10094;</button>
-        <button class="hero__arrow hero__arrow--next" aria-label="Next Slide">&#10095;</button>
-    </div>
-
-    <div class="hero__indicators container">
-        <span class="hero__dot is-active"></span>
-        <span class="hero__dot"></span>
-    </div>
-</section>
 
 <!-- ===== MAIN CONTENT ===== -->
+
 <main role="main">
+    <section id="promotions" class="section">
+        <div class="container">
+            <div class="section__header section-header">
+                <h2 class="section__title">Movies Now Showing</h2>
+            </div>
+        </div>
+    </section>
     <section class="section" aria-labelledby="movie-grid-title">
         <div class="container">
-            <div class="section__header">
-                <h1 id="movie-grid-title" class="section__title">Now Showing</h1>
-                <p class="section__subtitle">Book your favorite movie quickly</p>
-            </div>
             <div class="movie-grid">
                 <!-- Loop Movie -->
                 <article class="movie-card" th:each="movie : ${nowShowing}">
                     <div class="movie-card__top">
+                        <!--                        <img th:src="@{'/assets/img/posters/' + ${movie.movieID} + '.jpg'}"-->
                         <img th:src="@{${movie.img}}"
+
                              th:alt="${movie.title} + ' poster'" class="movie-card__poster">
                         <div class="movie-card__rating">
                             T<span th:text="${movie.ageRating}"></span>
@@ -69,6 +50,7 @@
                         <h3 class="movie-card__title" th:text="${movie.title}">Movie Title</h3>
                         <p class="movie-card__info" th:text="${movie.genre} + ' • ' + ${movie.duration} + ' minutes'">Genre • Duration</p>
                         <a th:href="@{'/booking/' + ${movie.movieID}}" class="movie-card__button">Book Ticket</a>
+                        <a th:href="@{'/movies/detail/' + ${movie.movieID}}" class="movie-card__button btn--secondary">Detail movie</a>
                     </div>
                 </article>
             </div>
@@ -96,22 +78,18 @@
     </div>
 </div>
 
-<!-- ✅ FIXED SECTION BELOW -->
-<!-- Hiển thị thông báo chào mừng nếu đã đăng nhập -->
-<div sec:authorize="isAuthenticated()" class="welcome-message">
-    <span>Welcome, <span sec:authentication="name"></span></span>
+<!-- Hiển thị thông báo chào mừng nếu username có giá trị -->
+<div th:if="${username != null}" class="welcome-message">
+    <span>Welcome, <span th:text="${username}"></span></span>
 </div>
 
-<!-- Chỉ admin thấy -->
-<div sec:authorize="hasAuthority('ROLE_ADMIN')">
-    <a th:href="@{/dashboard}">Admin Dashboard</a>
+<!-- Hiển thị các liên kết dựa trên vai trò người dùng -->
+<div th:if="${role == 'admin'}">
+    <a th:href="@{/admin/dashboard}">Admin Dashboard</a>
 </div>
-
-<!-- Nhân viên Cashier Staff hoặc Redemtion Staff thấy -->
-<div sec:authorize="hasAnyAuthority('ROLE_CASHIER STAFF','ROLE_REDEMTION STAFF')">
+<div th:if="${role == 'staff'}">
     <a th:href="@{/staff_home}">Staff Home</a>
 </div>
-<!-- ✅ END FIX -->
 
 <!-- JS -->
 <script th:src="@{/assets/js/hero.js}"></script>
@@ -135,6 +113,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+
 
 </body>
 </html>

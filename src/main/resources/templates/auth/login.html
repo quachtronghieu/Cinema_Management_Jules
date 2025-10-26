@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | D&D Cinema</title>
+
+    <!-- Bootstrap & Fonts -->
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Global Styles -->
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/dashboard.css}">
+
+    <!-- Login Page Styles -->
+    <link rel="stylesheet" th:href="@{/assets/css/login.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="login-page">
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+    <div class="header__container">
+        <div class="header__left">
+            <a th:href="@{/homepage}" class="header__logo">
+                <img th:src="@{/assets/logo.svg}" alt="Cinema Logo">
+                <span class="header__logo-text">D&D Cinema</span>
+            </a>
+        </div>
+        <div class="header__center">
+            <nav class="nav">
+                <ul class="nav__list">
+                    <li class="nav__item"><a th:href="@{/homepage}" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a th:href="@{/movies}" class="nav__link">Movies</a></li>
+                    <li class="nav__item"><a th:href="@{/promotions}" class="nav__link">Promotions</a></li>
+                    <li class="nav__item"><a th:href="@{/contact}" class="nav__link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<!-- ================= LOGIN SECTION ================= -->
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="login-card text-center bg-secondary p-4 rounded-4 shadow-lg" style="max-width: 400px; width: 100%;">
+
+        <h2 class="login-title mb-3 text-white">Welcome Back</h2>
+        <p class="text-light mb-4">Log in to continue your movie journey</p>
+
+        <!-- ✅ HIỂN THỊ THÔNG BÁO LOGIN FAIL / LOGOUT -->
+        <div th:if="${param.error}" class="alert alert-danger text-center mb-3">
+            Invalid username or password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success text-center mb-3">
+            You have been logged out successfully.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3 text-start">
+                <label for="username" class="form-label text-white">Username</label>
+                <input type="text" id="username" name="username"
+                       class="form-control bg-dark border-0 text-white"
+                       placeholder="Enter username" required>
+            </div>
+
+            <div class="mb-3 text-start position-relative">
+                <label for="password" class="form-label text-white">Password</label>
+                <div class="position-relative">
+                    <input type="password" id="password" name="password"
+                           class="form-control pe-5 bg-dark border-0 text-white"
+                           placeholder="Enter password" required>
+                    <i class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3"
+                       id="togglePassword" style="cursor: pointer; color: #adb5bd;"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100 mt-3 fw-semibold">Login</button>
+
+            <div class="text-center mt-3 text-muted small">
+                <p class="mb-0">Don’t have an account?
+                    <a th:href="@{/register}" class="text-decoration-none text-info">Sign up</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", () => {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+        togglePassword.classList.toggle("fa-eye-slash");
+    });
+</script>
+
+</body>
+</html>

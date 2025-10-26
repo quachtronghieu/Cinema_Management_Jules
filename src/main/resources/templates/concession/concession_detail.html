@@ -8,11 +8,14 @@
         <div class="bg-secondary rounded p-4">
             <div class="d-flex align-items-center mb-3">
                 <h6 class="mb-0">Concession Detail</h6>
-                <a class="btn btn-primary ms-auto btn-compact" th:href="@{|/concessions/${concession.concessionId}/edit|}">Edit</a>
+                <a class="btn btn-primary ms-auto btn-compact"
+                   th:href="@{/concessions/edit/{id}(id=${concession.concessionId})}">
+                    Edit
+                </a>
                 <a class="btn btn-secondary ms-2 btn-compact" th:href="@{/concessions}">Back</a>
             </div>
 
-            <div class="col-12">
+            <div class="col-12 mb-3">
                 <label class="text-white-50">Image</label>
                 <div>
                     <img th:if="${concession.img != null and !#strings.isEmpty(concession.img)}"
@@ -28,18 +31,15 @@
                     <label class="text-white-50">ID</label>
                     <div class="fw-semibold" th:text="${concession.concessionId}">PC0001</div>
                 </div>
-
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="text-white-50">Name</label>
                     <div class="fw-semibold" th:text="${concession.name}">Caramel Popcorn</div>
                 </div>
-
                 <div class="col-md-3">
                     <label class="text-white-50">Price</label>
                     <div class="fw-semibold"
                          th:text="${#numbers.formatDecimal(concession.price, 0, 'POINT', 0, 'COMMA')}">45,000</div>
                 </div>
-
                 <div class="col-12">
                     <label class="text-white-50">Description</label>
                     <p class="mb-0" th:text="${concession.description}">...</p>

@@ -1,63 +1,134 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{dashboard/dashboard :: layout(~{::title}, ~{::main})}">
-<head><title>Concessions</title></head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:fragment="layout(title, content)">
+<head th:replace="~{fragment/frag :: head_dashboard}">
+    <title>Concessions</title>
+</head>
+
 <body>
-<main>
-    <div class="container-fluid pt-4 px-4">
-        <div class="bg-secondary rounded p-4">
-            <div class="d-flex align-items-center flex-wrap gap-2">
-                <h6 class="mb-0">Concessions Management</h6>
-                <a class="btn btn-danger ms-auto" th:href="@{/concessions/create}">
-                    <i class="bi bi-plus-circle me-1"></i>Add item
-                </a>
-            </div>
+<div class="container-fluid position-relative d-flex p-0">
+    <div th:replace="~{fragment/frag :: sidebar_dashboard}"></div>
 
-            <div class="table-responsive mt-4">
-                <table class="table text-start align-middle table-bordered table-hover mb-0">
-                    <thead>
-                    <tr class="text-white">
-                        <th style="width:10%">Image</th>
-                        <th style="width:16%">ID</th>
-                        <th>Name</th>
-                        <th style="width:12%" class="text-end">Price</th>
-                        <th style="width:22%" class="text-end">Actions</th>
-                    </tr>
-                    </thead>
+    <!-- Content -->
+    <div class="content">
+        <div th:replace="~{fragment/frag :: navbar_dashboard}"></div>
 
-                    <tbody>
-                    <tr th:each="c : ${concessions}">
-                        <td>
-                            <img th:if="${c.img != null and !#strings.isEmpty(c.img)}"
-                                 th:src="${c.img}" alt="img"
-                                 style="width:64px;height:64px;object-fit:cover;border-radius:8px;"
-                                 onerror="this.src='/img/placeholder.png'">
-                            <span th:if="${c.img == null or #strings.isEmpty(c.img)}" class="text-muted">No image</span>
-                        </td>
+        <div class="container-fluid pt-4 px-4">
+            <div class="bg-secondary rounded p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="mb-0">Concessions Management</h6>
+                    <a th:href="@{/concessions/create}" class="btn btn-danger btn-compact">
+                        <i class="fa fa-plus me-2"></i>Add Concession
+                    </a>
+                </div>
 
-                        <td th:text="${c.concessionId}">PC0001</td>
-                        <td th:text="${c.name}">Caramel Popcorn</td>
-                        <td class="text-end" th:text="${#numbers.formatDecimal(c.price, 0, 'POINT', 0, 'COMMA')}">45,000</td>
-                        <td class="text-end">
-                            <a class="btn btn-sm btn-outline-light btn-compact"
-                               th:href="@{|/concessions/${c.concessionId}/detail|}">Detail</a>
-                            <a class="btn btn-sm btn-primary btn-compact"
-                               th:href="@{|/concessions/${c.concessionId}/edit|}">Edit</a>
-                            <form th:action="@{|/concessions/${c.concessionId}/delete|}" method="post" class="d-inline">
-                                <button class="btn btn-sm btn-danger btn-compact" type="submit"
-                                        onclick="return confirm('Delete this item?');">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
+                <div class="table-responsive">
+                    <table class="table text-start align-middle table-bordered table-hover mb-0">
+                        <thead>
+                        <tr class="text-white">
+                            <th style="width:10%">Image</th>
+                            <th style="width:16%">ID</th>
+                            <th>Name</th>
+                            <th style="width:12%" class="text-white">Price</th>
+                            <th style="width:22%" class="text-white">Action</th>
+                        </tr>
+                        </thead>
 
-                    <tr th:if="${#lists.isEmpty(concessions)}">
-                        <td colspan="5" class="text-center">No data</td>
-                    </tr>
-                    </tbody>
-                </table>
+                        <tbody id="concessionTableBody">
+                        <tr th:each="c : ${concessionsList}">
+                            <td>
+                                <img th:if="${c.img != null and !#strings.isEmpty(c.img)}"
+                                     th:src="${c.img}" alt="img"
+                                     style="width:64px;height:64px;object-fit:cover;border-radius:8px;"
+                                     onerror="this.src='/img/placeholder.png'">
+                                <span th:if="${c.img == null or #strings.isEmpty(c.img)}"
+                                      class="text-muted">No image</span>
+                            </td>
+                            <td th:text="${c.concessionId}"></td>
+                            <td th:text="${c.name}"></td>
+                            <td class="text-end"
+                                th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')}"></td>
+                            <td class="text-end">
+                                <a th:href="@{/concessions/edit/{id} (id=${c.concessionId})}"
+                                   class="btn btn-success btn-compact"><i class="fa fa-edit"></i> Edit</a>
+                                <a th:href="@{/concessions/detail/{id} (id=${c.concessionId})}"
+                                   class="btn btn-light btn-compact"><i class="bi bi-eye-fill"></i> Details</a>
+                                <button class="btn btn-danger btn-compact"
+                                        th:attr="data-id=${c.concessionId}, data-name=${c.name}"
+                                        onclick="openDeleteConcessionModal(this.dataset.id, this.dataset.name)">
+                                    <i class="fa fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(concessionsList)}">
+                            <td colspan="5" class="text-center">No data</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation example"
+                         th:if="${totalPages != null and totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/concessions(page=${currentPage - 1})}">Pre</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/concessions(page=${i})}" th:text="${i}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                                <a class="page-link" th:href="@{/concessions(page=${currentPage + 1})}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-</main>
+
+    <!-- Delete Concession Modal -->
+    <div class="modal fade" id="deleteConcessionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Concession</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete
+                        <strong class="text-danger" id="deleteConcessionName"></strong> (ID:
+                        <span id="deleteConcessionIdDisplay"></span>)?</p>
+                </div>
+                <form th:action="@{/concessions/delete}" method="post">
+                    <input type="hidden" id="deleteConcessionId" name="concessionId"/>
+                    <div class="modal-footer">
+                        <button class="btn btn-light" data-bs-dismiss="modal" type="button">Cancel</button>
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/dashboard.js"></script>
+
+<script>
+    // === Delete Concession Modal ===
+    function openDeleteConcessionModal(id, name) {
+        document.getElementById('deleteConcessionId').value = id;
+        document.getElementById('deleteConcessionName').textContent = name;
+        document.getElementById('deleteConcessionIdDisplay').textContent = id;
+
+        const modal = new bootstrap.Modal(document.getElementById('deleteConcessionModal'));
+        modal.show();
+    }
+</script>
 </body>
 </html>

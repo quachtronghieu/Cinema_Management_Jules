@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{dashboard/dashboard :: layout(~{::title}, ~{::main})}">
-<head><title>Edit Concession</title></head>
+<head>
+    <title>Edit Concession</title>
+</head>
 <body>
 <main>
     <div class="container-fluid pt-4 px-4">
         <div class="bg-secondary rounded p-4">
             <h6 class="mb-3">Edit Concession</h6>
 
-            <div th:if="${errors != null and errors._global != null}" class="alert alert-danger" th:text="${errors._global}"></div>
+            <div th:if="${errors != null and errors._global != null}"
+                 class="alert alert-danger"
+                 th:text="${errors._global}"></div>
 
-            <form th:action="@{|/concessions/${concession.concessionId}/edit|}" th:object="${concession}" method="post" class="row g-3">
+            <form th:action="@{|/concessions/edit/${concession.concessionId}|}"
+                  th:object="${concession}" method="post" class="row g-3">
+
                 <div class="col-md-3">
                     <label class="form-label">ID</label>
                     <input class="form-control bg-dark border-0" th:value="${concession.concessionId}" readonly>
@@ -25,7 +31,8 @@
 
                 <div class="col-md-4">
                     <label class="form-label">Price (VND)</label>
-                    <input class="form-control bg-dark border-0" th:field="*{price}" type="number" step="1000" min="0" required>
+                    <input class="form-control bg-dark border-0" th:field="*{price}"
+                           type="number" step="1000" min="0" required>
                     <div class="text-danger small" th:text="${errors?.price}"></div>
                 </div>
 
@@ -35,10 +42,11 @@
                     <div class="text-danger small" th:text="${errors?.description}"></div>
                 </div>
 
+                <!-- IMAGE -->
                 <div class="col-12">
                     <label class="form-label">Select Image</label>
                     <input type="hidden" th:field="*{img}">
-                    <select class="form-select" name="imageFile">
+                    <select class="form-select" id="imageSelect" name="imageFile">
                         <option value="">-- Keep current image --</option>
                         <option th:each="f : ${imageFiles}"
                                 th:value="${f}"
@@ -46,14 +54,38 @@
                                 th:text="${f}">
                         </option>
                     </select>
+
                     <div class="mt-2">
-                        <img th:src="${#strings.isEmpty(concession.img) ? '/img/placeholder.png' : concession.img}"
+                        <img id="imagePreview"
+                             th:src="${#strings.isEmpty(concession.img) ? '/assets/img/placeholder.png' : concession.img}"
                              alt="preview"
                              style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #555;"
-                             onerror="this.onerror=null; this.src='/img/placeholder.png';">
+                             onerror="this.onerror=null; this.src='/assets/img/placeholder.png';">
                     </div>
                     <div class="text-danger small" th:text="${errors?.img}"></div>
                 </div>
+
+                <!-- ✅ Script fix -->
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const select = document.getElementById("imageSelect");
+                        const preview = document.getElementById("imagePreview");
+
+                        select.addEventListener("change", function () {
+                            const fileName = select.value;
+                            if (fileName) {
+                                // Nếu value đã chứa "assets/", dùng trực tiếp
+                                if (fileName.includes('assets/')) {
+                                    preview.src = "/" + fileName;
+                                } else {
+                                    preview.src = "/assets/img/concessions/" + fileName;
+                                }
+                            } else {
+                                preview.src = "/assets/img/placeholder.png";
+                            }
+                        });
+                    });
+                </script>
 
                 <div class="col-12">
                     <button class="btn btn-danger" type="submit">Update</button>

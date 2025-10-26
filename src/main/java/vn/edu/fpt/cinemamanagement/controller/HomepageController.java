@@ -5,16 +5,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
 import vn.edu.fpt.cinemamanagement.entities.Voucher;
 import vn.edu.fpt.cinemamanagement.services.MovieService;
 import vn.edu.fpt.cinemamanagement.services.VoucherService;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
+import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -26,10 +27,18 @@ public class HomepageController {
     private VoucherService voucherService;
 
     //Huynh Anh add
-    @GetMapping("")
-    public String homepage(Model model) {
-        List<Movie> nowShowing = movieService.getNowShowingMovies();
-        model.addAttribute("nowShowing", nowShowing);
+    @GetMapping({"", "/"})
+    public String homepage(Model model, Principal principal) {
+        if (principal != null) {
+            String username = principal.getName();
+            model.addAttribute("username", username);
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String role = auth.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(", "));
+            model.addAttribute("role", role);
+        }
         return "homepage/homepage";
     }
 
@@ -71,4 +80,23 @@ public class HomepageController {
         model.addAttribute("voucher", voucherService.findVoucherById(id));
         return "vouchers/voucher_detail_customer";
     }
+
+    // 1. Add thêm movies now showing - Huynh Anh
+    @GetMapping("/movies_nowshowing")
+    public String moviesNowShowing(
+            @CookieValue(value = "user_name", required = false) String username,
+            @CookieValue(value = "user_role", required = false) String role,
+            Model model) {
+        // Lấy danh sách phim đang chiếu (có logic ẩn phim > 30 ngày )
+        List<Movie> nowShowing = movieService.getNowShowingMovies();
+
+        // Đưa danh sách và thông tin người dùng ra view
+        model.addAttribute("nowShowing", nowShowing);
+        model.addAttribute("username", username);
+        model.addAttribute("role", role);
+
+        // Render sang view mới
+        return "movies/movies_nowshowing"; // trỏ tới file templates/movies/movies_nowshowing.html
+    }
+
 }

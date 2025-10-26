@@ -2719,3 +2719,163 @@ select.form__input--error {
         padding: 10px 12px;
     }
 }
+
+
+/* ================= LOGIN PAGE ================= */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #000;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ---- Container ---- */
+.login-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* ---- Left Side (Poster) ---- */
+.login-left {
+    flex: 2;
+    overflow: hidden;
+    position: relative;
+}
+
+.login-left::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+/* ---- Right Side (Form) ---- */
+.login-right {
+    flex: 1;
+    background-color: #0b0b0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---- Card ---- */
+.login-card {
+    background: #191C24;
+    padding: 3rem 2.5rem;
+    border-radius: 16px;
+    width: 400px;
+    box-shadow: 0 0 25px rgba(157, 18, 18, 0.35);
+}
+
+.login-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #ff4040;
+    margin-bottom: 1rem;
+}
+
+.text-secondary {
+    color: #aaa !important;
+}
+
+/* ---- Input ---- */
+.form-label {
+    font-weight: 500;
+    margin-bottom: .3rem;
+}
+
+.form-control {
+    background-color: #111 !important;
+    border: 1px solid #333 !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+
+.form-control:focus {
+    border-color: #d32f2f !important;
+    box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.25) !important;
+}
+
+/* ---- Button ---- */
+.btn-login {
+    width: 100%;
+    background-color: #d32f2f;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    font-weight: 600;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* ---- Alert ---- */
+.alert-danger {
+    background-color: rgba(211, 47, 47, 0.15);
+    border: 1px solid #d32f2f;
+    color: #ffbaba;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* ---- Link ---- */
+.text-muted a {
+    color: #f5a623;
+    text-decoration: none;
+}
+
+.text-muted a:hover {
+    text-decoration: underline;
+}
+
+/* ---- Header ---- */
+.header {
+    background: #000;
+    border-bottom: 1px solid #d32f2f;
+    padding: 10px 0;
+}
+
+.header__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+}
+
+.header__logo-text {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #ff4040;
+    margin-left: 8px;
+}
+
+.nav__list {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav__link {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav__link:hover {
+    color: #ff4040;
+}
+/* Cho phép scroll trang luôn */
+body, html {
+    overflow-y: auto !important;
+}
