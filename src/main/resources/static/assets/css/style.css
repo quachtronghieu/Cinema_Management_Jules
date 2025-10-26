@@ -2831,3 +2831,7 @@ body {
 .nav__link:hover {
     color: #ff4040;
 }
+/* Cho phép scroll trang luôn */
+body, html {
+    overflow-y: auto !important;
+}

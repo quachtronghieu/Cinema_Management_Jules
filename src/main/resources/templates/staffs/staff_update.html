@@ -28,10 +28,13 @@
                 <div class="container bg-secondary text-white rounded p-4">
 
                     <div class="container bg-secondary text-white rounded p-4">
+                        <!-- Edit để  Nếu có errorMessage, chỉ hiển thị thông báo -->
+                        <div th:if="${errorMessage != null}" class="alert alert-danger">
+                            <span th:text="${errorMessage}"></span>
+                        </div>
 
-                        <!-- LỖI ĐÃ KHẮC PHỤC: Th:action phải trỏ đến endpoint update -->
-                        <form th:action="@{/staffs/update/{id}(id=${staff.staffID})}" th:object="${staff}" method="post">
-
+                        <!-- Nếu không có lỗi, hiển thị form -->
+                        <form th:if="${errorMessage == null}" th:action="@{/staffs/update/{id}(id=${staff.staffID})}" th:object="${staff}" method="post">
                             <!-- Staff ID -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Staff ID:</label>

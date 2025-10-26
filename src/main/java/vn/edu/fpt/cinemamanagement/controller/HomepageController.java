@@ -73,4 +73,23 @@ public class HomepageController {
         model.addAttribute("voucher", voucherService.findVoucherById(id));
         return "vouchers/voucher_detail_customer";
     }
+
+    // 1. Add thêm movies now showing - Huynh Anh
+    @GetMapping("/movies_nowshowing")
+    public String moviesNowShowing(
+            @CookieValue(value = "user_name", required = false) String username,
+            @CookieValue(value = "user_role", required = false) String role,
+            Model model) {
+        // Lấy danh sách phim đang chiếu (có logic ẩn phim > 30 ngày )
+        List<Movie> nowShowing = movieService.getNowShowingMovies();
+
+        // Đưa danh sách và thông tin người dùng ra view
+        model.addAttribute("nowShowing", nowShowing);
+        model.addAttribute("username", username);
+        model.addAttribute("role", role);
+
+        // Render sang view mới
+        return "movies/movies_nowshowing"; // trỏ tới file templates/movies/movies_nowshowing.html
+    }
+
 }

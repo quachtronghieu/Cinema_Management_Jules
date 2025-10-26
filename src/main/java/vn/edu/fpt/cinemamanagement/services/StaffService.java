@@ -1,12 +1,15 @@
 package vn.edu.fpt.cinemamanagement.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model; // Cần import Model
 import vn.edu.fpt.cinemamanagement.entities.Staff;
 import vn.edu.fpt.cinemamanagement.repositories.StaffRepository;
 import vn.edu.fpt.cinemamanagement.utils.HashUtil;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +30,10 @@ public class StaffService {
         return optionalStaff.orElse(null);
     }
 
+    // 2. thêm này để phân trang cho staff list
+    public Page<Staff> findAllStaff(Pageable pageable) {
+        return staffRepo.findAll(pageable);
+    }
     // --- Create / Save ---
     public void createStaff(Staff staff) {
         if (staff.getStaffID() == null || staff.getStaffID().isEmpty()) {
