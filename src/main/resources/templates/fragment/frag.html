@@ -79,7 +79,7 @@
     <header class="header" role="banner">
         <div class="header__container container">
             <div class="header__left">
-                <a href="/static" class="header__logo" aria-label="CGV Home">
+                <a href="/homepage" class="header__logo" aria-label="CGV Home">
                     <img th:src="@{/assets/img/logo.svg}" alt="CGV Movies Logo" width="120" height="40">
                 </a>
             </div>
@@ -88,13 +88,14 @@
                     <ul class="nav__list">
                         <li class="nav__item nav-item dropdown"><a href="/movies"  class="nav__link">Now Showing</a></li>
                         <li class="nav__item nav-item dropdown"><a href="/movies"  class="nav__link">Coming Soon</a></li>
-                        <li class="nav__item"><a th:href = "@{/homepage/vouchers}" class="nav__link">Promotions & Vouchers</a></li>
+                        <li class="nav__item"><a th:href = "@{/homepage/vouchers}" class="nav__link">Vouchers</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="header__right">
                 <a class="btn btn--outline" href="/login">Login</a>
                 <a class="btn" href="/register">Register</a>
+                <a class="btn" href="/forget_password">Forget Password (Temp)</a>
             </div>
         </div>
     </header>

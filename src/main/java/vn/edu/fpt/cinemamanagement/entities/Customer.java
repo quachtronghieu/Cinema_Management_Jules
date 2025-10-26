@@ -8,10 +8,10 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Customer" )
+@Table(name = "Customer")
 public class Customer {
     @Id
-    @Column(name = "user_id" , length = 10)
+    @Column(name = "user_id", length = 10)
     private String user_id;
     private String username;
     private String password;
@@ -19,11 +19,12 @@ public class Customer {
     private Boolean sex;
     private String email;
     private String phone;
+    private String otp;
 
     public Customer() {
     }
 
-    public Customer(String user_id, String username, String password, LocalDate dob, Boolean sex, String email, String phone) {
+    public Customer(String user_id, String username, String password, LocalDate dob, Boolean sex, String email, String phone, String otp) {
         this.user_id = user_id;
         this.username = username;
         this.password = password;
@@ -31,6 +32,7 @@ public class Customer {
         this.sex = sex;
         this.email = email;
         this.phone = phone;
+        this.otp = otp;
     }
 
     public String getUser_id() {
@@ -87,5 +89,13 @@ public class Customer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 }

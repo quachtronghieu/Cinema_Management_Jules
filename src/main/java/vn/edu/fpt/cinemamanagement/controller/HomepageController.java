@@ -34,7 +34,7 @@ public class HomepageController {
     }
 
     @GetMapping("/vouchers")
-    public String vouchers(Model model, @RequestParam(name = "page", defaultValue = "1", required = false) int page) {
+    public String vouchersList(Model model, @RequestParam(name = "page", defaultValue = "1", required = false) int page) {
         int size = 9;
 
         // Spring Data bắt đầu từ 0

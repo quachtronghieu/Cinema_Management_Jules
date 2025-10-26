@@ -3,10 +3,7 @@ package vn.edu.fpt.cinemamanagement.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.cinemamanagement.entities.Customer;
 import vn.edu.fpt.cinemamanagement.services.CustomerService;
 
@@ -45,6 +42,22 @@ public class AuthController {
         }
 
         // Thành công - redirect về homepage
+        return "redirect:/homepage";
+    }
+
+    @GetMapping("forget_password")
+    public String showForgetPasswordForm(Model model) {
+        model.addAttribute("customer", new Customer());
+        return "auth/forget_password";
+    }
+
+    @PostMapping("forget_password")
+    public String forgetPassword(Customer customer, Model model) {
+        boolean isAvailable = customerService.checkAvailableEmail(customer.getEmail(), model);
+        if (!isAvailable) {
+            model.addAttribute("email", customer.getEmail() );
+            return "auth/forget_password";
+        }
         return "redirect:/homepage";
     }
 }

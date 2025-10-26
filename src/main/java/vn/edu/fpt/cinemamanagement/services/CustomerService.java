@@ -3,11 +3,13 @@ package vn.edu.fpt.cinemamanagement.services;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import vn.edu.fpt.cinemamanagement.entities.Customer;
 import vn.edu.fpt.cinemamanagement.repositories.CustomerRepository;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -230,6 +232,24 @@ public class CustomerService {
         if (!confirmPassword.equals(password)) {
             errors.put("confirmPassword", "The confirmation password does not match.");
         }
+    }
+
+    public boolean  checkAvailableEmail(String email, Model model) {
+        boolean isAvailable = true;
+        List<Customer> customerList = customerRepository.findAll();
+
+        if(email.isEmpty()) {
+            model.addAttribute("errorEmail", "Email must be not empty!");
+            isAvailable = false;
+        }
+
+        for (Customer customer : customerList) {
+            if (!email.equalsIgnoreCase(customer.getEmail())) {
+                model.addAttribute("errorEmail", "The email you entered does not have any account");
+                isAvailable = false;
+            }
+        }
+        return isAvailable;
     }
 
 }
