@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
+                <div class="table-responsive" th:if="${staffList != null and !staffList.isEmpty()}">
                     <table class="table text-start align-middle table-bordered table-hover mb-0">
                         <thead>
                         <tr class="text-white">
@@ -67,6 +67,31 @@
                         </tr>
                         </tbody>
                     </table>
+
+                    <!--Thêm phân trang -->
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous -->
+                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/staffs(page=${currentPage - 1})}">Pre</a>
+                            </li>
+
+                            <!-- Page numbers -->
+                            <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/staffs(page=${i})}" th:text="${i}"></a>
+                            </li>
+
+                            <!-- Next -->
+                            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                                <a class="page-link" th:href="@{/staffs(page=${currentPage + 1})}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!---Edit để hiển thị thông báo khi danh sách trống-->
+                <div class="alert alert-warning text-center" th:if="${staffList == null or staffList.isEmpty()}">
+                    No staff available.
                 </div>
 
             </div>
