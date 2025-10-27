@@ -67,7 +67,7 @@
 
         <div class="navbar-nav align-items-center ms-auto">
             <a href="#" class="dropdown-item">My Profile</a>
-            <a th:href="@{/signin}" class="dropdown-item">Log Out</a>
+            <a th:href="@{/logout}" class="dropdown-item">Log Out</a>
         </div>
     </nav>
 </div>
@@ -81,7 +81,7 @@
             <!-- Logo -->
             <div class="header__left">
                 <a th:href="@{/homepage}" class="header__logo" aria-label="CGV Home">
-                    <img th:src="@{/assets/img/logo.svg}" alt="CGV Movies Logo" width="120" height="40">
+                    <img th:src="@{/assets/img/logo.png}" alt="CGV Movies Logo" width="120" height="40">
                 </a>
             </div>
 
@@ -94,7 +94,7 @@
                         <li class="nav__item"><a th:href="@{/homepage/coming-soon}" class="nav__link">
                             Coming Soon
                         </a></li>
-                        <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Promotions & Vouchers</a></li>
+                        <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Vouchers</a></li>
                     </ul>
                 </nav>
             </div>

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 public class AuthController {
@@ -93,6 +94,12 @@ public class AuthController {
             model.addAttribute("email", customer);
             return "auth/forget_password";
         }
+
+        Customer existingCustomer = customerService.findEmail(customer.getEmail());
+
+        String token = UUID.randomUUID().toString();
+
+
         return "redirect:/sendmail";
     }
 }

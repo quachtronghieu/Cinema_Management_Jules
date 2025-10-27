@@ -189,4 +189,8 @@ public class CustomerService {
         return passwordEncoder.encode(rawPassword);  // BCryptPasswordEncoder hashes the password
     }
 
+    public Customer findEmail(String email){
+        return customerRepository.findByEmail(email);
+    }
+
 }
