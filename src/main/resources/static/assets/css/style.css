@@ -728,13 +728,13 @@ p {
 }
 
 a {
-    color: var(--accent);
+    color: #7a7a7a;
     text-decoration: none;
     transition: var(--transition);
 }
 
 a:hover {
-    color: var(--white);
+    color: #9a7506;
 }
 
 /* Focus States for Accessibility */

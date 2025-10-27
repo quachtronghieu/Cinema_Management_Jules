@@ -36,7 +36,7 @@ public class SecurityConfig {
                         // ✅ Trang cho guest (không cần login)
                         .requestMatchers("/", "/homepage", "/homepage/**",
                                 "/movies/**", "/vouchers/**",
-                                "/login", "/register").permitAll()
+                                "/login", "/register", "/forget_password", "/sendmail").permitAll()
 
                         // ✅ Trang yêu cầu quyền
                         .requestMatchers("/dashboard").hasAuthority("ROLE_ADMIN")

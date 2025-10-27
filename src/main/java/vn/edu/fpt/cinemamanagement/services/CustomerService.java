@@ -3,11 +3,14 @@ package vn.edu.fpt.cinemamanagement.services;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import vn.edu.fpt.cinemamanagement.entities.Customer;
+import vn.edu.fpt.cinemamanagement.entities.Voucher;
 import vn.edu.fpt.cinemamanagement.repositories.CustomerRepository;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -112,6 +115,23 @@ public class CustomerService {
         return String.format("CS%06d", number);
     }
 
+    public boolean checkAvailableEmail(Model model, String email) {
+        boolean isAvailable = true;
+
+        if (email.isEmpty() || email.trim().isEmpty()) {
+            model.addAttribute("errorEmail", "The email must be not empty!");
+            isAvailable = false;
+        }
+        Customer customer = customerRepository.findByEmail(email);
+        if (customer == null) {
+            model.addAttribute("errorEmail", "Do not have any account available");
+            isAvailable = false;
+
+        }
+
+        return isAvailable;
+    }
+
     // ============================================
     // PRIVATE VALIDATION METHODS
     // ============================================
@@ -168,4 +188,5 @@ public class CustomerService {
     private String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);  // BCryptPasswordEncoder hashes the password
     }
+
 }

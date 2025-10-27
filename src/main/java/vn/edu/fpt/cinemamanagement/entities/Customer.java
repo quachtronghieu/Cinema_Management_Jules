@@ -19,7 +19,7 @@ public class Customer {
     private Boolean sex;
     private String email;
     private String phone;
-    private String otp;
+    private String verify_email;
 
     public Customer() {
     }
@@ -32,7 +32,7 @@ public class Customer {
         this.sex = sex;
         this.email = email;
         this.phone = phone;
-        this.otp = otp;
+        this.verify_email = otp;
     }
 
     public String getUser_id() {
@@ -91,11 +91,11 @@ public class Customer {
         this.phone = phone;
     }
 
-    public String getOtp() {
-        return otp;
+    public String getVerify_email() {
+        return verify_email;
     }
 
-    public void setOtp(String otp) {
-        this.otp = otp;
+    public void setVerify_email(String verify_email) {
+        this.verify_email = verify_email;
     }
 }

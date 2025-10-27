@@ -18,4 +18,6 @@ public interface CustomerRepository extends JpaRepository<Customer,String> {
     String findLastCustomerId();
     //login
     Optional<Customer>  findByUsername(String username);
+
+    Customer findByEmail(String email);
 }

@@ -80,19 +80,19 @@ public class AuthController {
         return "redirect:/homepage";
     }
 
-    @GetMapping("forget_password")
+    @GetMapping("/forget_password")
     public String showForgetPasswordForm(Model model) {
         model.addAttribute("customer", new Customer());
         return "auth/forget_password";
     }
 
-    @PostMapping("forget_password")
+    @PostMapping("/forget_password")
     public String forgetPassword(Customer customer, Model model) {
-        boolean isAvailable = customerService.checkAvailableEmail(customer.getEmail(), model);
+        boolean isAvailable = customerService.checkAvailableEmail(model, customer.getEmail());
         if (!isAvailable) {
-            model.addAttribute("email", customer.getEmail() );
+            model.addAttribute("email", customer);
             return "auth/forget_password";
         }
-        return "redirect:/homepage";
+        return "redirect:/sendmail";
     }
 }
