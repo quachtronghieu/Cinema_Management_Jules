@@ -194,4 +194,8 @@ public class StaffService {
 
         return hasError;
     }
+
+    public Page<Staff> findAllStaff(Pageable pageable) {
+        return staffRepo.findAll(pageable);
+    }
 }
