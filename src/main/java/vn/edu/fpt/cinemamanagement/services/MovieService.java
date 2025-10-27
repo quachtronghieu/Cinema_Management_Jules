@@ -378,5 +378,9 @@ public class MovieService {
         return imagePaths;
     }
 
+    public Page<Movie> findComingSoonMovies(Pageable pageable) {
+        return movieRepository.findByReleaseDateGreaterThan(LocalDate.now(), pageable);
+    }
+
 }
 
