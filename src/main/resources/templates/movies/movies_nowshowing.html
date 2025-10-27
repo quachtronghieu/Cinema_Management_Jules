@@ -51,9 +51,10 @@
                         <p class="movie-card__info" th:text="${movie.genre} + ' • ' + ${movie.duration} + ' minutes'">Genre • Duration</p>
                         
                         <!--Sửa nút Book và Detail -->
-                        <div class="d-flex justify-content-center gap-2">
-                            <a th:href="@{'/booking/' + ${movie.movieID}}" class="movie-card__button btn btn-danger">Booking</a>
+                        <div class="d-flex justify-content-center gap-4">
+
                             <a th:href="@{'/movies/detail/' + ${movie.movieID}}" class="movie-card__button btn btn-outline-warning">View Details</a>
+                            <a th:href="@{'/booking/' + ${movie.movieID}}" class="movie-card__button btn btn-danger">Booking</a>
                         </div>
                         
                     </div>

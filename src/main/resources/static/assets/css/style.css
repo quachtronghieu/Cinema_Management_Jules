@@ -331,8 +331,8 @@
 
 /* Đỏ đậm chủ đạo */
 .btn-danger {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: var(--danger-dark) !important;
+    border-color: var(--danger-dark) !important;
 }
 
 .btn-danger:hover {
@@ -675,6 +675,7 @@
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
+    --danger-dark: #9d1212;
 }
 
 /* Reset and Base Styles */
