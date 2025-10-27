@@ -331,8 +331,8 @@
 
 /* Đỏ đậm chủ đạo */
 .btn-danger {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: var(--danger-dark) !important;
+    border-color: var(--danger-dark) !important;
 }
 
 .btn-danger:hover {
@@ -675,6 +675,7 @@
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
+    --danger-dark: #9d1212;
 }
 
 /* Reset and Base Styles */
@@ -1047,7 +1048,7 @@ select:focus {
 /* Movie grid and cards */
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--spacing-lg);
 }
 
@@ -1060,6 +1061,7 @@ select:focus {
     overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition);
+    width: 280px;
 }
 
 .movie-card:hover {

@@ -49,8 +49,14 @@
                     <div class="movie-card__body">
                         <h3 class="movie-card__title" th:text="${movie.title}">Movie Title</h3>
                         <p class="movie-card__info" th:text="${movie.genre} + ' • ' + ${movie.duration} + ' minutes'">Genre • Duration</p>
-                        <a th:href="@{'/booking/' + ${movie.movieID}}" class="movie-card__button">Book Ticket</a>
-                        <a th:href="@{'/movies/detail/' + ${movie.movieID}}" class="movie-card__button btn--secondary">Detail movie</a>
+                        
+                        <!--Sửa nút Book và Detail -->
+                        <div class="d-flex justify-content-center gap-4">
+
+                            <a th:href="@{'/movies/detail/' + ${movie.movieID}}" class="movie-card__button btn btn-outline-warning">View Details</a>
+                            <a th:href="@{'/booking/' + ${movie.movieID}}" class="movie-card__button btn btn-danger">Booking</a>
+                        </div>
+                        
                     </div>
                 </article>
             </div>

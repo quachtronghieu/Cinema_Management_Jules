@@ -99,4 +99,38 @@ public class HomepageController {
         return "movies/movies_nowshowing"; // trỏ tới file templates/movies/movies_nowshowing.html
     }
 
+    @GetMapping("/coming-soon")
+    public String comingSoon(Model model,
+                             @RequestParam(name = "page", defaultValue = "1", required = false) int page) {
+        int size = 8;
+
+        int pageIndex = page - 1; // vì Spring Data bắt đầu từ 0
+        Pageable pageable = PageRequest.of(pageIndex, size);
+        Page<Movie> comingSoonPage = movieService.findComingSoonMovies(pageable);
+
+        model.addAttribute("comingSoon", comingSoonPage.getContent());
+
+        int totalPages = comingSoonPage.getTotalPages();
+        int currentPage = page;
+
+        int visiblePages = 5;
+        int startPage, endPage;
+
+        if (totalPages <= visiblePages) {
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            startPage = ((currentPage - 1) / visiblePages) * visiblePages + 1;
+            endPage = Math.min(startPage + visiblePages - 1, totalPages);
+        }
+
+        model.addAttribute("comingSoonPage", comingSoonPage);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        model.addAttribute("totalPages", totalPages);
+
+        return "movies/movie_coming_soon";
+    }
+
 }
