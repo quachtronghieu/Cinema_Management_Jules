@@ -1060,6 +1060,7 @@ select:focus {
     overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition);
+    width: 280px;
 }
 
 .movie-card:hover {
