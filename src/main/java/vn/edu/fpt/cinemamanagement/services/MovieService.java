@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
@@ -362,21 +363,38 @@ public class MovieService {
     public List<String> getImgPaths() {
         List<String> imagePaths = new ArrayList<>();
         try {
+            // 1️⃣ Lấy danh sách file ảnh trong thư mục
             File folder = new ClassPathResource("static/assets/img/movies").getFile();
             File[] files = folder.listFiles();
 
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        imagePaths.add("/assets/img/movies/" + file.getName());
-                    }
+            if (files == null) return imagePaths;
+
+            // 2️⃣ Lấy danh sách đường dẫn ảnh (hoặc tên file) đã được dùng trong DB
+            List<String> usedImgs = movieRepository.findAll()
+                    .stream()
+                    .map(Movie::getImg)
+                    .filter(Objects::nonNull)
+                    .map(path -> {
+                        // chuẩn hóa: chỉ lấy tên file nếu đường dẫn có chứa "/"
+                        int lastSlash = path.lastIndexOf("/");
+                        return lastSlash != -1 ? path.substring(lastSlash + 1) : path;
+                    })
+                    .collect(Collectors.toList());
+
+            // 3️⃣ Lọc ra những file chưa được dùng
+            for (File file : files) {
+                if (file.isFile() && !usedImgs.contains(file.getName())) {
+                    imagePaths.add("/assets/img/movies/" + file.getName());
                 }
             }
+
         } catch (IOException e) {
-            throw new RuntimeException("Can not read movies fofder!", e);
+            throw new RuntimeException("Cannot read movies folder!", e);
         }
+
         return imagePaths;
     }
+
 
     public Page<Movie> findComingSoonMovies(Pageable pageable) {
         return movieRepository.findByReleaseDateGreaterThan(LocalDate.now(), pageable);
