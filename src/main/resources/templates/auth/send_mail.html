@@ -19,24 +19,17 @@
 <body>
 <div th:replace="~{fragment/frag :: navbar_homepage}"></div>
 
+
 <main class="auth-page" role="main">
     <div class="auth-card">
-        <h1 class="modal__title">Forget Password</h1>
+        <div class="title-row">
+            <h1 class="modal__title">Notification</h1>
+            <a th:href=" @{/login}" class="back-link"><i class="fa fa-arrow-left me-1 "></i>
+                Back</a>
+        </div>
+
         <div id="formMessage" class="form__message hidden"></div>
-
-        <form th:action="@{/forget_password}" method="post" novalidate th:object="${customer}">
-
-            <!-- Email -->
-            <div class="form__field">
-                    <label class="form__label" for="email">Email</label>
-                    <input th:field="*{email}" type="email" class="form__input"
-                           id="email" name="email"
-                           placeholder="example@email.com">
-                    <div id="emailError" th:if="${errorEmail != null}" class="text-danger" th:text="${errorEmail}"></div>
-            </div>
-
-    <button type="submit" class="form__button">Next</button>
-    </form>
+        <p>Please check your email to change password!</p>
     </div>
 </main>
 

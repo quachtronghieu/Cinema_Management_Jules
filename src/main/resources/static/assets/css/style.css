@@ -2881,3 +2881,18 @@ body {
 body, html {
     overflow-y: auto !important;
 }
+
+.title-row {
+    display: flex;
+    justify-content: space-between; /* căn 2 đầu: trái - phải */
+    align-items: center; /* căn giữa theo chiều dọc */
+    margin-bottom: 20px;
+}
+
+.back-link {
+    color: #bababa;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 13px;
+    margin-bottom: auto;
+}

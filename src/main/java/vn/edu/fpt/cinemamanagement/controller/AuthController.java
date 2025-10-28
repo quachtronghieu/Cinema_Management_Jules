@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,6 +24,8 @@ public class AuthController {
     private CustomerService customerService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private MailController  mailController;
 
     // ========================== LOGIN ==========================
     public AuthController(AuthService authService) {
@@ -88,18 +91,41 @@ public class AuthController {
     }
 
     @PostMapping("/forget_password")
-    public String forgetPassword(Customer customer, Model model) {
+    public String forgetPassword(String email, Model model) {
+        Customer customer = customerService.findCustomerByEmail(email);
         boolean isAvailable = customerService.checkAvailableEmail(model, customer.getEmail());
         if (!isAvailable) {
-            model.addAttribute("email", customer);
+            model.addAttribute("email", customer.getEmail());
             return "auth/forget_password";
         }
+        String input = "wait"+ customer.getUser_id();
+        System.out.println(customer.getUser_id());
+        String fi;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(input.getBytes());
 
-        Customer existingCustomer = customerService.findEmail(customer.getEmail());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            fi= sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        String token = UUID.randomUUID().toString();
 
+        String title = "Xác nhận tài khoản của bạn";
 
+        String link = "http://localhost:8080/veryAccount/done/"
+                + customer.getUser_id() + "/" + fi;
+
+        String content =
+                "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
+                        + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
+                        + "<p>Nếu không bấm được, copy link sau dán vào trình duyệt:<br>"
+                        + link + "</p>";
+        mailController.testSend(customer.getEmail(), title, content);
         return "redirect:/sendmail";
     }
 }

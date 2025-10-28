@@ -25,6 +25,16 @@ public class CustomerService {
         this.passwordEncoder = passwordEncoder;  // Use BCryptPasswordEncoder for encoding passwords
     }
 
+    public Customer findCustomerById(String ID){
+        return customerRepository.findById(ID).orElse(null);
+    }
+    public Customer findCustomerByEmail(String email){
+        return customerRepository.findByEmail(email);
+    }
+    public Customer save(Customer customer){
+        return customerRepository.save(customer);
+    }
+
     // Regex patterns - định nghĩa ở đầu class
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
@@ -192,5 +202,7 @@ public class CustomerService {
     public Customer findEmail(String email){
         return customerRepository.findByEmail(email);
     }
+
+
 
 }
