@@ -2837,3 +2837,27 @@ body {
 body, html {
     overflow-y: auto !important;
 }
+/* Phạm vi riêng cho slider */
+.homepage-slider .swiper-wrapper {
+    align-items: stretch;
+}
+
+
+.homepage-slider .swiper-slide {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.homepage-slider .movie-card {
+    width: 250px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #111;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.homepage-slider .swiper-button-next,
+.homepage-slider .swiper-button-prev {
+    color: white;
+}

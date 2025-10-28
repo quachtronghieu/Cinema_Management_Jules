@@ -28,7 +28,9 @@ public class HomepageController {
 
     //Huynh Anh add
     @GetMapping({"", "/"})
-    public String homepage(Model model, Principal principal) {
+    public String homepage(Model model, Principal principal, @RequestParam(name = "page", defaultValue = "1", required = false) int page) {
+        int size = 10;
+        Pageable pageable = PageRequest.of(page - 1, size);
         if (principal != null) {
             String username = principal.getName();
             model.addAttribute("username", username);
@@ -39,6 +41,8 @@ public class HomepageController {
                     .collect(Collectors.joining(", "));
             model.addAttribute("role", role);
         }
+        Page<Movie> movie = movieService.getAllMovies(pageable);
+        model.addAttribute("movies", movie);
         return "homepage/homepage";
     }
 
