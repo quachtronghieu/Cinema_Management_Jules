@@ -1,7 +1,7 @@
-#Cinema Management System
+## Cinema Management System
 Team project (FPT University) | Java, Spring Boot, Thymeleaf, SQL Server  
 
-#My Role
+## My Role
 - "Backend Developer" (Register, Movie, and Room modules)
 - Implemented "user registration logic" with validation and authentication flow  
 - Developed "Movie" and "Room" management features (CRUD operations, data handling)
@@ -9,5 +9,5 @@ Team project (FPT University) | Java, Spring Boot, Thymeleaf, SQL Server
 - Integrated backend logic with Thymeleaf templates and handled request–response flow  
 - Ensured data consistency and business logic correctness across all modules  
 
-#Tech Stack
+## Tech Stack
 Spring Boot · JPA/Hibernate · Thymeleaf · SQL Server · Java · Bootstrap  
