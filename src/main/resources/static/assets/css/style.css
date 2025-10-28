@@ -2861,3 +2861,9 @@ body, html {
 .homepage-slider .swiper-button-prev {
     color: white;
 }
+
+.link__nowshowing {
+    font-size: 25px;
+    font-weight: 750;
+    color: #434343;
+}
