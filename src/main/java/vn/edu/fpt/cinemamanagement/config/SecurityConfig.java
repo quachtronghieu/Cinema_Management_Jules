@@ -29,16 +29,16 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService)
 
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ Static assets & public files
+                        //  Static assets & public files
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/assets/**", "/webjars/**",
                                 "/favicon.ico", "/error").permitAll()
 
-                        // ✅ Trang cho guest (không cần login)
+                        // Trang cho guest (không cần login)
                         .requestMatchers("/", "/homepage", "/homepage/**",
                                 "/movies/**", "/vouchers/**",
                                 "/login", "/register", "/forget_password", "/sendmail").permitAll()
 
-                        // ✅ Trang yêu cầu quyền
+                        // Trang yêu cầu quyền
                         .requestMatchers("/dashboard").hasAuthority("ROLE_ADMIN")
                         // Lưu ý: sửa tên quyền cho đúng với DB của bạn
                         .requestMatchers("/staff_home")
@@ -48,17 +48,31 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                .formLogin(form -> form
+                .formLogin(login -> login
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/homepage", true) // sau login luôn về homepage
-                        .failureUrl("/login?error=true")
+                        .failureUrl("/login?error")
+                        .successHandler((request, response, authentication) -> {
+                            var roles = authentication.getAuthorities().stream()
+                                    .map(r -> r.getAuthority())
+                                    .toList();
+
+                            if (roles.contains("ROLE_ADMIN")) {
+                                response.sendRedirect("/dashboard");
+                            } else if (roles.contains("ROLE_STAFF")
+                                    || roles.contains("ROLE_CASHIER_STAFF")
+                                    || roles.contains("ROLE_REDEMPTION_STAFF")) {
+                                response.sendRedirect("/staff_home");
+                            } else {
+                                response.sendRedirect("/homepage");
+                            }
+                        })
                         .permitAll()
                 )
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        // 👉 nếu muốn user sau khi logout vẫn vào được trang guest, cho về homepage
+                        // nếu muốn user sau khi logout vẫn vào được trang guest, cho về homepage
                         .logoutSuccessUrl("/homepage")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")

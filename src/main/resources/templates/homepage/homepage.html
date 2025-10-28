@@ -96,22 +96,7 @@
     </div>
 </div>
 
-<!-- ✅ FIXED SECTION BELOW -->
-<!-- Hiển thị thông báo chào mừng nếu đã đăng nhập -->
-<div sec:authorize="isAuthenticated()" class="welcome-message">
-    <span>Welcome, <span sec:authentication="name"></span></span>
-</div>
-
-<!-- Chỉ admin thấy -->
-<div sec:authorize="hasAuthority('ROLE_ADMIN')">
-    <a th:href="@{/dashboard}">Admin Dashboard</a>
-</div>
-
-<!-- Nhân viên Cashier Staff hoặc Redemtion Staff thấy -->
-<div sec:authorize="hasAnyAuthority('ROLE_CASHIER STAFF','ROLE_REDEMTION STAFF')">
-    <a th:href="@{/staff_home}">Staff Home</a>
-</div>
-<!-- ✅ END FIX -->
+<
 
 <!-- JS -->
 <script th:src="@{/assets/js/hero.js}"></script>
