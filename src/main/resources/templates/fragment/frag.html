@@ -67,15 +67,23 @@
 
         <div class="navbar-nav align-items-center ms-auto">
             <a href="#" class="dropdown-item">My Profile</a>
-            <a th:href="@{/signin}" class="dropdown-item">Log Out</a>
+
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <input th:if="${_csrf != null}"
+                       type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}"/>
+                <button type="submit" class="dropdown-item btn btn-link p-0 align-baseline">Log Out</button>
+            </form>
         </div>
+
     </nav>
 </div>
 
 
 <div></div>
 
-<div th:fragment="navbar_homepage">
+<div th:fragment="navbar_homepage" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <header class="header" role="banner">
         <div class="header__container container">
             <!-- Logo -->
@@ -90,47 +98,60 @@
                 <nav class="nav" role="navigation">
                     <ul class="nav__list">
                         <!--edit link Now Showing  trên homepage-->
-                        <li class="nav__item"><a th:href="@{/homepage/movies_nowshowing}"class="nav__link">Now Showing</a></li>
-                        <li class="nav__item"><a th:href="@{/homepage/coming-soon}" class="nav__link">
-                            Coming Soon
-                        </a></li>
+                        <li class="nav__item"><a th:href="@{/homepage/movies_nowshowing}" class="nav__link">Now Showing</a></li>
+                        <li class="nav__item"><a th:href="@{/homepage/coming-soon}" class="nav__link">Coming Soon</a></li>
                         <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Promotions & Vouchers</a></li>
                     </ul>
                 </nav>
             </div>
 
-            <!-- Login / Register buttons -->
-            <div th:if="${username == null}">
+            <!-- Chưa đăng nhập -->
+            <div sec:authorize="!isAuthenticated()">
                 <a class="btn btn--outline" th:href="@{/login}">Login</a>
                 <a class="btn" th:href="@{/register}">Register</a>
             </div>
 
-            <!-- User icon + dropdown -->
-            <div th:if="${username != null}" class="dropdown d-flex align-items-center">
-                <span class="text-light me-2">Welcome, <b th:text="${username}"></b></span>
+            <!-- Đã đăng nhập -->
+            <div sec:authorize="isAuthenticated()" class="dropdown d-flex align-items-center">
+                <span class="text-light me-2">
+                    Welcome, <b th:text="${#authentication.name}">user</b>
+                </span>
                 <button class="btn btn-outline-light rounded-circle"
                         id="userProfileDropdown"
                         data-bs-toggle="dropdown"
                         aria-expanded="false">
-                    <span th:text="${username.substring(0, 1).toUpperCase()}"></span>
+                    <span th:text="${#authentication.name != null ? #authentication.name.substring(0,1).toUpperCase() : 'U'}">U</span>
                 </button>
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
                     <li><a class="dropdown-item" th:href="@{/profile}">Profile Settings</a></li>
+
                     <!-- Dashboard cho admin -->
-                    <li th:if="${role != null and role.toLowerCase().contains('admin')}">
+                    <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" th:href="@{/dashboard}">Admin Dashboard</a>
                     </li>
+
                     <!-- Trang staff -->
-                    <li th:if="${role != null and (role.toLowerCase().contains('cashier') or role.toLowerCase().contains('redemption'))}">
+                    <li sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
                         <a class="dropdown-item" th:href="@{/staff_home}">Staff Home</a>
                     </li>
-                    <li><a class="dropdown-item" th:href="@{/logout}">Log Out</a></li>
+
+                    <!-- Logout dùng POST + CSRF (không dùng #request, null-safe) -->
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="px-3 py-1">
+                            <input th:if="${_csrf != null}"
+                                   type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}"/>
+                            <button type="submit" class="dropdown-item">Log Out</button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
     </header>
 </div>
+
 
 <div th:fragment = "footer_homepage">
     <footer class="footer" role="contentinfo">
