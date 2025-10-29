@@ -15,13 +15,7 @@ public class MailController {
     MailService mailService;
 
     @GetMapping("/sendmail")
-    public String testSend(@RequestParam(defaultValue = "vyltt.ce190528@gmail.com") String to,String title,String deception) {
-        try {
-            mailService.sendTest(title,deception,to);
-            return "auth/send_mail";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
+    public String sendMail(@RequestParam(defaultValue = "addminn9999@gmail.com") String to,String title,String deception) {
+        return "auth/send_mail";
     }
 }

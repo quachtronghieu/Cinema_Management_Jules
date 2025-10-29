@@ -133,4 +133,9 @@ public class HomepageController {
         return "movies/movie_coming_soon";
     }
 
+    @GetMapping("/error")
+    public String error() {
+        return "auth/reset_password";
+    }
+
 }

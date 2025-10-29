@@ -11,6 +11,7 @@ import vn.edu.fpt.cinemamanagement.services.AuthService;
 import vn.edu.fpt.cinemamanagement.services.CustomerService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import vn.edu.fpt.cinemamanagement.services.MailService;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +27,8 @@ public class AuthController {
     private AuthService authService;
     @Autowired
     private MailController  mailController;
+    @Autowired
+    private MailService mailService;
 
     // ========================== LOGIN ==========================
     public AuthController(AuthService authService) {
@@ -79,6 +82,7 @@ public class AuthController {
             model.addAttribute("customer", customer);
             return "auth/register";
         }
+        customer.setVerify("active");
 
         // Thành công - redirect về homepage
         return "redirect:/homepage";
@@ -91,41 +95,45 @@ public class AuthController {
     }
 
     @PostMapping("/forget_password")
-    public String forgetPassword(String email, Model model) {
+    public String forgetPassword(@RequestParam("email") String email, Model model) {
+
         Customer customer = customerService.findCustomerByEmail(email);
-        boolean isAvailable = customerService.checkAvailableEmail(model, customer.getEmail());
-        if (!isAvailable) {
-            model.addAttribute("email", customer.getEmail());
+        if (customer == null) {
+            model.addAttribute("errorEmail", "No account found for this email!");
+            model.addAttribute("customer", new Customer());
             return "auth/forget_password";
         }
-        String input = "wait"+ customer.getUser_id();
-        System.out.println(customer.getUser_id());
+        String input = "wait" + customer.getUser_id();
         String fi;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digest = md.digest(input.getBytes());
-
             StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
-            }
-            fi= sb.toString();
+            for (byte b : digest) sb.append(String.format("%02x", b));
+            fi = sb.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
 
-        String title = "Xác nhận tài khoản của bạn";
+        String title = "Reset Your Password";
+        String link = "http://localhost:8080/veryAccount/done/" + customer.getUser_id() + "/" + fi;
 
-        String link = "http://localhost:8080/veryAccount/done/"
-                + customer.getUser_id() + "/" + fi;
 
         String content =
-                "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
-                        + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
-                        + "<p>Nếu không bấm được, copy link sau dán vào trình duyệt:<br>"
-                        + link + "</p>";
-        mailController.testSend(customer.getEmail(), title, content);
-        return "redirect:/sendmail";
+                "<div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>" +
+                        "<h2>Hello " + customer.getUsername() + ",</h2>" +
+                        "<p>We received a request to reset your CGV Movies account password.</p>" +
+                        "<p>To set a new password, please click the button below:</p>" +
+                        "<p><a href='" + link + "' style='background-color:#9D1212;color:white;padding:10px 20px;text-decoration:none;border-radius:6px;display:inline-block;'>Reset Password</a></p>" +
+                        "<p>This link will expire soon for your account’s security.</p>" +
+                        "<hr><p>Best regards,<br>The CGV Movies Team</p>" +
+                        "</div>";
+
+
+        mailService.sendForgetPasswordMail(title, content, customer.getEmail());
+
+
+        return "auth/send_mail";
     }
 }

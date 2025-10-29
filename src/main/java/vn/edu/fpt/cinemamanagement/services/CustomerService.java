@@ -125,22 +125,6 @@ public class CustomerService {
         return String.format("CS%06d", number);
     }
 
-    public boolean checkAvailableEmail(Model model, String email) {
-        boolean isAvailable = true;
-
-        if (email.isEmpty() || email.trim().isEmpty()) {
-            model.addAttribute("errorEmail", "The email must be not empty!");
-            isAvailable = false;
-        }
-        Customer customer = customerRepository.findByEmail(email);
-        if (customer == null) {
-            model.addAttribute("errorEmail", "Do not have any account available");
-            isAvailable = false;
-
-        }
-
-        return isAvailable;
-    }
 
     // ============================================
     // PRIVATE VALIDATION METHODS

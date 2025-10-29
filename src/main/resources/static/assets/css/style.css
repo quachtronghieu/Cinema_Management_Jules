@@ -791,7 +791,7 @@ select:focus {
 }
 
 .header__logo img {
-    height: 40px;
+    height: 55px;
     width: auto;
 }
 
@@ -2495,7 +2495,7 @@ h5{
     justify-content: center;
     max-width: 1200px;
     padding: 0;
-    margin: 0 8%;
+    margin: 0 auto;
 }
 
 .voucher {
