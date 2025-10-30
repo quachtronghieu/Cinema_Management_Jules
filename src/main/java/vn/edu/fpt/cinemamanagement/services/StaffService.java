@@ -32,6 +32,10 @@ public class StaffService {
         return optionalStaff.orElse(null);
     }
 
+    public Page<Staff> findAllStaff(Pageable pageable) {
+        return staffRepo.findAll(pageable);
+    }
+
     // --- Create / Save ---
     public void createStaff(Staff staff) {
         if (staff.getStaffID() == null || staff.getStaffID().isEmpty()) {
@@ -191,7 +195,4 @@ public class StaffService {
         return hasError;
     }
 
-    public Page<Staff> findAllStaff(Pageable pageable) {
-        return staffRepo.findAll(pageable);
-    }
 }

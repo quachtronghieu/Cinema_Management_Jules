@@ -729,13 +729,13 @@ p {
 }
 
 a {
-    color: var(--accent);
+    color: #6f6f6f;
     text-decoration: none;
     transition: var(--transition);
 }
 
 a:hover {
-    color: var(--white);
+    color: #9a7506;
 }
 
 /* Focus States for Accessibility */
@@ -791,7 +791,7 @@ select:focus {
 }
 
 .header__logo img {
-    height: 40px;
+    height: 55px;
     width: auto;
 }
 
@@ -1102,8 +1102,8 @@ select:focus {
 }
 
 .movie-card__badge {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--white);
+    background: rgb(0 0 0 / 35%);
+    color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 2px 8px;
     border-radius: 6px;
@@ -1495,7 +1495,7 @@ select:focus {
     border: none;
     padding: var(--spacing-sm) var(--spacing-lg);
     border-radius: var(--border-radius);
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     transition: var(--transition);
     text-align: center;
@@ -2204,7 +2204,7 @@ select:focus {
 }
 
 .auth-card {
-    max-width: 420px;
+    max-width: 720px; /* 👉 tăng rộng để chứa được 2 cột */
     width: 100%;
     background: #1f1f1f;
     border-radius: 12px;
@@ -2242,7 +2242,7 @@ select:focus {
     filter: brightness(1.1);
 }
 
-/* Style cho link chuyển đổi */
+/* Link chuyển đổi */
 .form-switch-link {
     background: none;
     border: none;
@@ -2257,14 +2257,21 @@ select:focus {
     color: #ffb74d;
 }
 
-/* Responsive cho form nhỏ hơn */
-@media (max-width: 480px) {
-    .modal__content {
-        padding: 15px;
-    }
+/* Form Section Title */
+.form__section {
+    margin-bottom: 1.5rem;
 }
 
-/* Form error states (Register/Login) */
+.form__section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.25rem;
+}
+
+/* Form lỗi */
 .form__input--error {
     border-color: #f44336 !important;
     animation: shake 0.5s ease;
@@ -2279,12 +2286,49 @@ select:focus {
     line-height: 1.4;
 }
 
-.form__error--visible {
+.form__error--visible,
+.form__error.visible {
     display: block;
 }
 
 .form__error--terms {
     margin: -10px 0 10px 0;
+}
+
+/* Responsive chia cột form */
+@media (min-width: 768px) {
+    .form__section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem 1.5rem;
+    }
+    .form__section-title {
+        grid-column: 1 / -1;
+    }
+    .form__field {
+        width: 100%;
+    }
+}
+
+/* Responsive nhỏ */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 15px;
+    }
+}
+
+.form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* mỗi field chiếm 50% */
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Khi màn hình nhỏ, tự xuống hàng */
+@media (max-width: 600px) {
+    .form__row {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Booking Page */
@@ -2451,7 +2495,7 @@ h5{
     justify-content: center;
     max-width: 1200px;
     padding: 0;
-    margin: 0 8%;
+    margin: 0 auto;
 }
 
 .voucher {
@@ -2837,6 +2881,7 @@ body {
 body, html {
     overflow-y: auto !important;
 }
+
 /* Phạm vi riêng cho slider */
 .homepage-slider .swiper-wrapper {
     align-items: stretch;
@@ -2862,8 +2907,24 @@ body, html {
     color: white;
 }
 
+.title-row {
+    display: flex;
+    justify-content: space-between; /* căn 2 đầu: trái - phải */
+    align-items: center; /* căn giữa theo chiều dọc */
+    margin-bottom: 20px;
+}
+
+.back-link {
+    color: #bababa;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 13px;
+    margin-bottom: auto;
+}
+
 .link__nowshowing {
     font-size: 25px;
-    font-weight: 750;
+    font-weight: 700;
     color: #434343;
 }
+

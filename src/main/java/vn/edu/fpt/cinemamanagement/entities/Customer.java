@@ -6,12 +6,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Customer" )
+@Table(name = "Customer")
 public class Customer {
     @Id
-    @Column(name = "user_id" , length = 10)
+    @Column(name = "user_id", length = 10)
     private String user_id;
     private String username;
     private String password;
@@ -19,11 +20,14 @@ public class Customer {
     private Boolean sex;
     private String email;
     private String phone;
+    private String verify;
+    @Column(name = "reset_requested_at")
+    private LocalDateTime resetRequestedAt;
 
     public Customer() {
     }
 
-    public Customer(String user_id, String username, String password, LocalDate dob, Boolean sex, String email, String phone) {
+    public Customer(String user_id, String username, String password, LocalDate dob, Boolean sex, String email, String phone, String verify, LocalDateTime resetRequestedAt) {
         this.user_id = user_id;
         this.username = username;
         this.password = password;
@@ -31,6 +35,8 @@ public class Customer {
         this.sex = sex;
         this.email = email;
         this.phone = phone;
+        this.verify = verify;
+        this.resetRequestedAt = resetRequestedAt;
     }
 
     public String getUser_id() {
@@ -87,5 +93,21 @@ public class Customer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getVerify() {
+        return verify;
+    }
+
+    public void setVerify(String verify) {
+        this.verify = verify;
+    }
+
+    public LocalDateTime getResetRequestedAt() {
+        return resetRequestedAt;
+    }
+
+    public void setResetRequestedAt(LocalDateTime resetRequestedAt) {
+        this.resetRequestedAt = resetRequestedAt;
     }
 }

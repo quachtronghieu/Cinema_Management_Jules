@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CGV Movies - Create Account</title>
+    <title>CGV Movies - Register</title>
     <meta name="description"
           content="Create your CGV Movies account to start booking tickets and enjoying premium cinema experiences.">
     <!-- ICON & FONTS -->
@@ -13,14 +13,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
 
     <!-- CSS -->
+      <link rel="stylesheet" th:href="@{/assets/css/style.css}">
     <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
 </head>
 <body>
 <div th:replace="~{fragment/frag :: navbar_homepage}"></div>
+
 <main class="auth-page" role="main">
     <div class="auth-card">
-        <h1 class="modal__title">Create Account</h1>
+        <h1 class="modal__title">Register</h1>
         <div id="formMessage" class="form__message hidden"></div>
 
         <form id="registerForm" th:action="@{/register}" method="post" th:object="${customer}" novalidate>
@@ -47,73 +48,68 @@
                      th:classappend="${errors != null && errors.containsKey('username')} ? 'visible' : 'hidden'"
                      th:text="${errors != null ? errors['username'] : ''}"></div>
             </div>
-            <!-- Date of birth -->
-            <div class="form__field">
-                <label class="form__label" for="dob">Date of Birth</label>
-                <input type="date"
-                       class="form__input"
-                       th:classappend="${errors != null && errors.containsKey('dob')} ? 'form__input--error' : ''"
-                       id="dob"
-                       name="dob"
-                       th:field="*{dob}"
-                       pattern="\d{4}-\d{2}-\d{2}"
-                       required>
-                <div id="dobError"
-                     class="form__error"
-                     th:classappend="${errors != null && errors.containsKey('dob')} ? 'visible' : 'hidden'"
-                     th:text="${errors != null ? errors['dob'] : ''}"></div>
+
+            <input type="text"
+                   class="form__input"
+                   id="verify"
+                   name="verify"
+                   th:field="*{verify}"
+                   hidden="hidden">
+
+            <div class="form__row">
+                <!-- Date of Birth -->
+                <div class="form__field">
+                    <label class="form__label" for="dob">Date of Birth</label>
+                    <input type="date" class="form__input"
+                           th:classappend="${errors != null && errors.containsKey('dob')} ? 'form__input--error' : ''"
+                           id="dob" name="dob" th:field="*{dob}" required>
+                    <div id="dobError" class="form__error"
+                         th:classappend="${errors != null && errors.containsKey('dob')} ? 'visible' : 'hidden'"
+                         th:text="${errors != null ? errors['dob'] : ''}"></div>
+                </div>
+
+                <!-- Gender -->
+                <div class="form__field">
+                    <label class="form__label">Gender</label>
+                    <select class="form__input"
+                            th:classappend="${errors != null && errors.containsKey('sex')} ? 'form__input--error' : ''"
+                            id="sex" name="sex" th:field="*{sex}" required>
+                        <option value="">-- Select --</option>
+                        <option th:value="1">Male</option>
+                        <option th:value="0">Female</option>
+                    </select>
+                    <div id="sexError" class="form__error"
+                         th:classappend="${errors != null && errors.containsKey('sex')} ? 'visible' : 'hidden'"
+                         th:text="${errors != null ? errors['sex'] : ''}"></div>
+                </div>
             </div>
 
-            <!-- Gender -->
-            <div class="form__field">
-                <label class="form__label">Gender</label>
-                <select class="form__input"
-                        th:classappend="${errors != null && errors.containsKey('sex')} ? 'form__input--error' : ''"
-                        id="sex"
-                        name="sex"
-                        th:field="*{sex}"
-                        required>
-                    <option value="">-- Select --</option>
-                    <option th:value="1">Male</option>
-                    <option th:value="0">Female</option>
-                </select>
-                <div id="sexError"
-                     class="form__error"
-                     th:classappend="${errors != null && errors.containsKey('sex')} ? 'visible' : 'hidden'"
-                     th:text="${errors != null ? errors['sex'] : ''}"></div>
-            </div>
-            <!-- Email -->
-            <div class="form__field">
-                <label class="form__label" for="email">Email </label>
-                <input type="email"
-                       class="form__input"
-                       th:classappend="${errors != null && errors.containsKey('email')} ? 'form__input--error' : ''"
-                       id="email"
-                       name="email"
-                       th:field="*{email}"
-                       placeholder="example@email.com">
-                <div id="emailError"
-                     class="form__error"
-                     th:classappend="${errors != null && errors.containsKey('email')} ? 'visible' : 'hidden'"
-                     th:text="${errors != null ? errors['email'] : ''}"></div>
-            </div>
+            <!-- 🔸 Nhóm Email + Phone -->
+            <div class="form__row">
+                <!-- Email -->
+                <div class="form__field">
+                    <label class="form__label" for="email">Email</label>
+                    <input type="email" class="form__input"
+                           th:classappend="${errors != null && errors.containsKey('email')} ? 'form__input--error' : ''"
+                           id="email" name="email" th:field="*{email}"
+                           placeholder="example@email.com">
+                    <div id="emailError" class="form__error"
+                         th:classappend="${errors != null && errors.containsKey('email')} ? 'visible' : 'hidden'"
+                         th:text="${errors != null ? errors['email'] : ''}"></div>
+                </div>
 
-            <!-- Số điện thoại -->
-            <div class="form__field">
-                <label class="form__label" for="phone">Phone Number </label>
-                <input type="tel"
-                       class="form__input"
-                       th:classappend="${errors != null && errors.containsKey('phone')} ? 'form__input--error' : ''"
-                       id="phone"
-                       name="phone"
-                       th:field="*{phone}"
-                       placeholder="Phone Number">
-                <div id="phoneError"
-                     class="form__error"
-                     th:classappend="${errors != null && errors.containsKey('phone')} ? 'visible' : 'hidden'"
-                     th:text="${errors != null ? errors['phone'] : ''}"></div>
+                <!-- Phone -->
+                <div class="form__field">
+                    <label class="form__label" for="phone">Phone Number</label>
+                    <input type="tel" class="form__input"
+                           th:classappend="${errors != null && errors.containsKey('phone')} ? 'form__input--error' : ''"
+                           id="phone" name="phone" th:field="*{phone}"
+                           placeholder="Phone Number">
+                    <div id="phoneError" class="form__error"
+                         th:classappend="${errors != null && errors.containsKey('phone')} ? 'visible' : 'hidden'"
+                         th:text="${errors != null ? errors['phone'] : ''}"></div>
+                </div>
             </div>
-
             <!-- Mật khẩu -->
             <div class="form__field">
                 <label class="form__label" for="password">Password</label>

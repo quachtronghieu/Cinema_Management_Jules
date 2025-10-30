@@ -27,9 +27,9 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
+                <div class="table-responsive" >
                     <table class="table text-start align-middle table-bordered table-hover mb-0">
-                        <thead>
+                        <thead th:if="${vouchersList.isEmpty()}" th:classappend="hidden">
                         <tr class="text-white">
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
@@ -65,7 +65,11 @@
                         </tbody>
                     </table>
 
-                    <nav aria-label="Page navigation example">
+
+                    <p class="text-danger" th:if="${vouchersList.isEmpty()}" th:text="${voucherEmpty}"></p>
+
+
+                    <nav aria-label="Page navigation example" th:if="${vouchersList.isEmpty()}" th:classappend="hidden">
                         <ul class="pagination justify-content-center">
                             <!-- Previous -->
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">

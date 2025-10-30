@@ -45,6 +45,9 @@ public class VoucherController {
             endPage = Math.min(startPage + visiblePages - 1, totalPages);
         }
 
+        if (voucherPage.isEmpty()){
+            model.addAttribute("voucherEmpty", "Voucher list is empty" );
+        }
         model.addAttribute("voucherPage", voucherPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("startPage", startPage);
@@ -62,7 +65,7 @@ public class VoucherController {
 
     @PostMapping("/create")
     public String createVoucher(Voucher voucher, Model model) {
-        if (voucher.getDiscountType().equals("amount")) {
+        if (voucher.getDiscountType().equalsIgnoreCase("amount")) {
             voucher.setVoucherId(voucherService.generateAmountVoucherID());
         } else {
             voucher.setVoucherId(voucherService.generatePercentageVoucherID());
