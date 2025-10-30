@@ -70,13 +70,20 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Age Rating:</label>
-                            <input type="text" th:field="*{ageRating}" class="form-control" required>
+                            <select th:field="*{ageRating}" class="form-select"  >
+                                <option value="">-- Select ageRating --</option>
+                                    <option th:each="a : ${ageRatings}"
+                                            th:value="${a}"
+                                            th:text="${@movieService.getAgeRatingDescription(a)}"
+                                            th:selected="${movie.ageRating == @movieService.getAgeRatingDescription(a)}">
+                                    </option>
+                            </select>
                             <div th:if="${errors['ageRating']}" class="text-danger" th:text="${errors['ageRating']}"></div>
 
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Summary:</label>
+                            <label class="form-label fw-bold">Description:</label>
                             <textarea th:field="*{summary}" class="form-control" rows="3" required></textarea>
                             <div th:if="${errors['summary']}" class="text-danger" th:text="${errors['summary']}"></div>
 
@@ -86,7 +93,12 @@
                             <label class="form-label fw-bold">Image:</label>
                             <select th:field="*{img}" class="form-select">
                                 <option value="">-- Choose a poster --</option>
-                                <option th:each="poster : ${imgPaths}" th:value="${poster}" th:text="${poster}"></option>
+                                <option th:each="poster : ${imgPaths}"
+                                        th:value="${poster}"
+                                        th:text="${poster}"
+                                        th:selected="${poster.equals(movie.img)}">
+
+                                </option>
                             </select>
                             <div th:if="${errors['img']}" class="text-danger" th:text="${errors['img']}"></div>
                         </div>

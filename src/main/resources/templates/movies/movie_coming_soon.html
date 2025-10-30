@@ -43,7 +43,7 @@
                         <p class="movie-card__release-date">
                             Release Date: <span th:text="${movie.releaseDate}">Date</span>
                         </p>
-                        <a th:href="@{/movies/detail/{id}(id=${movie.movieID})}" class="movie-card__button btn btn-outline-warning">View Details</a>
+                        <a th:href="@{/homepage/movie_detail/{id}(id=${movie.movieID})}" class="movie-card__button btn btn-outline-warning">View Details</a>
                     </div>
                 </article>
             </div>

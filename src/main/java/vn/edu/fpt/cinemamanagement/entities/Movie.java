@@ -1,9 +1,6 @@
 package vn.edu.fpt.cinemamanagement.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -25,14 +22,14 @@ public class Movie {
     private LocalDate releaseDate;
 
     @Column(name = "age_rating")
-    private int ageRating;
+    private String ageRating;
 
     private String img;
     private String trailer;
 
     public Movie(){
     }
-    public Movie(String movieID, String title, String genre, String summary, int duration, LocalDate  releaseDate, int ageRating,  String img, String trailer) {
+    public Movie(String movieID, String title, String genre, String summary, int duration, LocalDate  releaseDate, String ageRating, String img, String trailer) {
         this.movieID = movieID;
         this.title = title;
         this.genre = genre;
@@ -92,11 +89,11 @@ public class Movie {
         this.releaseDate = releaseDate;
     }
 
-    public int getAgeRating() {
+    public String getAgeRating() {
         return ageRating;
     }
 
-    public void setAgeRating(int ageRating) {
+    public void setAgeRating(String ageRating) {
         this.ageRating = ageRating;
     }
 
