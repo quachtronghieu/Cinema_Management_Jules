@@ -205,22 +205,18 @@ private void validateAgeRating(String ageRating, Map<String, String> errors) {
     public List<String> getAgeRatings() {
         return List.of(
                 "P",
-                "K",
                 "T13",
                 "T16",
-                "T18",
-                "C"
+                "T18"
         );
     }
 
     public String getAgeRatingDescription(String code) {
         switch (code) {
-            case "P": return "Suitable for all ages.";
-            case "K": return "Viewers under 13 must be accompanied by a parent or guardian.";
-            case "T13": return "Restricted to viewers aged 13 and above.";
-            case "T16": return "Restricted to viewers aged 16 and above.";
-            case "T18": return "Restricted to viewers aged 18 and above.";
-            case "C": return "Banned from public screening in Vietnam.";
+            case "P": return "P - Suitable for all ages.";
+            case "T13": return "T13 - Restricted to viewers aged 13 and above.";
+            case "T16": return "T16 - Restricted to viewers aged 16 and above.";
+            case "T18": return "T18 - Restricted to viewers aged 18 and above.";
             default: return "Unknown rating.";
         }
     }
