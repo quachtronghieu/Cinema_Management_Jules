@@ -19,6 +19,7 @@
         <div class="container">
             <div class="section__header section-header">
                 <h2 class="section__title">Coming Soon</h2>
+                <a th:href="@{/homepage/movies_nowshowing}" class="link__nowshowing">Now Showing</a>
             </div>
             <div class="movie-grid">
                 <!-- Loop Movie -->
@@ -42,7 +43,7 @@
                         <p class="movie-card__release-date">
                             Release Date: <span th:text="${movie.releaseDate}">Date</span>
                         </p>
-                        <a th:href="@{/movies/detail/{id}(id=${movie.movieID})}" class="movie-card__button">View Details</a>
+                        <a th:href="@{/movies/detail/{id}(id=${movie.movieID})}" class="movie-card__button btn btn-outline-warning">View Details</a>
                     </div>
                 </article>
             </div>

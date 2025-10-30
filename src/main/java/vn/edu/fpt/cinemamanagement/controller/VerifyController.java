@@ -8,6 +8,8 @@ import vn.edu.fpt.cinemamanagement.entities.Customer;
 import vn.edu.fpt.cinemamanagement.services.CustomerService;
 
 import java.security.MessageDigest;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
@@ -36,22 +38,54 @@ public class VerifyController {
             throw new RuntimeException(e);
         }
 
+        Customer customer = customerService.findCustomerById(id);
+        if (!"resetPassword".equals(customer.getVerify())) {
+            model.addAttribute("error", "This reset link is no longer valid!");
+            return "error/error500";
+        }
 
-        if(customerService.findCustomerById(id).getVerify().equals("resetPassword")){
+
+            LocalDateTime requestTime = customer.getResetRequestedAt();
+            LocalDateTime now = LocalDateTime.now();
+
+            if(requestTime != null && now.isAfter(requestTime.plusMinutes(10))) {
+                customer.setVerify("active");
+                customer.setResetRequestedAt(null);
+                customerService.save(customer);
+                model.addAttribute("error", "Link expired, please request again!");
+                return "error/error500";
+            }
+
             if(fi.equalsIgnoreCase(code)){
+                model.addAttribute("customer", customerService.findCustomerById(id));
                 return "auth/reset_password";
             }
-        }
+
+
+        model.addAttribute("error", "The URL is not valid");
         return "error/error500";
     }
 
-    @PostMapping
-    public String changePassword(){
+    @PostMapping("/resetPassword")
+    public String changePassword(@RequestParam("id") String id,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 Model model) {
+        Map<String, String> errors = customerService.resetPassword(id, newPassword, confirmPassword);
+        Customer customer = customerService.findCustomerById(id);
+        if (!errors.isEmpty()) {
+            model.addAttribute("errors", errors);
+            model.addAttribute("customer", customer);
+            return "auth/reset_password";
+        }
 
+        customer.setVerify("active");
+        customer.setResetRequestedAt(null);
+        customerService.save(customer);
+        model.addAttribute("success", "Password changed successfully!");
 
+        return "auth/login";
 
-        return "da doi thanh cong";
     }
-
 
 }

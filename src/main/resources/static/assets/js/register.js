@@ -47,6 +47,21 @@ function togglePassword(inputId, buttonId) {
     }
 }
 
+function toggleNewPassword(inputId, buttonId) {
+    var input = document.getElementById(inputId);
+    var button = document.getElementById(buttonId);
+
+    if (!input || !button) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = 'Hidden';
+    } else {
+        input.type = 'password';
+        button.textContent = 'Show';
+    }
+}
+
 // ----------------------
 // Hiển thị lỗi 1 ô input
 // ----------------------
@@ -216,6 +231,7 @@ function initModal() {
     // Toggle password
     document.getElementById('passwordToggle')?.addEventListener('click', () => togglePassword('password', 'passwordToggle'));
     document.getElementById('confirmPasswordToggle')?.addEventListener('click', () => togglePassword('confirmPassword', 'confirmPasswordToggle'));
+    document.getElementById('toggleNewPassword').addEventListener('click', () => togglePassword('new_password', 'toggleNewPassword'));
 
     // Validation khi blur
     ['username', 'dob', 'email', 'phone', 'password', 'confirmPassword'].forEach(id => {

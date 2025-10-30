@@ -48,6 +48,14 @@
                      th:classappend="${errors != null && errors.containsKey('username')} ? 'visible' : 'hidden'"
                      th:text="${errors != null ? errors['username'] : ''}"></div>
             </div>
+
+            <input type="text"
+                   class="form__input"
+                   id="verify"
+                   name="verify"
+                   th:field="*{verify}"
+                   hidden="hidden">
+
             <div class="form__row">
                 <!-- Date of Birth -->
                 <div class="form__field">

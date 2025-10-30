@@ -27,7 +27,7 @@ public class MovieController {
 
     @RequestMapping
     public String getAllMovies(Model model,  @RequestParam(name = "page", defaultValue = "1", required = false) int page) {
-        int size = 3;
+        int size = 10;
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Movie> movies = movieService.getAllMovies(pageable);
         model.addAttribute("movies", movies);

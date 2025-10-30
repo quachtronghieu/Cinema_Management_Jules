@@ -48,6 +48,8 @@ public class AuthService {
         return errors;
     }
 
+
+
     // Login method to authenticate the user manually (without AuthenticationManager)
     public boolean login(String username, String password) {
         // Retrieve the customer based on username

@@ -16,6 +16,8 @@ import vn.edu.fpt.cinemamanagement.services.MailService;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,7 +28,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     @Autowired
-    private MailController  mailController;
+    private MailController mailController;
     @Autowired
     private MailService mailService;
 
@@ -62,6 +64,7 @@ public class AuthController {
         model.addAttribute("customer", new Customer());
         return "auth/register"; // trỏ đến templates/auth/register.html
     }
+
     @PostMapping(value = "/register")
     public String register(@ModelAttribute Customer customer,
                            @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
@@ -96,13 +99,16 @@ public class AuthController {
 
     @PostMapping("/forget_password")
     public String forgetPassword(@RequestParam("email") String email, Model model) {
-
         Customer customer = customerService.findCustomerByEmail(email);
         if (customer == null) {
             model.addAttribute("errorEmail", "No account found for this email!");
             model.addAttribute("customer", new Customer());
             return "auth/forget_password";
         }
+        customer.setVerify("resetPassword");
+        customer.setResetRequestedAt(LocalDateTime.now());
+        customerService.save(customer);
+
         String input = "wait" + customer.getUser_id();
         String fi;
         try {
@@ -117,7 +123,7 @@ public class AuthController {
 
 
         String title = "Reset Your Password";
-        String link = "http://localhost:8080/veryAccount/done/" + customer.getUser_id() + "/" + fi;
+        String link = "http://localhost:8080/verify/done/" + customer.getUser_id() + "/" + fi;
 
 
         String content =
