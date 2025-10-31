@@ -2928,3 +2928,167 @@ body, html {
     color: #434343;
 }
 
+
+.customer_info {
+    color: white;
+}
+
+.profile-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Left Sidebar --- */
+.profile-sidebar {
+    background-color: #1b1b1b;
+    width: 25%;
+    text-align: center;
+    padding: 40px 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Circle Avatar (first letter) */
+.avatar-circle {
+    width: 130px;
+    height: 130px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background-color: #6c757d;
+    /*border: 3px solid #E50914;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+.profile-sidebar h2 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.profile-sidebar p {
+    color: #ccc;
+    font-size: 0.95rem;
+}
+
+/* --- Right Content --- */
+.profile-content {
+    flex: 1;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* ✅ giữ mọi thứ sát nhau từ trên xuống */
+    align-items: stretch;
+}
+
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-header h1 {
+    color: #E50914;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px; /* khoảng cách giữa các input */
+}
+
+.form-row .form-group {
+    flex: 1; /* mỗi input chiếm đều 50% khi có 2 input */
+    margin-bottom: 0; /* bỏ margin-bottom nếu muốn */
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #bbb;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #444;
+    background-color: #1f1f1f;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.form-group input:disabled {
+    background-color: #2a2a2a;
+    color: #777;
+}
+
+/* --- Buttons --- */
+.profile-actions {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.profile-actions button {
+    background-color: #E50914;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1rem;
+}
+
+.profile-actions button:hover {
+    background-color: #ff1e22;
+}
+.btn-edit {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    min-width: 120px; /* tất cả nút bằng nhau */
+    transition: 0.3s;
+}
+
+/* Nút đỏ (Edit / Save) */
+.btn-primary {
+    background-color: #E50914;
+    color: #fff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #ff1e22;
+}
+
+/* Nút xám nhẹ (Back) */
+.btn-secondary {
+    background-color: #d6d6d6;
+    color: #333;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #c6c6c6;
+}
+
+/* Nút nhỏ gọn */
+.btn-compact {
+    padding: 8px 16px;
+}
+

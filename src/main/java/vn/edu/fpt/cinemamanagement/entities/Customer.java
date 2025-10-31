@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class Customer {
     private String user_id;
     private String username;
     private String password;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
     private Boolean sex;
     private String email;
