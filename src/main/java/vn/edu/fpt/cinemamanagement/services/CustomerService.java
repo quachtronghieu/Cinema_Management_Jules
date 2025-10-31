@@ -1,16 +1,11 @@
 package vn.edu.fpt.cinemamanagement.services;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import vn.edu.fpt.cinemamanagement.entities.Customer;
-import vn.edu.fpt.cinemamanagement.entities.Voucher;
 import vn.edu.fpt.cinemamanagement.repositories.CustomerRepository;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -230,6 +225,26 @@ public class CustomerService {
         }
     }
 
+    private void validateNewPassword(String newPassword, String password, Map<String, String> errors) {
+        if (newPassword == null || newPassword.isEmpty()) {
+            errors.put("newPassword", "A newPassword is required.");
+            return;
+        }
+
+        if (newPassword.length() < 6) {
+            errors.put("newPassword", "The newPassword must be at least 6 characters long.");
+            return;
+        }
+
+        if (!PASSWORD_PATTERN.matcher(newPassword).matches()) {
+            errors.put("newPassword", "The newPassword must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.");
+        }
+
+        if (passwordEncoder.matches(newPassword, password)){
+            errors.put("newPassword", "The new password must not be the same as the current password.");
+        }
+    }
+
     /**
      * Validate confirm password
      */
@@ -282,6 +297,40 @@ public class CustomerService {
         customerRepository.save(customer);
 
         return errors; // empty map = success
+    }
+
+    // Change pass - Ngan
+    private Map<String, String> validateChangePassword(String username, String currentPassword, String newPassword, String confirmPassword){
+        Map<String, String> errors = new HashMap<>();
+        validatePassword(currentPassword, errors);
+        Customer customer = customerRepository.findByUsername(username).orElse(null);
+        if (customer != null && errors.isEmpty()) {
+            if(!passwordEncoder.matches(currentPassword, customer.getPassword())){
+                errors.put("password", "Incorrect password.");
+                System.out.println(customer.getUsername());
+                System.out.println(customer.getPassword());
+            }
+        }
+
+        validateNewPassword(newPassword, customer.getPassword(), errors);
+        validateConfirmPassword(newPassword, confirmPassword, errors);
+
+        return errors;
+    }
+
+    public Map<String, String> changePassword(String username, String currentPassword, String newPassword, String confirmPassword) {
+        Map<String, String> errors = validateChangePassword(username, currentPassword, newPassword, confirmPassword);
+        if (!errors.isEmpty()) {
+            return errors;
+        }
+
+        Customer customer = customerRepository.findByUsername(username).orElse(null);
+
+        if (customer != null) {customer.setPassword(encodePassword(newPassword));
+        customerRepository.save(customer);
+        return errors;
+        }
+        return errors;
     }
 
 }

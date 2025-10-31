@@ -11,8 +11,6 @@ import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @Controller
 @RequestMapping("/verify")
 public class VerifyController {
@@ -67,10 +65,10 @@ public class VerifyController {
     }
 
     @PostMapping("/resetPassword")
-    public String changePassword(@RequestParam("id") String id,
-                                 @RequestParam("newPassword") String newPassword,
-                                 @RequestParam("confirmPassword") String confirmPassword,
-                                 Model model) {
+    public String resetPassword(@RequestParam("id") String id,
+                                @RequestParam("newPassword") String newPassword,
+                                @RequestParam("confirmPassword") String confirmPassword,
+                                Model model) {
         Map<String, String> errors = customerService.resetPassword(id, newPassword, confirmPassword);
         Customer customer = customerService.findCustomerById(id);
         if (!errors.isEmpty()) {

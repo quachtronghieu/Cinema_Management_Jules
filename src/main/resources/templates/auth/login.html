@@ -37,6 +37,8 @@
         <div th:if="${param.logout}" class="alert alert-success text-center mb-3">
             You have been logged out successfully.
         </div>
+        <div th:if="${success != null}" th:text="${success}" class="alert alert-success text-center mb-3">
+        </div>
 
         <form th:action="@{/login}" method="post">
             <div class="mb-3 text-start">
