@@ -31,6 +31,10 @@ public class StaffService {
         Optional<Staff> optionalStaff = staffRepo.findById(staffID);
         return optionalStaff.orElse(null);
     }
+    //view profile
+    public StaffRepository getStaffRepo() {
+        return staffRepo;
+    }
 
     public Page<Staff> findAllStaff(Pageable pageable) {
         return staffRepo.findAll(pageable);
@@ -156,8 +160,10 @@ public class StaffService {
         }
 
         // --- Phone ---
-        if (staff.getPhone() == null || staff.getPhone().isEmpty() ||
-                !staff.getPhone().matches("^0\\d{9}$")) {
+        if (staff.getPhone() == null || staff.getPhone().isEmpty()) {
+            model.addAttribute("errorPhone", "Phone cannot be empty");
+            hasError = true;
+        } else if (!staff.getPhone().matches("^0\\d{9}$")) {
             model.addAttribute("errorPhone", "Phone must be 10 digits starting with 0");
             hasError = true;
         } else {
@@ -171,23 +177,26 @@ public class StaffService {
             }
         }
 
-// --- Email ---
-        if (staff.getEmail() != null) {
-            // Chuyển email về chữ thường
-            staff.setEmail(staff.getEmail().toLowerCase());
-        }
 
-        if (staff.getEmail() == null || staff.getEmail().isEmpty() ||
-                !staff.getEmail().matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$")) {
-            model.addAttribute("errorEmail", "Invalid email format");
+// --- Email ---
+        if (staff.getEmail() == null || staff.getEmail().isEmpty()) {
+            model.addAttribute("errorEmail", "Email cannot be empty");
             hasError = true;
         } else {
-            // Check uniqueness
-            Staff existingByEmail = staffRepo.findByEmail(staff.getEmail());
-            if (existingByEmail != null) {
-                if (staff.getStaffID() == null || !existingByEmail.getStaffID().equals(staff.getStaffID())) {
-                    model.addAttribute("errorEmail", "Email already exists");
-                    hasError = true;
+            // Chuyển email về chữ thường
+            staff.setEmail(staff.getEmail().toLowerCase());
+
+            if (!staff.getEmail().matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$")) {
+                model.addAttribute("errorEmail", "Invalid email format");
+                hasError = true;
+            } else {
+                // Check uniqueness
+                Staff existingByEmail = staffRepo.findByEmail(staff.getEmail());
+                if (existingByEmail != null) {
+                    if (staff.getStaffID() == null || !existingByEmail.getStaffID().equals(staff.getStaffID())) {
+                        model.addAttribute("errorEmail", "Email already exists");
+                        hasError = true;
+                    }
                 }
             }
         }
