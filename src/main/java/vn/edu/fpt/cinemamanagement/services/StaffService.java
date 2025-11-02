@@ -53,8 +53,10 @@ public class StaffService {
 
     // --- Update ---
     public void updateStaff(Staff staff) {
+        Staff existing = staffRepo.findById(staff.getStaffID())
+                .orElseThrow(() -> new RuntimeException("Staff not found"));
         if (staff.getPassword() != null && !staff.getPassword().isEmpty()) {
-            staff.setPassword(encodePassword(staff.getPassword()));
+            existing.setPassword(encodePassword(staff.getPassword()));
         }
         if (staff.getStaffID() != null && staffRepo.existsById(staff.getStaffID())) {
             staffRepo.save(staff);
