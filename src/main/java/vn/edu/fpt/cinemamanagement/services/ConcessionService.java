@@ -50,8 +50,10 @@ public class ConcessionService {
 
         // validate dữ liệu (yêu cầu có ảnh khi tạo)
         validateConcession(c, true, errors);
-
-        if (!errors.isEmpty()) return errors;
+        if (!errors.isEmpty()) {
+            errors.putIfAbsent("_global", "Please correct the highlighted fields before saving.");
+            return errors;
+        }
 
         String newId = nextId(type.toUpperCase(Locale.ROOT));
         c.setConcessionId(newId);
@@ -63,6 +65,10 @@ public class ConcessionService {
     public Map<String, String> update(String id, Concession incoming, String imageFile) {
         Map<String, String> errors = new HashMap<>();
         Concession old = findById(id);
+        if (!StringUtils.hasText(id)) {
+            errors.put("_global", "Missing concession ID. Cannot update this item.");
+            return errors;
+        }
 
         // merge các trường cho chắc (giữ nguyên những gì không đổi)
         old.setName(incoming.getName());
@@ -73,8 +79,10 @@ public class ConcessionService {
         }
         // validate (update không bắt buộc đổi ảnh -> requireImage=false)
         validateConcession(old, false, errors);
-
-        if (!errors.isEmpty()) return errors;
+        if (!errors.isEmpty()) {
+            errors.putIfAbsent("_global", "Please correct the highlighted fields before saving.");
+            return errors;
+        }
 
         repo.save(old);
         return errors; // rỗng = OK
@@ -105,29 +113,52 @@ public class ConcessionService {
 
     /* ======================= VALIDATION (thuần Java, không regex) ======================= */
     private void validateConcession(Concession c, boolean requireImage, Map<String, String> errors) {
-        // Name: chỉ chữ/số/khoảng trắng, 2–50
+        // === Name: bắt buộc, 2–50 ký tự, chỉ tiếng Anh ===
         if (!StringUtils.hasText(c.getName())) {
             errors.put("name", "Name is required");
         } else if (!isAlnumSpace(c.getName(), 2, 50)) {
-            errors.put("name", "Name: 2–50 chars, only letters, numbers, spaces");
+            errors.put("name", "Name must be 2–50 English letters, numbers or spaces (no accents or special characters)");
+        } else if (!isEnglishText(c.getName())) {
+            errors.put("name", "Name must use English characters only (no Vietnamese or symbols)");
         }
 
-        // Price: >= 0
+        // === Price: >= 0 ===
         if (c.getPrice() == null || c.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            errors.put("price", "Price must be \u2265 0");
+            errors.put("price", "Price must be ≥ 0");
         }
 
-        // Description: chữ/số/khoảng trắng/ , .
+        // === Description: bắt buộc, 5–200 ký tự, chỉ tiếng Anh ===
         if (!StringUtils.hasText(c.getDescription())) {
             errors.put("description", "Description is required");
         } else if (!isAlnumSpaceCommaDot(c.getDescription(), 5, 200)) {
-            errors.put("description", "Description: 5–200 chars; only letters, numbers, spaces, comma, period");
+            errors.put("description", "Description must be 5–200 English letters, numbers, spaces, commas or periods");
+        } else if (!isEnglishText(c.getDescription())) {
+            errors.put("description", "Description must use English characters only (no Vietnamese or symbols)");
         }
 
-        // Image
+        // === Image ===
         if (requireImage && !StringUtils.hasText(c.getImg())) {
             errors.put("img", "Please choose an image");
         }
+
+        // === Thông báo chung (_global) ===
+        if (!errors.isEmpty()) {
+            errors.put("_global", "Please correct the highlighted fields before saving.");
+
+        }
+    }
+    /**
+     * Kiểm tra chuỗi chỉ gồm ký tự ASCII (tiếng Anh cơ bản)
+     * Trả false nếu chứa ký tự có dấu, emoji, ký tự đặc biệt ngoài khoảng 0–127.
+     */
+    private boolean isEnglishText(String s) {
+        if (s == null) return false;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) > 127) {
+                return false; // ký tự Unicode (có dấu, tiếng Việt, emoji, ...)
+            }
+        }
+        return true;
     }
 
     private boolean isAlnumSpace(String s, int min, int max) {
