@@ -126,7 +126,7 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
                     <!-- Nếu là CUSTOMER (không phải staff) -->
                     <li sec:authorize="isAuthenticated() and !hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
-                        <a class="dropdown-item" th:href="@{/profile/my_profile}">My Profile</a>
+                        <a class="dropdown-item" th:href="@{customer/profile/my_profile}">My Profile</a>
                     </li>
                     <!-- Dashboard cho admin -->
                     <li sec:authorize="hasRole('ADMIN')">
