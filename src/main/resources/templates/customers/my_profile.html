@@ -31,14 +31,16 @@
                     <div class="avatar-circle" th:text="${#strings.substring(customer.username, 0, 1)}"></div>
                     <h2 th:text="${customer.username}"></h2>
                     <div class="profile-actions mt-3">
-                        <a th:href="@{/profile/edit}" class="btn-edit btn-primary">Edit Profile</a>
+                        <a th:href="@{/customer/profile/edit}" class="btn-edit btn-primary">Edit Profile</a>
                     </div>
+
                 </div>
 
                 <!-- Right Content -->
                 <div class="profile-content">
-                    <div class="profile-header">
-                        <h1>Account Information</h1>
+                    <div class="profile-header d-flex align-items-center justify-content-between">
+                        <h1 class="mb-0">Account Information</h1>
+                        <a th:href="@{/customer/profile/changePassword}" class="btn btn-outline-warning">Change Password</a>
                     </div>
 
                     <form th:object="${customer}">

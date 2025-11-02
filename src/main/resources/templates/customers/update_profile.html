@@ -21,7 +21,7 @@
         <div class="container">
             <div class="section__header section-header">
                 <h2 class="section__title">Your Infomation</h2>
-                <a th:href="@{/profile/my_profile}" class="btn btn-light btn-compact">
+                <a th:href="@{/customer/profile/my_profile}" class="btn btn-light btn-compact">
                     <i class="fa fa-arrow-left me-1 "></i> Back
                 </a>
             </div>
@@ -40,7 +40,7 @@
                         <h1>My Profile</h1>
                     </div>
 
-                    <form id="profileForm" method="post" th:action="@{/profile/update}" th:object="${customer}">
+                    <form id="profileForm" method="post" th:action="@{/customer/profile/update}" th:object="${customer}">
 
                         <!-- User ID -->
                         <div class="form-group">

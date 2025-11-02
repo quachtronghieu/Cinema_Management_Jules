@@ -29,6 +29,9 @@ public class CustomerService {
     public Customer save(Customer customer){
         return customerRepository.save(customer);
     }
+    public Customer getCustomerByUsername(String username) {
+        return customerRepository.findByUsername(username).orElse(null);
+    }
 
     // Regex patterns - định nghĩa ở đầu class
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
@@ -166,6 +169,12 @@ public class CustomerService {
         int currentYear = LocalDate.now().getYear();
         if (year < 1900 || year > currentYear) {
             errors.put("dob", String.format("The year of birth must be between 1900–%d", currentYear));
+        }
+
+        int birthYear = dob.getYear();
+        int age = currentYear - birthYear;
+        if (age < 10) {
+            errors.put("dob", "You must be at least 10 years old.");
         }
     }
 
@@ -331,6 +340,29 @@ public class CustomerService {
         return errors;
         }
         return errors;
+    }
+
+    public Map<String, String> validateCustomer(Customer customer) {
+        Map<String, String> errors = new HashMap<>();
+
+        // 1. VALIDATE FORMAT
+        validateDateOfBirth(customer.getDob(), errors);
+        validateEmail(customer.getEmail(), errors);
+        validatePhone(customer.getPhone(), errors);
+
+        // 2. VALIDATE BUSINESS RULES - check trùng lặp trong DB
+
+        if (customerRepository.existsByEmail(customer.getEmail())) {
+            errors.put("email", "Email already exists");
+        }
+
+        if (customerRepository.existsByPhone(customer.getPhone())) {
+            errors.put("phone", "Phone already exists");
+        }
+
+
+
+        return errors; // trả về map lỗi, empty nếu hợp lệ
     }
 
 }
