@@ -100,4 +100,9 @@ public class RoomController {
         }
         return "redirect:/rooms";
     }
+
+    @GetMapping("seat")
+    public String showSeatPage(Model model) {
+        return "seats/seat";
+    }
 }
