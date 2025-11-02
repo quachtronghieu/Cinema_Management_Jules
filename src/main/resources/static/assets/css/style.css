@@ -3092,3 +3092,10 @@ body, html {
     padding: 8px 16px;
 }
 
+@media (min-width: 992px) {
+    .action-group { flex-wrap: nowrap; }
+}
+@media (min-width: 992px) {
+    .table th.col-action,
+    .table td.col-action { min-width: 280px; }
+}
