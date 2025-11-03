@@ -103,6 +103,6 @@ public class RoomController {
 
     @GetMapping("seat")
     public String showSeatPage(Model model) {
-        return "seats/seat";
+        return "seats/seat_template";
     }
 }

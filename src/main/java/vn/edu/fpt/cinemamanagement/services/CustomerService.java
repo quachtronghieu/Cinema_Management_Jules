@@ -352,11 +352,11 @@ public class CustomerService {
 
         // 2. VALIDATE BUSINESS RULES - check trùng lặp trong DB
 
-        if (customerRepository.existsByEmail(customer.getEmail())) {
+        if (customerRepository.existsByEmail(customer.getEmail()) && !customer.getUser_id().equals(customer.getUser_id())) {
             errors.put("email", "Email already exists");
         }
 
-        if (customerRepository.existsByPhone(customer.getPhone())) {
+        if (customerRepository.existsByPhone(customer.getPhone()) && !customer.getUser_id().equals(customer.getUser_id())) {
             errors.put("phone", "Phone already exists");
         }
 

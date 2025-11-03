@@ -38,7 +38,7 @@
     <!-- Sidebar -->
     <div class="sidebar pe-4 pb-3">
         <nav class="navbar bg-secondary navbar-dark">
-            <a th:href="@{/homepage}" class="navbar-brand mx-4 mb-3">
+            <a th:href="@{/dashboard}" class="navbar-brand mx-4 mb-3">
                 <h2 class="text-primary">Dashboard</h2>
             </a>
 
@@ -74,10 +74,17 @@
             </a>
 
             <div class="navbar-nav w-100">
-                <a th:href="@{/cashier_booking}" class="nav-item nav-link" sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i class="fa fa-ticket-alt me-2" ></i>Booking</a>
-                <a th:href="@{/redemption}" class="nav-item nav-link" sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i class="fa fa-ticket-alt me-2"></i>Redemption</a>
-                <a th:href="@{/schedule}" class="nav-item nav-link" sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i class="fa fa-calendar-alt me-2"></i>My Schedule</a>
-                <a th:href="@{/schedule}" class="nav-item nav-link" sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i class="fa fa-calendar-alt me-2" ></i>My Schedule</a>
+                <a th:href="@{/cashier_booking}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i class="fa fa-ticket-alt me-2"></i>Booking</a>
+                <a th:href="@{/redemption}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
+                        class="fa fa-ticket-alt me-2"></i>Redemption</a>
+                <a th:href="@{/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
+                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
+                <a th:href="@{/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i
+                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
             </div>
         </nav>
     </div>
@@ -93,7 +100,7 @@
         <a href="#" class="sidebar-toggler flex-shrink-0"><i class="fa fa-bars"></i></a>
 
         <div class="navbar-nav align-items-center ms-auto">
-            <a th:href="@{/profile/my_profile}" class="dropdown-item">My Profile</a>
+            <a th:href="@{/homepage}" class="dropdown-item">Homepage</a>
 
             <form th:action="@{/logout}" method="post" class="d-inline">
                 <input th:if="${_csrf != null}"
@@ -110,7 +117,7 @@
 
 <div></div>
 
-<div th:fragment="navbar_homepage" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" >
+<div th:fragment="navbar_homepage" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <header class="header" role="banner">
         <div class="header__container container">
             <!-- Logo -->
@@ -125,9 +132,12 @@
                 <nav class="nav" role="navigation">
                     <ul class="nav__list">
                         <!--edit link Now Showing  trên homepage-->
-                        <li class="nav__item"><a th:href="@{/homepage/movies_nowshowing}" class="nav__link">Now Showing</a></li>
-                        <li class="nav__item"><a th:href="@{/homepage/coming-soon}" class="nav__link">Coming Soon</a></li>
-                        <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Promotions & Vouchers</a></li>
+                        <li class="nav__item"><a th:href="@{/homepage/movies_nowshowing}" class="nav__link">Now
+                            Showing</a></li>
+                        <li class="nav__item"><a th:href="@{/homepage/coming-soon}" class="nav__link">Coming Soon</a>
+                        </li>
+                        <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Promotions &
+                            Vouchers</a></li>
                     </ul>
                 </nav>
             </div>
@@ -152,20 +162,23 @@
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
                     <!-- Nếu là CUSTOMER (không phải staff) -->
-                    <li sec:authorize="isAuthenticated() and !hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
-                        <a class="dropdown-item" th:href="@{customer/profile/my_profile}">My Profile</a>
+                    <li sec:authorize="isAuthenticated() and !hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF', 'ADMIN')">
+                        <button class="dropdown-item"><a class="dropdown-item" th:href="@{customer/profile/my_profile}">My Profile</a>
+                        </button>
                     </li>
                     <!-- Dashboard cho admin -->
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a class="dropdown-item" th:href="@{/dashboard}">Admin Dashboard</a>
+                       <button class="dropdown-item">
+                           <a class="dropdown-item" th:href="@{/dashboard}">Admin Dashboard</a>
+                       </button>
                     </li>
 
                     <!-- Trang staff -->
                     <li sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
-                        <a class="dropdown-item" th:href="@{/profile/staff_profile}">My Profile</a>
+                        <button class="dropdown-item"><a class="dropdown-item" th:href="@{/profile/staff_profile}">My Profile</a></button>
                     </li>
                     <li sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
-                        <a class="dropdown-item" th:href="@{/staff_home}">Staff Home</a>
+                        <button class="dropdown-item"><a class="dropdown-item" th:href="@{/staff_home}">Staff Home</a></button>
                     </li>
 
                     <!-- Logout dùng POST + CSRF (không dùng #request, null-safe) -->
@@ -185,7 +198,7 @@
 </div>
 
 
-<div th:fragment = "footer_homepage">
+<div th:fragment="footer_homepage">
     <footer class="footer" role="contentinfo">
         <div class="footer__container">
             <div class="footer__section">

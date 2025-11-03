@@ -65,7 +65,7 @@ public class CustomerController {
 
         customerService.save(customer);
 
-        return "redirect:/profile/my_profile";
+        return "customers/my_profile";
     }
 
     @GetMapping("changePassword")
