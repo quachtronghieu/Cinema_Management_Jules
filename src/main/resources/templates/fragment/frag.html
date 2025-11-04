@@ -175,7 +175,7 @@
 
                     <!-- Trang staff -->
                     <li sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
-                        <button class="dropdown-item"><a class="dropdown-item" th:href="@{/profile/staff_profile}">My Profile</a></button>
+                        <button class="dropdown-item"><a class="dropdown-item" th:href="@{/staffs/staff_profile}">My Profile</a></button>
                     </li>
                     <li sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
                         <button class="dropdown-item"><a class="dropdown-item" th:href="@{/staff_home}">Staff Home</a></button>
