@@ -1,6 +1,6 @@
 /* Seat Map */
 .seat-map {
-
+    margin-top: 7rem;
     background-color: var(--dark-gray);
 
     padding: var(--spacing-lg);
@@ -81,8 +81,6 @@ appear in a horizontal line and centered within the seat map. */
 
     grid-column: 1 / -1; /* make each row take the full width of the grid */
 
-    padding: 6px 0;
-
 }
 
 
@@ -129,6 +127,23 @@ appear in a horizontal line and centered within the seat map. */
     border-color: var(--accent);
 
 }
+
+.seat--standard {
+
+    background-color: var(--dark);
+
+    color: var(--white);
+
+}
+
+.seat--standard:hover {
+
+    background-color: var(--accent);
+
+    border-color: var(--accent);
+
+}
+
 
 
 .seat--selected {
@@ -246,6 +261,7 @@ appear in a horizontal line and centered within the seat map. */
 
 .seat-map__grid--t2 .aisle {
     visibility: hidden;
+    width: 8rem; /* hoặc 50px nếu muốn rộng hơn */
 }
 
 .seat-map__grid--t3 {
@@ -263,6 +279,8 @@ appear in a horizontal line and centered within the seat map. */
 
 .seat-map__grid--t4 .aisle {
     visibility: hidden;
+    display: block;
+    width: 10rem;
 }
 
 
@@ -2396,4 +2414,6 @@ ADMIN THEME — stable buttons, action column, responsive
         font-size: .875rem;
 
     }
+
+
 }

@@ -17,584 +17,112 @@
 </head>
 
 <body>
-<!-- Header -->
-<header th:replace="~{fragment/frag :: navbar_homepage}"></header>
+
 
 <!-- Main Content -->
 <main role="main">
 
+
     <!-- Seat Selection -->
     <section class="section pt-0">
         <div class="container">
-            <input type="radio" id="tpl1" name="tpl" checked>
-            <input type="radio" id="tpl2" name="tpl">
-            <input type="radio" id="tpl3" name="tpl">
-            <input type="radio" id="tpl4" name="tpl">
+            <input type="radio" id="tpl1" name="tpl" th:checked="${template == 'TM000001'}" hidden="">
+            <input type="radio" id="tpl2" name="tpl" th:checked="${template == 'TM000002'}" hidden="">
+            <input type="radio" id="tpl3" name="tpl" th:checked="${template == 'TM000003'}" hidden="">
+            <input type="radio" id="tpl4" name="tpl" th:checked="${template == 'TM000004'}" hidden="">
 
             <div class="seat-map">
-                <h2 class="seat-map__title">Select Your Seats</h2>
-                <p class="text-center text-light-gray mb-4">Click on available
-                    seats to select them</p>
-
                 <!-- Screen -->
                 <div class="seat-map__screen">SCREEN</div>
 
-                <!-- Template tabs -->
-                <div class="template-switch" role="tablist" aria-label="Seat layout templates">
-                    <label for="tpl1" role="tab" aria-controls="template-1">Template 1</label>
-                    <label for="tpl2" role="tab" aria-controls="template-2">Template 2</label>
-                    <label for="tpl3" role="tab" aria-controls="template-3">Template 3</label>
-                    <label for="tpl4" role="tab" aria-controls="template-4">Template 4</label>
-                </div>
 
                 <div class="templates">
                     <!-- TEMPLATE 1: existing layout -->
-                    <div id="template-1" class="template-section">
-                        <!-- Seat Map Grid -->
-                        <!--Seat Map Grid Layout 1-->
-                        <div class="seat-map__grid .Row">
-                            <!-- Row A -->
-                            <div class="row">
-                                <div class="seat seat seat--available" data-seat="A1">A1</div>
-                                <div class="seat seat seat--available" data-seat="A2">A2</div>
-                                <div class="seat seat seat--available" data-seat="A3">A3</div>
-                                <div class="seat seat seat--available" data-seat="A4">A4</div>
-                                <div class="seat seat seat--available" data-seat="A5">A5</div>
-                                <div class="seat seat seat--available" data-seat="A6">A6</div>
-                                <div class="seat seat seat--available" data-seat="A7">A7</div>
+                    <div id="template-1" class="template-section"
+                         th:if="${template == 'TM000001'}">
 
-                            </div>
+                        <div th:each="entry : ${groupSeat}">
+                            <!-- Seat Map Grid -->
+                            <!--Seat Map Grid Layout 1-->
+                            <div class="seat-map__grid .Row">
+                                <!-- Row A -->
+                                <div class="row">
+                                    <div th:each="seats : ${entry.getValue()}" class="seat seat"
+                                         th:classappend=" 'seat--' + ${seats.getSeat_type()}"
+                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
+                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                    </div>
+                                </div>
 
-                            <!-- Row B -->
-                            <div class="row">
-                                <div class="seat seat seat--available" data-seat="B9">B7</div>
-                                <div class="seat seat seat--available" data-seat="B9">B8</div>
-                                <div class="seat seat seat--available" data-seat="B9">B7</div>
-                                <div class="seat seat seat--available" data-seat="B8">B6</div>
-                                <div class="seat seat seat--available" data-seat="B7">B5</div>
-                                <div class="seat seat seat--available" data-seat="B6">B4</div>
-                                <div class="seat seat seat--available" data-seat="B5">B3</div>
-
-                            </div>
-
-                            <!-- Row C -->
-                            <div class="row">
-                                <div class="seat seat seat--available" data-seat="C9">C7</div>
-                                <div class="seat seat seat--available" data-seat="C9">C7</div>
-                                <div class="seat seat seat--available" data-seat="C9">C7</div>
-                                <div class="seat seat seat--available" data-seat="C8">C6</div>
-                                <div class="seat seat seat--available" data-seat="C7">C5</div>
-                                <div class="seat seat seat--available" data-seat="C6">C4</div>
-                                <div class="seat seat seat--available" data-seat="C5">C3</div>
-
-                            </div>
-
-                            <!-- Row D -->
-                            <div class="row">
-                                <div class="seat seat--available" data-seat="D9">D9</div>
-                                <div class=" seat seat--available" data-seat="D8">D8</div>
-                                <div class=" seat seat--available" data-seat="D7">D7</div>
-                                <div class=" seat seat--available" data-seat="D6">D6</div>
-                                <div class=" seat seat--available" data-seat="D5">D5</div>
-                                <div class=" seat seat--available" data-seat="D4">D4</div>
-                                <div class=" seat seat--available" data-seat="D3">D3</div>
-                                <div class=" seat seat--available" data-seat="D2">D2</div>
-                                <div class=" seat seat--available" data-seat="D1">D1</div>
-                            </div>
-
-                            <!-- Row E -->
-                            <div class="row">
-                                <div class=" seat seat--available" data-seat="E9">E9</div>
-                                <div class=" seat seat--available" data-seat="E8">E8</div>
-                                <div class=" seat seat--available" data-seat="E7">E7</div>
-                                <div class=" seat seat--available" data-seat="E6">E6</div>
-                                <div class=" seat seat--available" data-seat="E5">E5</div>
-                                <div class=" seat seat--available" data-seat="E4">E4</div>
-                                <div class=" seat seat--available" data-seat="E3">E3</div>
-                                <div class=" seat seat--available" data-seat="E2">E2</div>
-                                <div class=" seat seat--available" data-seat="E1">E1</div>
-                            </div>
-
-                            <!-- Row F (đỏ) -->
-                            <div class="row">
-                                <div class="seat seat--available" data-seat="F9">F9</div>
-                                <div class="seat seat--available" data-seat="F8">F8</div>
-                                <div class="seat seat--available" data-seat="F7">F7</div>
-                                <div class="seat seat--available" data-seat="F6">F6</div>
-                                <div class="seat seat--available" data-seat="F5">F5</div>
-                                <div class="seat seat--available" data-seat="F4">F4</div>
-                                <div class="seat seat--available" data-seat="F3">F3</div>
-                                <div class="seat seat--available" data-seat="F2">F2</div>
-                                <div class="seat seat--available" data-seat="F1">F1</div>
-                            </div>
-
-                            <!-- Row G -->
-                            <div class="row">
-                                <div class="seat seat--available" data-seat="G9">G9</div>
-                                <div class="seat seat--available" data-seat="G8">G8</div>
-                                <div class="seat seat--available" data-seat="G7">G7</div>
-                                <div class="seat seat--available" data-seat="G6">G6</div>
-                                <div class="seat seat--available" data-seat="G5">G5</div>
-                                <div class="seat seat--available" data-seat="G4">G4</div>
-                                <div class="seat seat--available" data-seat="G3">G3</div>
-                                <div class="seat seat--available" data-seat="G2">G2</div>
-                                <div class="seat seat--available" data-seat="G1">G1</div>
-                            </div>
-
-                            <!-- Row H -->
-                            <div class="row">
-                                <div class="seat seat--available" data-seat="H9">H9</div>
-                                <div class="seat seat--available" data-seat="H8">H8</div>
-                                <div class="seat seat--available" data-seat="H7">H7</div>
-                                <div class="seat seat--available" data-seat="H6">H6</div>
-                                <div class="seat seat--available" data-seat="H5">H5</div>
-                                <div class="seat seat--available" data-seat="H4">H4</div>
-                                <div class="seat seat--available" data-seat="H3">H3</div>
-                                <div class="seat seat--available" data-seat="H2">H2</div>
-                                <div class="seat seat--available" data-seat="H1">H1</div>
-                            </div>
-
-                            <!-- Row I -->
-                            <div class="row">
-                                <div class="seat seat--available" data-seat="I9">I9</div>
-                                <div class="seat seat--available" data-seat="I8">I8</div>
-                                <div class="seat seat--available" data-seat="I7">I7</div>
-                                <div class="seat seat--available" data-seat="I6">I6</div>
-                                <div class="seat seat--available" data-seat="I5">I5</div>
-                                <div class="seat seat--available" data-seat="I4">I4</div>
-                                <div class="seat seat--available" data-seat="I3">I3</div>
-                                <div class="seat seat--available" data-seat="I2">I2</div>
-                                <div class="seat seat--available" data-seat="I1">I1</div>
                             </div>
                         </div>
                     </div>
 
+
                     <!-- TEMPLATE 2: two aisles (3 blocks per row) -->
-                    <div id="template-2" class="template-section">
+                    <div id="template-2" class="template-section" th:if="${template == 'TM000002'}">
+
                         <div class="seat-map__grid seat-map__grid--t2">
                             <!-- Rows A-F with two aisles at columns 5 and 9 -->
-                            <div class="row">
-                                <div class="seat seat--available">A1</div>
-                                <div class="seat seat--available">A2</div>
-                                <div class="seat seat--available">A3</div>
-                                <div class="seat seat--available">A4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">A5</div>
-                                <div class="seat seat--available">A6</div>
-                                <div class="seat seat--available">A7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">A8</div>
-                                <div class="seat seat--available">A9</div>
-                                <div class="seat seat--available">A10</div>
-                            </div>
-                            <div class="row">
-                                <div class="seat seat--available">B1</div>
-                                <div class="seat seat--available">B2</div>
-                                <div class="seat seat--available">B3</div>
-                                <div class="seat seat--available">B4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">B5</div>
-                                <div class="seat seat--available">B6</div>
-                                <div class="seat seat--available">B7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">B8</div>
-                                <div class="seat seat--available">B9</div>
-                                <div class="seat seat--available">B10</div>
-                            </div>
-                            <div class="row">
-                                <div class="seat seat--available">C1</div>
-                                <div class="seat seat--available">C2</div>
-                                <div class="seat seat--available">C3</div>
-                                <div class="seat seat--available">C4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">C5</div>
-                                <div class="seat seat--available">C6</div>
-                                <div class="seat seat--available">C7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">C8</div>
-                                <div class="seat seat--available">C9</div>
-                                <div class="seat seat--available">C10</div>
-                            </div>
-                            <div class="row">
-                                <div class="seat seat--available">D1</div>
-                                <div class="seat seat--available">D2</div>
-                                <div class="seat seat--available">D3</div>
-                                <div class="seat seat--available">D4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">D5</div>
-                                <div class="seat seat--available">D6</div>
-                                <div class="seat seat--available">D7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">D8</div>
-                                <div class="seat seat--available">D9</div>
-                                <div class="seat seat--available">D10</div>
-                            </div>
-                            <div class="row">
-                                <div class="seat seat--available">E1</div>
-                                <div class="seat seat--available">E2</div>
-                                <div class="seat seat--available">E3</div>
-                                <div class="seat seat--available">E4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">E5</div>
-                                <div class="seat seat--available">E6</div>
-                                <div class="seat seat--available">E7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">E8</div>
-                                <div class="seat seat--available">E9</div>
-                                <div class="seat seat--available">E10</div>
-                            </div>
-                            <div class="row">
-                                <div class="seat seat--available">F1</div>
-                                <div class="seat seat--available">F2</div>
-                                <div class="seat seat--available">F3</div>
-                                <div class="seat seat--available">F4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">F5</div>
-                                <div class="seat seat--available">F6</div>
-                                <div class="seat seat--available">F7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">F8</div>
-                                <div class="seat seat--available">F9</div>
-                                <div class="seat seat--available">F10</div>
-                            </div>
-                            <div class="row">
-                                <div class="seat seat--available">G1</div>
-                                <div class="seat seat--available">G2</div>
-                                <div class="seat seat--available">G3</div>
-                                <div class="seat seat--available">G4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">G5</div>
-                                <div class="seat seat--available">G6</div>
-                                <div class="seat seat--available">G7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">G8</div>
-                                <div class="seat seat--available">G9</div>
-                                <div class="seat seat--available">G10</div>
-                            </div>
-                            <div class="row">
-                                <div class="seat seat--available">H1</div>
-                                <div class="seat seat--available">H2</div>
-                                <div class="seat seat--available">H3</div>
-                                <div class="seat seat--available">H4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">H5</div>
-                                <div class="seat seat--available">H6</div>
-                                <div class="seat seat--available">H7</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">H8</div>
-                                <div class="seat seat--available">H9</div>
-                                <div class="seat seat--available">H10</div>
+                            <div class="row" th:each="entry : ${groupSeat}">
+
+                                <div th:each="seats, iterStat : ${entry.value}">
+                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeat_type()}"
+                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
+                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                    </div>
+                                    <div class="aisle" th:if="${iterStat.index == 3 or iterStat.index == 6}">
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
 
                     <!-- TEMPLATE 3: front VIP rows + compact rear grid -->
-                    <div id="template-3" class="template-section">
-                        <div class="seat-map__grid seat-map__grid--t3">
-                            <!-- VIP front row -->
-                            <div class="seat seat--available seat--vip">A1</div>
-                            <div class="seat seat--available seat--vip">A2</div>
-                            <div class="seat seat--available seat--vip">A3</div>
-                            <div class="seat seat--available seat--vip">A4</div>
-                            <div class="seat seat--available seat--vip">A5</div>
-                            <div class="seat seat--available seat--vip">A6</div>
-                            <div class="seat seat--available seat--vip">A7</div>
-                            <div class="seat seat--available seat--vip">A8</div>
-                            <div class="seat seat--available seat--vip">A9</div>
-                            <div class="seat seat--available seat--vip">A10</div>
+                    <div id="template-3" class="template-section" th:if="${template == 'TM000003'}">
+                        <div th:each="entry : ${groupSeat}">
 
-                            <!-- VIP second row -->
-                            <div class="seat seat--available seat--vip">B1</div>
-                            <div class="seat seat--available seat--vip">B2</div>
-                            <div class="seat seat--available seat--vip">B3</div>
-                            <div class="seat seat--available seat--vip">B4</div>
-                            <div class="seat seat--available seat--vip">B5</div>
-                            <div class="seat seat--available seat--vip">B6</div>
-                            <div class="seat seat--available seat--vip">B7</div>
-                            <div class="seat seat--available seat--vip">B8</div>
-                            <div class="seat seat--available seat--vip">B9</div>
-                            <div class="seat seat--available seat--vip">B10</div>
-
-                            <!-- Rear compact grid (C to F) -->
-                            <div class="seat seat--available">C1</div>
-                            <div class="seat seat--available">C2</div>
-                            <div class="seat seat--available">C3</div>
-                            <div class="seat seat--available">C4</div>
-                            <div class="seat seat--available">C5</div>
-                            <div class="seat seat--available">C6</div>
-                            <div class="seat seat--available">C7</div>
-                            <div class="seat seat--available">C8</div>
-                            <div class="seat seat--available">C9</div>
-                            <div class="seat seat--available">C10</div>
-
-                            <div class="seat seat--available">D1</div>
-                            <div class="seat seat--available">D2</div>
-                            <div class="seat seat--available">D3</div>
-                            <div class="seat seat--available">D4</div>
-                            <div class="seat seat--available">D5</div>
-                            <div class="seat seat--available">D6</div>
-                            <div class="seat seat--available">D7</div>
-                            <div class="seat seat--available">D8</div>
-                            <div class="seat seat--available">D9</div>
-                            <div class="seat seat--available">D10</div>
-
-                            <div class="seat seat--available">E1</div>
-                            <div class="seat seat--available">E2</div>
-                            <div class="seat seat--available">E3</div>
-                            <div class="seat seat--available">E4</div>
-                            <div class="seat seat--available">E5</div>
-                            <div class="seat seat--available">E6</div>
-                            <div class="seat seat--available">E7</div>
-                            <div class="seat seat--available">E8</div>
-                            <div class="seat seat--available">E9</div>
-                            <div class="seat seat--available">E10</div>
-
-                            <div class="seat seat--available">F1</div>
-                            <div class="seat seat--available">F2</div>
-                            <div class="seat seat--available">F3</div>
-                            <div class="seat seat--available">F4</div>
-                            <div class="seat seat--available">F5</div>
-                            <div class="seat seat--available">F6</div>
-                            <div class="seat seat--available">F7</div>
-                            <div class="seat seat--available">F8</div>
-                            <div class="seat seat--available">F9</div>
-                            <div class="seat seat--available">F10</div>
-                            <div class="seat seat--available">G1</div>
-                            <div class="seat seat--available">G2</div>
-                            <div class="seat seat--available">G3</div>
-                            <div class="seat seat--available">G4</div>
-                            <div class="seat seat--available">G5</div>
-                            <div class="seat seat--available">G6</div>
-                            <div class="seat seat--available">G7</div>
-                            <div class="seat seat--available">G8</div>
-                            <div class="seat seat--available">G9</div>
-                            <div class="seat seat--available">G10</div>
-                            <div class="seat seat--available">H1</div>
-                            <div class="seat seat--available">H2</div>
-                            <div class="seat seat--available">H3</div>
-                            <div class="seat seat--available">H4</div>
-                            <div class="seat seat--available">H5</div>
-                            <div class="seat seat--available">H6</div>
-                            <div class="seat seat--available">H7</div>
-                            <div class="seat seat--available">H8</div>
-                            <div class="seat seat--available">H9</div>
-                            <div class="seat seat--available">H10</div>
+                            <div class="seat-map__grid seat-map__grid--t3">
+                                <div th:each="seats : ${entry.getValue()}" class="seat seat"
+                                     th:classappend=" 'seat--' + ${seats.getSeat_type()}"
+                                     th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
+                                     th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                     <!-- TEMPLATE 4: 8 columns, single aisle in the middle (2 blocks) -->
-                    <div id="template-4" class="template-section">
+                    <div id="template-4" class="template-section" th:if="${template == 'TM000004'}">
                         <div class="seat-map__grid seat-map__grid--t4">
-                            <!-- Row A -->
-                            <div class="row">
-                                <div class="seat seat--available">A1</div>
-                                <div class="seat seat--available">A2</div>
-                                <div class="seat seat--available">A3</div>
-                                <div class="seat seat--available">A4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">A5</div>
-                                <div class="seat seat--available">A6</div>
-                                <div class="seat seat--available">A7</div>
-                                <div class="seat seat--available">A8</div>
-                            </div>
-                            <!-- Row B -->
-                            <div class="row">
-                                <div class="seat seat--available">B1</div>
-                                <div class="seat seat--available">B2</div>
-                                <div class="seat seat--available">B3</div>
-                                <div class="seat seat--available">B4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">B5</div>
-                                <div class="seat seat--available">B6</div>
-                                <div class="seat seat--available">B7</div>
-                                <div class="seat seat--available">B8</div>
-                            </div>
-                            <!-- Row C -->
-                            <div class="row">
-                                <div class="seat seat--available">C1</div>
-                                <div class="seat seat--available">C2</div>
-                                <div class="seat seat--available">C3</div>
-                                <div class="seat seat--available">C4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">C5</div>
-                                <div class="seat seat--available">C6</div>
-                                <div class="seat seat--available">C7</div>
-                                <div class="seat seat--available">C8</div>
-                            </div>
-                            <!-- Row D -->
-                            <div class="row">
-                                <div class="seat seat--available">D1</div>
-                                <div class="seat seat--available">D2</div>
-                                <div class="seat seat--available">D3</div>
-                                <div class="seat seat--available">D4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">D5</div>
-                                <div class="seat seat--available">D6</div>
-                                <div class="seat seat--available">D7</div>
-                                <div class="seat seat--available">D8</div>
-                            </div>
-                            <!-- Row E -->
-                            <div class="row">
-                                <div class="seat seat--available">E1</div>
-                                <div class="seat seat--available">E2</div>
-                                <div class="seat seat--available">E3</div>
-                                <div class="seat seat--available">E4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">E5</div>
-                                <div class="seat seat--available">E6</div>
-                                <div class="seat seat--available">E7</div>
-                                <div class="seat seat--available">E8</div>
-                            </div>
-                            <!-- Row F -->
-                            <div class="row">
-                                <div class="seat seat--available">F1</div>
-                                <div class="seat seat--available">F2</div>
-                                <div class="seat seat--available">F3</div>
-                                <div class="seat seat--available">F4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">F5</div>
-                                <div class="seat seat--available">F6</div>
-                                <div class="seat seat--available">F7</div>
-                                <div class="seat seat--available">F8</div>
-                            </div>
-                            <!-- Row G -->
-                            <div class="row">
-                                <div class="seat seat--available">G1</div>
-                                <div class="seat seat--available">G2</div>
-                                <div class="seat seat--available">G3</div>
-                                <div class="seat seat--available">G4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">G5</div>
-                                <div class="seat seat--available">G6</div>
-                                <div class="seat seat--available">G7</div>
-                                <div class="seat seat--available">G8</div>
-                            </div>
-                            <!-- Row H -->
-                            <div class="row">
-                                <div class="seat seat--available">H1</div>
-                                <div class="seat seat--available">H2</div>
-                                <div class="seat seat--available">H3</div>
-                                <div class="seat seat--available">H4</div>
-                                <div class="aisle">&nbsp;</div>
-                                <div class="seat seat--available">H5</div>
-                                <div class="seat seat--available">H6</div>
-                                <div class="seat seat--available">H7</div>
-                                <div class="seat seat--available">H8</div>
+                            <div class="row" th:each="entry : ${groupSeat}">
+
+                                <div th:each="seats, iterStat : ${entry.value}">
+                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeat_type()}"
+                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
+                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                    </div>
+                                    <div class="aisle" th:if="${iterStat.index == 3}">
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-                </div>
 
 
-                <!-- Legend -->
-                <div class="seat-map__legend">
-                    <div class="legend-item">
-                        <div class="legend-item__color legend-item__color--available"></div>
-                        <span>Available</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-item__color legend-item__color--selected"></div>
-                        <span>Selected</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-item__color legend-item__color--booked"></div>
-                        <span>Booked</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-item__color legend-item__color--vip"></div>
-                        <span>VIP</span>
+                    <!-- Legend -->
+                    <div class="seat-map__legend">
+                        <div class="legend-item">
+                            <div class="legend-item__color legend-item__color--available"></div>
+                            <span>Standard</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-item__color legend-item__color--vip"></div>
+                            <span>VIP</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Selected Seats Summary -->
-            <div class="selected-seats card-dark mt-2rem">
-                <h3 class="text-primary mb-2">Selected Seats</h3>
-                <div class="selected-seats__list d-flex gap-sm flex-wrap mb-2">
-                    <span class="selected-seat seat-chip hidden" data-seat="E8">E8</span>
-                    <span class="selected-seat seat-chip hidden" data-seat="E9">E9</span>
-                </div>
-                <p class="text-light-gray text-sm">Click on seats to select them. You can
-                    select up to 8 seats.</p>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="actions">
-                <a class="btn btn--secondary btn--large" href="booking.html">Back to Booking</a>
-                <a class="btn btn--large" href="checkout.html">Proceed to Checkout</a>
-            </div>
-        </div>
-    </section>
-</main>
-
-<!-- Footer -->
-<footer class="footer" role="contentinfo">
-    <div class="footer__container">
-        <div class="footer__section">
-            <h3 class="footer__section-title">About CGV</h3>
-            <ul class="footer__list">
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">About Us</a>
-                </li>
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">Careers</a>
-                </li>
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">News</a>
-                </li>
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">Contact</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="footer__section">
-            <h3 class="footer__section-title">Customer Service</h3>
-            <ul class="footer__list">
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">Help Center</a>
-                </li>
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">Ticket Refund</a>
-                </li>
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">Terms & Conditions</a>
-                </li>
-                <li class="footer__list-item">
-                    <a href="#" class="footer__list-link">Privacy Policy</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="footer__section">
-            <h3 class="footer__section-title">Contact Info</h3>
-            <p class="footer__contact">Hotline: 1900 6017</p>
-            <p class="footer__contact">Email: support@cgv.vn</p>
-            <p style="color: var(--light-gray); margin-top: 1rem;">
-                Available 24/7 for your convenience
-            </p>
-
-            <div class="footer__social">
-                <a href="#" class="footer__social-link" aria-label="Facebook">
-                    <span aria-hidden="true">📘</span>
-                </a>
-                <a href="#" class="footer__social-link" aria-label="Instagram">
-                    <span aria-hidden="true">📷</span>
-                </a>
-                <a href="#" class="footer__social-link" aria-label="Twitter">
-                    <span aria-hidden="true">🐦</span>
-                </a>
-                <a href="#" class="footer__social-link" aria-label="YouTube">
-                    <span aria-hidden="true">📺</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer__bottom">
-        <p>&copy; 2024 CGV Movies. All rights reserved. | Premium Cinema Experience</p>
-    </div>
-</footer>
 </body>
 
 </html>

@@ -20,10 +20,6 @@
             <div class="container-fluid pt-4 px-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="mb-0">Room list</h6>
-                    <div class="d-flex gap-2">
-                        <button id="btnAddRoom" class="btn btn-primary btn-compact">
-                            <i class="fa fa-plus me-2"></i>Add room</button>
-                    </div>
                 </div>
 
                 <div class="bg-secondary rounded p-3">
@@ -47,15 +43,15 @@
                                     <td th:text="${room.totalSeats}">Active</td>
                                     <td th:text="${room.status}"></td>
                                     <td class="text-end">
+
                                         <a th:href="@{'/rooms/edit/' + ${room.roomId}}"
                                            class="btn btn-success btn-compact">
                                             <i class="bi bi-pencil-square"></i> Edit
                                         </a>
-                                        <!-- Nút Delete: vẫn gọi controller backend -->
-                                        <a th:href="@{'/rooms/delete/' + ${room.roomId}}"
-                                           class="btn btn-light btn-compact"
-                                           onclick="return confirm('Are you sure you want to delete this room?');">
-                                            <i class="bi bi-trash"></i> Delete
+
+                                        <a th:href="@{'/rooms/template/' + ${room.roomId}}"
+                                           class="btn btn-light btn-compact">
+                                            <i class="bi bi-aspect-ratio"></i> Temp
                                         </a>
                                     </td>
 

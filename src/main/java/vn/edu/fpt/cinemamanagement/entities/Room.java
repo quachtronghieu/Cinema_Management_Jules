@@ -3,12 +3,13 @@ package vn.edu.fpt.cinemamanagement.entities;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "room")
 public class Room {
     @Id
-@Column(name = "room_id")
+    @Column(name = "room_id")
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id", referencedColumnName = "template_id")
     private Template template;
 
