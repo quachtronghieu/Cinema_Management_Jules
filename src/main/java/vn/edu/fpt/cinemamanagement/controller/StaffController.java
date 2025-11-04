@@ -9,6 +9,9 @@ import vn.edu.fpt.cinemamanagement.services.StaffService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/staffs")
 public class StaffController {
@@ -144,4 +147,58 @@ public class StaffController {
         return "staffs/staff_detail";
     }
 
+    // ===========================
+    // 🔹 6. VIEW STAFF PROFILE (SELF)
+    // ===========================
+    @GetMapping("/staff_profile")
+    public String viewProfile(Model model, Principal principal) {
+        if (principal == null) return "redirect:/login";
+
+        String username = principal.getName(); // lấy username đăng nhập
+        Staff staff = staffService.getAllStaff().stream()
+                .filter(s -> s.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
+
+        if (staff != null) {
+            model.addAttribute("staff", staff);
+        }
+        return "staffs/staff_profile"; // file thymeleaf
+    }
+
+    // ===========================
+    // 🔹 7. EDIT STAFF PROFILE (SELF)
+    // ===========================
+    @GetMapping("/staff_profile/edit/{id}")
+    public String editProfile(@PathVariable("id") String id, Model model) {
+        Staff staff = staffService.getStaffByID(id);
+        if (staff != null) {
+            model.addAttribute("staff", staff);
+        }
+        return "staffs/staff_update_profile";
+    }
+
+    // ===========================
+    // 🔹 8. SAVE STAFF PROFILE (SELF)
+    // ===========================
+    @PostMapping("/staff_profile/save")
+    public String saveProfile(@ModelAttribute Staff formStaff, Model model) {
+        Staff existingStaff = staffService.getStaffByID(formStaff.getStaffID());
+        if (existingStaff == null) {
+            model.addAttribute("error", "Staff not found!");
+            return "staffs/staff_update_profile";
+        }
+
+        existingStaff.setEmail(formStaff.getEmail());
+        existingStaff.setPhone(formStaff.getPhone());
+
+        boolean hasError = staffService.validateStaff(existingStaff, model, true);
+        if (hasError) {
+            model.addAttribute("staff", existingStaff);
+            return "staffs/staff_update_profile";
+        }
+
+        staffService.getStaffRepo().save(existingStaff);
+        return "redirect:/staffs/staff_profile";
+    }
 }

@@ -8,7 +8,6 @@ import vn.edu.fpt.cinemamanagement.entities.Voucher;
 import vn.edu.fpt.cinemamanagement.repositories.VoucherRepository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class VoucherService {
@@ -31,24 +30,24 @@ public class VoucherService {
         return voucherRepo.save(voucher);
     }
 
-    private int extractNextNumber(String maxCode) {
-        if (maxCode == null || maxCode.length() < 4) {
+    private int extractNextNumber(String maxID) {
+        if (maxID == null || maxID.length() < 4) {
             return 1; // bắt đầu từ 00001 nếu chưa có mã
         }
-        String numberPart = maxCode.substring(3); // Bỏ VC1 / VC2
+        String numberPart = maxID.substring(3); // Bỏ VC1 / VC2
         return Integer.parseInt(numberPart) + 1;
     }
 
     public String generateAmountVoucherID() {
-        String maxCode = voucherRepo.getMaxAmountVoucherCode();
-        int nextNumber = extractNextNumber(maxCode);
+        String maxID = voucherRepo.getMaxAmountVoucherID();
+        int nextNumber = extractNextNumber(maxID);
 
         return String.format("VC1%05d", nextNumber);
     }
 
     public String generatePercentageVoucherID() {
-        String maxCode = voucherRepo.getMaxPercentageVoucher();
-        int nextNumber = extractNextNumber(maxCode);
+        String maxID = voucherRepo.getMaxPercentageVoucherID();
+        int nextNumber = extractNextNumber(maxID);
 
         return String.format("VC2%05d", nextNumber);
     }
@@ -85,7 +84,7 @@ public class VoucherService {
         } else if (voucher.getCode().length() > 10) {
             model.addAttribute("errorCode", "Voucher name too long, must be less than or equal to 10 characters");
             isValid = false;
-        } else if (voucher.getCode().split(" ").length > 1){
+        } else if (voucher.getCode().split(" ").length > 1) {
             model.addAttribute("errorCode", "Voucher must be not have space");
             isValid = false;
         }

@@ -16,7 +16,7 @@
             <div class="bg-secondary rounded p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h6 class="mb-0">Concessions Management</h6>
-                    <a th:href="@{/concessions/create}" class="btn btn-danger btn-compact">
+                    <a th:href="@{/concessions/create}" class="btn btn-primary btn-compact">
                         <i class="fa fa-plus me-2"></i>Add Concession
                     </a>
                 </div>
@@ -28,26 +28,29 @@
                             <th style="width:10%">Image</th>
                             <th style="width:16%">ID</th>
                             <th>Name</th>
-                            <th style="width:12%" class="text-white">Price</th>
-                            <th style="width:22%" class="text-white">Action</th>
+                            <th style="width:12%" class="text-white ">Price</th>
+                            <th style="width:22%" class="text-white col-action">Action</th>
                         </tr>
                         </thead>
 
                         <tbody id="concessionTableBody">
                         <tr th:each="c : ${concessionsList}">
-                            <td>
-                                <img th:if="${c.img != null and !#strings.isEmpty(c.img)}"
-                                     th:src="${c.img}" alt="img"
-                                     style="width:64px;height:64px;object-fit:cover;border-radius:8px;"
-                                     onerror="this.src='/img/placeholder.png'">
-                                <span th:if="${c.img == null or #strings.isEmpty(c.img)}"
-                                      class="text-muted">No image</span>
+                            <td class="text-center align-middle" style="width:10%">
+                                <div style="width:100px; height:100px; overflow:hidden; margin:auto;">
+                                    <img th:if="${c.img != null and !#strings.isEmpty(c.img)}"
+                                         th:src="${c.img}" alt="img"
+                                         style="width:100%; height:100%; object-fit:cover; border-radius:8px;"
+                                         onerror="this.src='/img/placeholder.png'">
+                                    <span th:if="${c.img == null or #strings.isEmpty(c.img)}"
+                                          class="text-muted">No image</span>
+                                </div>
                             </td>
+
                             <td th:text="${c.concessionId}"></td>
                             <td th:text="${c.name}"></td>
-                            <td class="text-end"
+                            <td
                                 th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')}"></td>
-                            <td class="text-end">
+                            <td >
                                 <a th:href="@{/concessions/edit/{id} (id=${c.concessionId})}"
                                    class="btn btn-success btn-compact"><i class="fa fa-edit"></i> Edit</a>
                                 <a th:href="@{/concessions/detail/{id} (id=${c.concessionId})}"

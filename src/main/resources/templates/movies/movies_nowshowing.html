@@ -54,7 +54,7 @@
                         <!--Sửa nút Book và Detail -->
                         <div class="d-flex justify-content-center gap-4">
 
-                            <a th:href="@{'/movies/detail/' + ${movie.movieID}}" class="movie-card__button btn btn-outline-warning">View Details</a>
+                            <a th:href="@{'/homepage/movie_detail/' + ${movie.movieID}}" class="movie-card__button btn btn-outline-warning">View Details</a>
                             <a th:href="@{'/booking/' + ${movie.movieID}}" class="movie-card__button btn btn-danger">Booking</a>
                         </div>
                         

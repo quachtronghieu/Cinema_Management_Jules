@@ -10,9 +10,10 @@
         <div class="bg-secondary rounded p-4">
             <h6 class="mb-3">Edit Concession</h6>
 
-            <div th:if="${errors != null and errors._global != null}"
+            <!-- Sửa cú pháp Map: dùng errors['...'] -->
+            <div th:if="${errors != null and errors['_global'] != null}"
                  class="alert alert-danger"
-                 th:text="${errors._global}"></div>
+                 th:text="${errors['_global']}"></div>
 
             <form th:action="@{|/concessions/edit/${concession.concessionId}|}"
                   th:object="${concession}" method="post" class="row g-3">
@@ -20,26 +21,37 @@
                 <div class="col-md-3">
                     <label class="form-label">ID</label>
                     <input class="form-control bg-dark border-0" th:value="${concession.concessionId}" readonly>
-                    <div class="text-danger small" th:text="${errors?.concessionId}"></div>
+                    <div class="text-danger small" th:if="${errors != null and errors['concessionId'] != null}"
+                         th:text="${errors['concessionId']}"></div>
                 </div>
+                <input type="hidden" th:field="*{concessionId}">
 
                 <div class="col-md-5">
                     <label class="form-label">Name</label>
-                    <input class="form-control bg-dark border-0" th:field="*{name}" required>
-                    <div class="text-danger small" th:text="${errors?.name}"></div>
+                    <!-- Thêm pattern/title để bắt ngay trên trình duyệt (giữ logic backend) -->
+                    <input class="form-control bg-dark border-0" th:field="*{name}" required
+                           pattern="[A-Za-z0-9 ]{2,50}"
+                           title="Only English letters, digits and spaces (2–50 chars)">
+                    <div class="text-danger small" th:if="${errors != null and errors['name'] != null}"
+                         th:text="${errors['name']}"></div>
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label">Price (VND)</label>
                     <input class="form-control bg-dark border-0" th:field="*{price}"
                            type="number" step="1000" min="0" required>
-                    <div class="text-danger small" th:text="${errors?.price}"></div>
+                    <div class="text-danger small" th:if="${errors != null and errors['price'] != null}"
+                         th:text="${errors['price']}"></div>
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control bg-dark border-0" th:field="*{description}" rows="2" required></textarea>
-                    <div class="text-danger small" th:text="${errors?.description}"></div>
+                    <!-- Chỉ cho English + dấu cách + , .  -->
+                    <textarea class="form-control bg-dark border-0" th:field="*{description}" rows="2" required
+                              pattern="[A-Za-z0-9 ,.]{5,200}"
+                              title="Only English letters, digits, spaces, comma and period (5–200 chars)"></textarea>
+                    <div class="text-danger small" th:if="${errors != null and errors['description'] != null}"
+                         th:text="${errors['description']}"></div>
                 </div>
 
                 <!-- IMAGE -->
@@ -62,10 +74,11 @@
                              style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #555;"
                              onerror="this.onerror=null; this.src='/assets/img/placeholder.png';">
                     </div>
-                    <div class="text-danger small" th:text="${errors?.img}"></div>
+                    <div class="text-danger small" th:if="${errors != null and errors['img'] != null}"
+                         th:text="${errors['img']}"></div>
                 </div>
 
-                <!-- ✅ Script fix -->
+                <!-- Giữ script cũ, chỉ làm sạch một chút -->
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         const select = document.getElementById("imageSelect");
@@ -74,7 +87,6 @@
                         select.addEventListener("change", function () {
                             const fileName = select.value;
                             if (fileName) {
-                                // Nếu value đã chứa "assets/", dùng trực tiếp
                                 if (fileName.includes('assets/')) {
                                     preview.src = "/" + fileName;
                                 } else {

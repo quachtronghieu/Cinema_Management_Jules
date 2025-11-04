@@ -27,7 +27,7 @@ public class MovieController {
 
     @RequestMapping
     public String getAllMovies(Model model,  @RequestParam(name = "page", defaultValue = "1", required = false) int page) {
-        int size = 3;
+        int size = 10;
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Movie> movies = movieService.getAllMovies(pageable);
         model.addAttribute("movies", movies);
@@ -67,7 +67,10 @@ public class MovieController {
         movie.setMovieID(movieService.generateMovieID());
         model.addAttribute("movie", movie);
 
-        List<String> imgPaths = movieService.getImgPaths();
+        List<String> ageRatings = movieService.getAgeRatings();
+        model.addAttribute("ageRatings", ageRatings);
+
+        List<String> imgPaths = movieService.getImgPaths(null);
         model.addAttribute("imgPaths", imgPaths);
         model.addAttribute("errors", new HashMap<String, String>());
         model.addAttribute("genres", movieService.getGenres());
@@ -79,7 +82,10 @@ public class MovieController {
         if (!movieService.existsByMovieID(id)) {
             model.addAttribute("error", String.format("Movie with ID %s does not exist", id));
         }
-        List<String> imgPaths = movieService.getImgPaths();
+        List<String> ageRatings = movieService.getAgeRatings();
+        model.addAttribute("ageRatings", ageRatings);
+
+        List<String> imgPaths = movieService.getImgPaths(movieService.findById(id).getImg());
         model.addAttribute("imgPaths", imgPaths);
         model.addAttribute("errors", new HashMap<String, String>());
         model.addAttribute("genres", movieService.getGenres());
@@ -93,7 +99,8 @@ public String create(@ModelAttribute("movie") Movie movie, Model model) {
     if (!errors.isEmpty()) {
         model.addAttribute("movie", movie); // ⚠️ cần có dòng này
         model.addAttribute("errors", errors);
-        model.addAttribute("imgPaths", movieService.getImgPaths());
+        model.addAttribute("ageRatings", movieService.getAgeRatings());
+        model.addAttribute("imgPaths", movieService.getImgPaths(movie.getImg()));
         model.addAttribute("genres", movieService.getGenres());
 
         return  "movies/movie_create";
@@ -109,7 +116,8 @@ public String create(@ModelAttribute("movie") Movie movie, Model model) {
         if (!errors.isEmpty()) {
             model.addAttribute("movie", movie); // ⚠️ cần có dòng này
             model.addAttribute("errors", errors);
-            model.addAttribute("imgPaths", movieService.getImgPaths());
+            model.addAttribute("ageRatings", movieService.getAgeRatings());
+            model.addAttribute("imgPaths", movieService.getImgPaths(movie.getImg()));
             model.addAttribute("genres", movieService.getGenres());
 
             return "movies/movie_update";

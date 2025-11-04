@@ -43,7 +43,7 @@
                         <p class="movie-card__release-date">
                             Release Date: <span th:text="${movie.releaseDate}">Date</span>
                         </p>
-                        <a th:href="@{/movies/detail/{id}(id=${movie.movieID})}" class="movie-card__button btn btn-outline-warning">View Details</a>
+                        <a th:href="@{/homepage/movie_detail/{id}(id=${movie.movieID})}" class="movie-card__button btn btn-outline-warning">View Details</a>
                     </div>
                 </article>
             </div>
@@ -76,5 +76,7 @@
 <!-- JS -->
 <script th:src="@{/assets/js/hero.js}"></script>
 <script th:src="@{/assets/js/movies.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -3,6 +3,7 @@ package vn.edu.fpt.cinemamanagement.controller;
 import vn.edu.fpt.cinemamanagement.dto.RoomDetailDTO;
 import vn.edu.fpt.cinemamanagement.entities.Room;
 import vn.edu.fpt.cinemamanagement.entities.Template;
+import vn.edu.fpt.cinemamanagement.entities.TemplateSeat;
 import vn.edu.fpt.cinemamanagement.repositories.TemplateRepository;
 import vn.edu.fpt.cinemamanagement.repositories.TemplateSeatRepository;
 import vn.edu.fpt.cinemamanagement.services.RoomService;
@@ -11,8 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import vn.edu.fpt.cinemamanagement.services.TemplateSeatService;
 
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "rooms")
@@ -23,6 +29,8 @@ public class RoomController {
     private TemplateRepository templateRepository;
     @Autowired
     private TemplateSeatRepository templateSeatRepository;
+    @Autowired
+    TemplateSeatService templateSeatService;
 
     public RoomController(
             RoomService roomService,
@@ -99,5 +107,32 @@ public class RoomController {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
         }
         return "redirect:/rooms";
+    }
+
+    @GetMapping("seat")
+    public String showSeatPage(Model model) {
+        return "seats/seat_template";
+    }
+
+    @GetMapping("template/{roomId}")
+    public String showTemplateSeat(@PathVariable("roomId") String roomId, Model model) {
+        Room room = roomService.findById(roomId);
+        Template template = room.getTemplate();
+        List<TemplateSeat> seats = templateSeatService.findAllSeatsByTemplateID(template.getId());
+
+        seats.sort(Comparator.comparing(TemplateSeat::getRow_label).thenComparing(TemplateSeat::getSeat_number));
+
+        Map<String, List<TemplateSeat>> groupedSeats = seats.stream()
+                .collect(Collectors.groupingBy(TemplateSeat::getRow_label,
+                        LinkedHashMap::new, Collectors.toList()));
+
+
+        model.addAttribute("room", room);
+        model.addAttribute("template", template.getId());
+        model.addAttribute("groupSeat", groupedSeats);
+        System.out.println("Temp: " + template.getId().trim());
+        System.out.println("Seats size: " + seats.size());
+        groupedSeats.forEach((k, v) -> System.out.println(k + " -> " + v.size()));
+        return "seats/seat_template";
     }
 }

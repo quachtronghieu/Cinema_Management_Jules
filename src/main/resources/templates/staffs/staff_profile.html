@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
+</head>
+
+<body>
+<header th:replace="~{fragment/frag :: navbar_homepage}"></header>
+
+<main role="main">
+    <section class="section" aria-labelledby="staff-profile-title">
+        <div class="container">
+            <div class="section__header section-header">
+                <h2 class="section__title">My Profile</h2>
+                <a th:href="@{/homepage}" class="btn btn-light btn-compact">
+                    <i class="fa fa-arrow-left me-1"></i> Back
+                </a>
+            </div>
+
+            <div class="profile-container">
+                <!-- Left Sidebar -->
+                <div class="profile-sidebar">
+                    <div class="avatar-circle" th:text="${#strings.substring(staff.username, 0, 1)}">A</div>
+                    <h2 th:text="${staff.fullName}">Nguyễn Văn A</h2>
+                    <!--<p th:text="${staff.position}">Cashier</p>-->
+                    <div class="profile-actions mt-3">
+                        <a th:href="@{/staffs/staff_profile/edit/{id}(id=${staff.staffID})}" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+
+                <!-- Right Content -->
+                <div class="profile-content">
+                    <div class="profile-header">
+                        <h1>Account Information</h1>
+                    </div>
+
+                    <form th:object="${staff}">
+                        <div class="form-group">
+                            <label>Staff ID</label>
+                            <input type="text" th:field="*{staffID}" readonly class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Position</label>
+                            <input type="text" th:field="*{position}" readonly class="form-control">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" th:field="*{fullName}" readonly class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" th:field="*{username}" readonly class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" th:field="*{email}" readonly class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" th:field="*{phone}" readonly class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
+<script th:src="@{/assets/js/hero.js}"></script>
+<script th:src="@{/assets/js/movies.js}"></script>
+</body>
+</html>

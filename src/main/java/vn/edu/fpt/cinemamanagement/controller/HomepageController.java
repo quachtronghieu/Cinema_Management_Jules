@@ -136,5 +136,22 @@ public class HomepageController {
 
         return "movies/movie_coming_soon";
     }
+    @RequestMapping(value = "/movie_detail/{id}")
+    public String getMovieDetails(@PathVariable("id") String id, Model model) {
+        Movie movie = movieService.findById(id);
+        model.addAttribute("movie", movie);
+        boolean isNowShowing = movieService.isMovieNowShowing(movie, movieService.getNowShowingMovies());
+        if (isNowShowing) {
+            model.addAttribute("isNowShowing", true);
+        } else {
+            model.addAttribute("isNowShowing", false);
+        }
+        if (!movieService.existsByMovieID(id)) {
+            model.addAttribute("error", String.format("Movie with ID %s does not exist", id));
+        }
+        return "movies/movie_detail_guest";
+    }
+
+
 
 }

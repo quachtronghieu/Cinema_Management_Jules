@@ -164,12 +164,11 @@ public class MovieService {
         }
     }
 
-
-    private void validateAgeRating(int ageRating, Map<String, String> errors) {
-        if (ageRating != 0 && ageRating != 13 && ageRating != 16 && ageRating != 18) {
-            errors.put("ageRating", "Age rating must be one of: 0, 13, 16, or 18.");
-        }
+private void validateAgeRating(String ageRating, Map<String, String> errors) {
+    if (ageRating == null || ageRating.trim().isEmpty()) {
+        errors.put("ageRating", "The age rating is required.");
     }
+}
 
     private void validateImage(String img, Map<String, String> errors) {
         if (img == null || img.trim().isEmpty()) {
@@ -203,6 +202,26 @@ public class MovieService {
         );
     }
 
+    public List<String> getAgeRatings() {
+        return List.of(
+                "P",
+                "T13",
+                "T16",
+                "T18"
+        );
+    }
+
+    public String getAgeRatingDescription(String code) {
+        switch (code) {
+            case "P": return "P - Suitable for all ages.";
+            case "T13": return "T13 - Restricted to viewers aged 13 and above.";
+            case "T16": return "T16 - Restricted to viewers aged 16 and above.";
+            case "T18": return "T18 - Restricted to viewers aged 18 and above.";
+            default: return "Unknown rating.";
+        }
+    }
+
+
 
     @Transactional
     public Map<String, String> createMovie(Movie movie) {
@@ -217,19 +236,15 @@ public class MovieService {
         validateSummary(movie.getSummary(), errors);
         validateImage(movie.getImg(), errors);
         validateTrailer(movie.getTrailer(), errors);
+        validateDuplicateTitle(movie.getTitle(), errors);
 
         // Nếu có lỗi format thì return luôn
         if (!errors.isEmpty()) {
             return errors;
         }
-        String img = movie.getImg();
-        if (img == null || img.trim().isEmpty()) {
-            errors.put("img", "Image cannot be empty");
-        }
+
         System.out.println("Checking duplicate for title: " + movie.getTitle());
         System.out.println("existsByTitleIgnoreCase result: " + movieRepository.existsByTitleIgnoreCase(movie.getTitle().toUpperCase()));
-
-        validateDuplicateTitle(movie.getTitle(), errors);
 
         // Nếu có lỗi business rule thì return luôn
         if (!errors.isEmpty()) {
@@ -259,10 +274,6 @@ public class MovieService {
         // Nếu có lỗi format thì return luôn
         if (!errors.isEmpty()) {
             return errors;
-        }
-        String img = movie.getImg();
-        if (img == null || img.trim().isEmpty()) {
-            errors.put("img", "Image cannot be empty");
         }
 
         System.out.println("Checking duplicate for title: " + movie.getTitle());
@@ -360,7 +371,7 @@ public class MovieService {
     }
 
     @Transactional
-    public List<String> getImgPaths() {
+    public List<String> getImgPaths(String currentImg) {
         List<String> imagePaths = new ArrayList<>();
         try {
             // 1️⃣ Lấy danh sách file ảnh trong thư mục
@@ -387,6 +398,9 @@ public class MovieService {
                     imagePaths.add("/assets/img/movies/" + file.getName());
                 }
             }
+            if (currentImg != null && !imagePaths.contains(currentImg)) {
+                imagePaths.add(currentImg);
+            }
 
         } catch (IOException e) {
             throw new RuntimeException("Cannot read movies folder!", e);
@@ -399,6 +413,13 @@ public class MovieService {
     public Page<Movie> findComingSoonMovies(Pageable pageable) {
         return movieRepository.findByReleaseDateGreaterThan(LocalDate.now(), pageable);
     }
+
+    public boolean isMovieNowShowing(Movie movie, List<Movie> nowShowingMovies) {
+        if (movie == null || nowShowingMovies == null) return false;
+        return nowShowingMovies.stream()
+                .anyMatch(m -> m.getMovieID().equals(movie.getMovieID()));
+    }
+
 
 }
 

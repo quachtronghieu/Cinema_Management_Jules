@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGV Movies - Your Movie Experience Begins Here</title>
+    <meta name="description" content="Book movie tickets online at CGV. Watch the latest movies in premium cinemas with the best sound and picture quality.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
+</head>
+
+<body>
+
+<header th:replace="~{fragment/frag :: navbar_homepage}"></header>
+<main role="main">
+    <section class="section" aria-labelledby="coming-soon-grid-title">
+        <div class="container">
+            <div class="section__header section-header">
+                <h2 class="section__title">Your Infomation</h2>
+                <a th:href="@{/customer/profile/my_profile}" class="btn btn-light btn-compact">
+                    <i class="fa fa-arrow-left me-1 "></i> Back
+                </a>
+            </div>
+            
+            <div class="profile-container">
+                <!-- Left Sidebar -->
+                <div class="profile-sidebar">
+                    <div class ="avatar-circle" th:text="${#strings.substring(customer.username, 0, 1)}"></div>
+                    <h2 th:text="${customer.username}"></h2>
+                    <!--                    <p th:text="${staff.position}">Cashier</p>-->
+                </div>
+
+                <!-- Right Content -->
+                <div class="profile-content">
+                    <div class="profile-header">
+                        <h1>My Profile</h1>
+                    </div>
+
+                    <form id="profileForm" method="post" th:action="@{/customer/profile/update}" th:object="${customer}">
+
+                        <!-- User ID -->
+                        <div class="form-group">
+                            <input type="hidden" th:field="*{user_id}" readonly class="form-control">
+                        </div>
+
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" th:field="*{username}" readonly class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="hidden" th:field="*{password}" class="form-control">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                <input id="dob" type="date" th:field="*{dob}" class="form-control">
+                                <p class="text-danger" th:if="${errors != null and errors.containsKey('dob')}" th:text="${errors['dob']}"></p>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Sex</label>
+                                <select th:field="*{sex}" class="form-control">
+                                    <option th:value="true">Male</option>
+                                    <option th:value="false">Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" th:field="*{email}" class="form-control">
+                                <p class="text-danger" th:if="${errors != null and errors.containsKey('email')}" th:text="${errors['email']}"></p>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" th:field="*{phone}" class="form-control">
+                                <p class="text-danger"  th:if="${errors != null and errors.containsKey('phone')}" th:text="${errors['phone']}"></p>
+                            </div>
+                        </div>
+
+                        <div class="profile-actions mt-3">
+                            <button type="submit" class="btn-edit btn-primary">Save Profile</button>
+                        </div>
+                    </form>
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
+
+<!-- JS -->
+<script th:src="@{/assets/js/hero.js}"></script>
+<script th:src="@{/assets/js/movies.js}"></script>
+</body>
+</html>

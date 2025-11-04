@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import vn.edu.fpt.cinemamanagement.entities.Customer;
 import vn.edu.fpt.cinemamanagement.entities.Staff;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +20,10 @@ public interface CustomerRepository extends JpaRepository<Customer,String> {
     String findLastCustomerId();
     //login
     Optional<Customer>  findByUsername(String username);
+
+    Customer findByEmail(String email);
+
+    Customer findByPhone(String phone);
+
+    List<Customer> findByVerifyAndResetRequestedAtBefore(String verify, LocalDateTime time);
 }

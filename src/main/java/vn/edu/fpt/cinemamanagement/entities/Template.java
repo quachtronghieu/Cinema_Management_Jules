@@ -12,15 +12,15 @@ public class Template {
     private String name;
     private String description;
 
-    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Room> rooms;
+    @OneToOne(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Room rooms;
 
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TemplateSeat> templateSeats;
     public Template() {
     }
 
-    public Template(String id, String name, String description, List<Room> rooms) {
+    public Template(String id, String name, String description, Room rooms) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -51,11 +51,11 @@ public class Template {
         this.description = description;
     }
 
-    public List<Room> getRooms() {
+    public Room getRooms() {
         return rooms;
     }
 
-    public void setRooms(List<Room> rooms) {
+    public void setRooms(Room rooms) {
         this.rooms = rooms;
     }
 }

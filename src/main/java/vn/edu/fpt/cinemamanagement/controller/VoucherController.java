@@ -45,6 +45,9 @@ public class VoucherController {
             endPage = Math.min(startPage + visiblePages - 1, totalPages);
         }
 
+        if (voucherPage.isEmpty()){
+            model.addAttribute("voucherEmpty", "Voucher list is empty" );
+        }
         model.addAttribute("voucherPage", voucherPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("startPage", startPage);
@@ -62,7 +65,7 @@ public class VoucherController {
 
     @PostMapping("/create")
     public String createVoucher(Voucher voucher, Model model) {
-        if (voucher.getDiscountType().equals("amount")) {
+        if (voucher.getDiscountType().equalsIgnoreCase("amount")) {
             voucher.setVoucherId(voucherService.generateAmountVoucherID());
         } else {
             voucher.setVoucherId(voucherService.generatePercentageVoucherID());
@@ -110,11 +113,6 @@ public class VoucherController {
         return "vouchers/voucher_detail";
     }
 
-    @GetMapping("/delete/{id}")
-    public String confirmDelete(@PathVariable("id") String id, Model model) {
-        model.addAttribute("voucher", voucherService.findVoucherById(id));
-        return "vouchers/voucher_delete";
-    }
 
     @PostMapping("/delete")
     public String deleteVoucher(@RequestParam("voucherId") String id) {

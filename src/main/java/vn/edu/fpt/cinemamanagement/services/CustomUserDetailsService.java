@@ -27,10 +27,22 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        // Cố gắng tìm người dùng từ Staff Repository
-        Staff staff = staffRepository.findByUsername(username).orElse(null);
+        // Kiểm tra username có ký tự viết hoa không
+        boolean hasUpperCase = !username.equals(username.toLowerCase());
 
-        if (staff != null) {
+        if (hasUpperCase) {
+            // Là Customer
+            Customer customer = customerRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+            return User.builder()
+                    .username(customer.getUsername())
+                    .password(customer.getPassword())
+                    .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
+                    .build();
+        } else {
+            // Là Staff
+            Staff staff = staffRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Staff not found"));
             String role = "ROLE_" + staff.getPosition().toUpperCase();
             return User.builder()
                     .username(staff.getUsername())
@@ -38,13 +50,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .authorities(Collections.singletonList(new SimpleGrantedAuthority(role)))
                     .build();
         }
-
-        // Nếu không tìm thấy trong Staff, tìm trong Customer Repository
-        Customer customer = customerRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        return User.builder()
-                .username(customer.getUsername())
-                .password(customer.getPassword())
-                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))  // Vai trò mặc định cho khách hàng
-                .build();
     }
 }

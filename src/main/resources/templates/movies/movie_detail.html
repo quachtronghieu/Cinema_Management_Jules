@@ -53,10 +53,10 @@
                             </div>
                             <div class="mb-2">
                                 <strong>Age Rating:</strong>
-                                <p th:text="*{ageRating}"></p>
+                                <span th:text="${@movieService.getAgeRatingDescription(movie.ageRating)}"></span>
                             </div>
                             <div class="mb-3">
-                                <strong>Summary:</strong>
+                                <strong>Description:</strong>
                                 <p class="mt-1" th:text="*{summary}"></p>
                             </div>
 
