@@ -13,7 +13,7 @@ public class TemplateSeat {
     private Template template;
     private String row_label;
     private int seat_number;
-private String seat_type;
+    private String seat_type;
 
     public TemplateSeat() {
     }

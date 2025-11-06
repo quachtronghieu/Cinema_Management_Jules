@@ -113,11 +113,6 @@ public class VoucherController {
         return "vouchers/voucher_detail";
     }
 
-    @GetMapping("/delete/{id}")
-    public String confirmDelete(@PathVariable("id") String id, Model model) {
-        model.addAttribute("voucher", voucherService.findVoucherById(id));
-        return "vouchers/voucher_delete";
-    }
 
     @PostMapping("/delete")
     public String deleteVoucher(@RequestParam("voucherId") String id) {

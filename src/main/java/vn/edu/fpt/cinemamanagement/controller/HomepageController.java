@@ -145,7 +145,6 @@ public class HomepageController {
 
         return "movies/movie_coming_soon";
     }
-
     @RequestMapping(value = "/movie_detail/{id}")
     public String getMovieDetails(@PathVariable("id") String id, Model model) {
         Movie movie = movieService.findById(id);

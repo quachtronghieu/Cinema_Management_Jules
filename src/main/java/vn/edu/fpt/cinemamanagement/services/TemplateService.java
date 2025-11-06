@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TemplateService {
     private TemplateRepository templateRepository;
-    public  TemplateService(TemplateRepository templateRepository) {this.templateRepository = templateRepository;}
+
+    public TemplateService(TemplateRepository templateRepository) {
+        this.templateRepository = templateRepository;
+    }
 
     @Transactional
     public String getTemplateNameByID(String templateID) {
@@ -16,4 +19,9 @@ public class TemplateService {
                 .map(Template::getName)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Template có ID: " + templateID));
     }
+
+    public Template getTemplateByID(String templateID) {
+        return templateRepository.findById(templateID).orElse(null);
+    }
+
 }
