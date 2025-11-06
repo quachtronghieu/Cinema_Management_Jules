@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      th:replace="~{dashboard/dashboard :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Create Showtime</title>
+</head>
+<body>
+<main th:fragment="content">
+    <div class="container-fluid pt-4 px-4">
+        <div class="bg-secondary rounded p-4 shadow-lg">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0 text-white">
+                    <i class="bi bi-camera-reels me-2 text-danger"></i>Create Showtime
+                </h5>
+                <a th:href="@{/showtime}" class="btn btn-light btn-compact">
+                    <i class="bi bi-arrow-left me-1"></i>Back
+                </a>
+            </div>
+
+            <!-- Alert -->
+            <div id="availabilityMsg"
+                 class="alert text-center fw-semibold py-2 mt-3"
+                 style="display:none; border-radius:10px;">
+            </div>
+
+            <!-- Form -->
+            <form th:action="@{/showtime/create}" th:object="${form}" method="post"
+                  class="row g-3 needs-validation" novalidate>
+                <!-- Movie -->
+                <div class="col-md-4">
+                    <label class="form-label text-light fw-semibold">Movie *</label>
+                    <select id="movieId" class="form-select bg-dark text-white border-0"
+                            th:field="*{movieId}" required>
+                        <option value="">-- Select Movie --</option>
+                        <option th:each="m : ${movies}"
+                                th:value="${m.movieID}"
+                                th:data-duration="${m.duration}"
+                                th:text="${m.title}"></option>
+                    </select>
+                    <div class="invalid-feedback">Please select a movie.</div>
+                </div>
+
+                <!-- Room -->
+                <div class="col-md-3">
+                    <label class="form-label text-light fw-semibold">Room *</label>
+                    <select id="roomId" class="form-select bg-dark text-white border-0"
+                            th:field="*{roomId}" required>
+                        <option value="">-- Select Room --</option>
+                        <option th:each="room : ${roomList}"
+                                th:value="${room.roomID}"
+                                th:text="${room.template != null ? room.template.name + ' (' + room.roomID + ')' : room.roomID}">
+                        </option>
+                    </select>
+                    <div class="invalid-feedback">Please select a room.</div>
+                </div>
+
+                <!-- Date -->
+                <div class="col-md-3">
+                    <label class="form-label text-light fw-semibold">Date *</label>
+                    <input id="showDate" type="date"
+                           class="form-control bg-dark text-white border-0"
+                           th:field="*{showDate}" required
+                           pattern="\d{4}-\d{2}-\d{2}">
+                    <div class="invalid-feedback">Please enter a valid date.</div>
+                </div>
+
+                <!-- Start Time -->
+                <div class="col-md-2">
+                    <label class="form-label text-light fw-semibold">Start Time *</label>
+                    <select id="startTime" class="form-select bg-dark text-white border-0"
+                            th:field="*{startTime}" required>
+                        <option value="">-- Select Time --</option>
+                        <option th:each="i : ${#numbers.sequence(9, 23)}"
+                                th:value="${i < 10 ? '0' + i + ':00' : i + ':00'}"
+                                th:text="${i < 10 ? '0' + i + ':00' : i + ':00'}"></option>
+                    </select>
+                    <div class="invalid-feedback">Please select a start time.</div>
+                </div>
+
+                <!-- Save -->
+                <div class="col-12 text-end">
+                    <button id="saveBtn" type="submit" class="btn btn-danger">
+                        <i class="bi bi-save me-1"></i>Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client Validation -->
+    <script>
+        (() => {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function() {
+            function checkAvailability() {
+                const movieId = $("#movieId").val();
+                const roomId = $("#roomId").val();
+                const date = $("#showDate").val();
+                const startTime = $("#startTime").val();
+
+                if (!movieId || !roomId || !date || !startTime) return;
+
+                const duration = $("#movieId option:selected").data("duration");
+
+                $.ajax({
+                    url: "/showtime/check-available",
+                    type: "GET",
+                    data: {
+                        movieId: movieId,
+                        roomId: roomId,
+                        date: date,
+                        startTime: startTime,
+                        duration: duration
+                    },
+                    success: function(res) {
+                        const alertBox = $("#availabilityMsg");
+                        alertBox.removeClass("alert-success alert-danger alert-warning");
+
+                        if (res.available) {
+                            alertBox
+                                .addClass("alert-success")
+                                .html("<i class='bi bi-check-circle me-2'></i>" + res.message)
+                                .slideDown();
+                        } else {
+                            // Chỉ hiển thị cảnh báo, KHÔNG khóa nút Save
+                            alertBox
+                                .addClass("alert-warning")
+                                .html("<i class='bi bi-exclamation-triangle me-2'></i>" + res.message)
+                                .slideDown();
+                        }
+                    },
+                    error: function() {
+                        $("#availabilityMsg")
+                            .removeClass("alert-success alert-warning")
+                            .addClass("alert-danger")
+                            .html("<i class='bi bi-x-circle me-2'></i>Error checking slot availability.")
+                            .slideDown();
+                    }
+                });
+            }
+
+            // Lắng nghe khi thay đổi dữ liệu
+            $("#movieId, #roomId, #showDate, #startTime").on("change", checkAvailability);
+        });
+    </script>
+</main>
+</body>
+</html>
