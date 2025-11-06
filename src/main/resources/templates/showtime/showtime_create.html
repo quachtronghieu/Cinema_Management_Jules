@@ -25,6 +25,8 @@
             </div>
 
             <!-- Form -->
+            <div th:if="${error}" class="alert alert-danger text-center fw-semibold mb-3" th:text="${error}"></div>
+            <div th:if="${msg}" class="alert alert-success text-center fw-semibold mb-3" th:text="${msg}"></div>
             <form th:action="@{/showtime/create}" th:object="${form}" method="post"
                   class="row g-3 needs-validation" novalidate>
                 <!-- Movie -->
@@ -38,6 +40,7 @@
                                 th:data-duration="${m.duration}"
                                 th:text="${m.title}"></option>
                     </select>
+                    <p th:if="${movieIdError}" class="text-danger small mt-1" th:text="${movieIdError}"></p>
                     <div class="invalid-feedback">Please select a movie.</div>
                 </div>
 
@@ -48,10 +51,11 @@
                             th:field="*{roomId}" required>
                         <option value="">-- Select Room --</option>
                         <option th:each="room : ${roomList}"
-                                th:value="${room.roomID}"
-                                th:text="${room.template != null ? room.template.name + ' (' + room.roomID + ')' : room.roomID}">
+                                th:value="${room.id}"
+                                th:text="${room.template != null ? room.template.name : 'Unnamed Room'}">
                         </option>
                     </select>
+                    <p th:if="${roomIdError}" class="text-danger small mt-1" th:text="${roomIdError}"></p>
                     <div class="invalid-feedback">Please select a room.</div>
                 </div>
 
@@ -62,6 +66,7 @@
                            class="form-control bg-dark text-white border-0"
                            th:field="*{showDate}" required
                            pattern="\d{4}-\d{2}-\d{2}">
+                    <p th:if="${showDateError}" class="text-danger small mt-1" th:text="${showDateError}"></p>
                     <div class="invalid-feedback">Please enter a valid date.</div>
                 </div>
 
@@ -74,6 +79,7 @@
                         <option th:each="i : ${#numbers.sequence(9, 23)}"
                                 th:value="${i < 10 ? '0' + i + ':00' : i + ':00'}"
                                 th:text="${i < 10 ? '0' + i + ':00' : i + ':00'}"></option>
+                        <p th:if="${startTimeError}" class="text-danger small mt-1" th:text="${startTimeError}"></p>
                     </select>
                     <div class="invalid-feedback">Please select a start time.</div>
                 </div>

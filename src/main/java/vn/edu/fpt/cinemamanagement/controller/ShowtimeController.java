@@ -20,6 +20,7 @@ import vn.edu.fpt.cinemamanagement.services.TimeSlotService;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,7 +46,7 @@ public class ShowtimeController {
         this.timeSlotService = timeSlotService;
     }
 
-    /** 📋 LIST tất cả showtime */
+    /**  LIST tất cả showtime */
     @GetMapping
     public String list(Model model) {
         List<Showtime> list = showtimeRepository.findAll();
@@ -57,12 +58,12 @@ public class ShowtimeController {
         return "showtime/showtime_list";
     }
 
-    /** ➕ FORM tạo mới */
+    /**  FORM tạo mới */
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("form", new ShowtimeForm());
         model.addAttribute("movies", movieService.getNowShowingMovies());
-        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("roomList", showtimeService.getAllRoomsWithTemplate());
         return "showtime/showtime_create";
     }
 
@@ -98,7 +99,7 @@ public class ShowtimeController {
         return Map.of("available", available, "message", message);
     }
 
-    /** 🕘 API load slot khả dụng */
+    /**  API load slot khả dụng */
     @GetMapping("/available-slots")
     @ResponseBody
     public ResponseEntity<List<String>> availableSlots(
@@ -122,28 +123,65 @@ public class ShowtimeController {
     /**  POST tạo mới */
     @PostMapping("/create")
     public String createSubmit(@ModelAttribute("form") ShowtimeForm form,
+                               Model model,
                                RedirectAttributes ra) {
-        try {
-            if (form.getMovieId() == null || form.getRoomId() == null
-                    || form.getShowDate() == null || form.getStartTime() == null) {
-                ra.addFlashAttribute("msg", "Please fill all fields!");
-                return "redirect:/showtime/create";
-            }
 
+        boolean hasError = false;
+        Map<String, String> fieldErrors = new HashMap<>();
+
+        // Validate thủ công từng ô
+        if (form.getMovieId() == null || form.getMovieId().isEmpty()) {
+            fieldErrors.put("movieIdError", "Please select a movie.");
+            hasError = true;
+        }
+        if (form.getRoomId() == null || form.getRoomId().isEmpty()) {
+            fieldErrors.put("roomIdError", "Please select a room.");
+            hasError = true;
+        }
+        if (form.getShowDate() == null) {
+            fieldErrors.put("showDateError", "Please select a date.");
+            hasError = true;
+        } else {
+            LocalDate now = LocalDate.now();
+            if (form.getShowDate().isBefore(now.minusYears(1))) {
+                fieldErrors.put("showDateError", "Date cannot be more than 1 year in the past.");
+                hasError = true;
+            } else if (form.getShowDate().isAfter(now.plusYears(1))) {
+                fieldErrors.put("showDateError", "Date cannot be more than 1 year in the future.");
+                hasError = true;
+            }
+        }
+        if (form.getStartTime() == null) {
+            fieldErrors.put("startTimeError", "Please select a start time.");
+            hasError = true;
+        }
+
+        //  Nếu có lỗi thì quay lại form
+        if (hasError) {
+            model.addAllAttributes(fieldErrors);
+            model.addAttribute("movies", movieService.getNowShowingMovies());
+            model.addAttribute("roomList", showtimeService.getAllRoomsWithTemplate());
+            model.addAttribute("form", form);
+            return "showtime/showtime_create"; //  render lại form
+        }
+
+        //  Nếu hợp lệ thì gọi service
+        try {
             showtimeService.createShowtime(
                     form.getMovieId(),
                     form.getRoomId(),
                     form.getShowDate(),
                     form.getStartTime()
             );
-
             ra.addFlashAttribute("msg", "Showtime created successfully!");
             return "redirect:/showtime";
         } catch (Exception ex) {
             ra.addFlashAttribute("msg", "Create failed: " + ex.getMessage());
-            return "redirect:/showtime";
+            return "redirect:/showtime/create";
         }
     }
+
+
 
     // ✏ EDIT FORM
     @GetMapping("/edit/{id}")

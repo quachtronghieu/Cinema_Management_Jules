@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
 import vn.edu.fpt.cinemamanagement.entities.Room;
 import vn.edu.fpt.cinemamanagement.entities.Showtime;
+import vn.edu.fpt.cinemamanagement.entities.Template;
 import vn.edu.fpt.cinemamanagement.repositories.ShowtimeRepository;
 
 import java.time.*;
@@ -44,6 +45,12 @@ public class ShowtimeService {
         }
         if (showDate.isAfter(now.plusMonths(1))) {
             throw new IllegalArgumentException("Showtime date cannot be more than 1 months in the future.");
+        }
+        if (showDate.isBefore(now.minusYears(1))) {
+            throw new IllegalArgumentException("Showtime date cannot be more than 1 year in the past.");
+        }
+        if (showDate.isAfter(now.plusYears(1))) {
+            throw new IllegalArgumentException("Showtime date cannot be more than 1 year in the future.");
         }
 
         int duration = movie.getDuration();
@@ -110,6 +117,19 @@ public class ShowtimeService {
         return showtimes;
     }
 
+    public List<Room> getAllRoomsWithTemplate() {
+        List<Room> rooms = roomService.getAllRooms(); // hoặc roomService.findAll()
+        for (Room r : rooms) {
+            if (r.getTemplate() != null) {
+                r.getTemplate().getName(); // ép Hibernate load template
+            }
+            System.out.println("ROOM DEBUG: " + r.getId() +
+                    " → template = " + (r.getTemplate() != null ? r.getTemplate().getName() : "null"));
+        }
+        return rooms;
+    }
+
+
 
     @Transactional
     public Showtime updateShowtime(String showtimeId, String movieId, String roomId,
@@ -128,6 +148,12 @@ public class ShowtimeService {
             throw new IllegalArgumentException("Showtime date cannot be more than 1 months in the past.");
         if (showDate.isAfter(now.plusMonths(1)))
             throw new IllegalArgumentException("Showtime date cannot be more than 1 months in the future.");
+        if (showDate.isBefore(now.minusYears(1))) {
+            throw new IllegalArgumentException("Showtime date cannot be more than 1 year in the past.");
+        }
+        if (showDate.isAfter(now.plusYears(1))) {
+            throw new IllegalArgumentException("Showtime date cannot be more than 1 year in the future.");
+        }
 
         int duration = movie.getDuration();
         int roundedDuration = (int) (Math.ceil(duration / 5.0) * 5);
