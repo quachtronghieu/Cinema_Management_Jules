@@ -198,7 +198,7 @@ public class ShowtimeController {
 
         model.addAttribute("form", form);
         model.addAttribute("movies", movieService.getNowShowingMovies());
-        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("rooms", showtimeService.getAllRoomsWithTemplate());
         return "showtime/showtime_update";
     }
 
@@ -232,5 +232,11 @@ public class ShowtimeController {
             ra.addFlashAttribute("msg", "Delete failed: " + e.getMessage());
         }
         return "redirect:/showtime";
+    }
+    @GetMapping("/detail/{id}")
+    public  String detailForm(@PathVariable String id, Model model) {
+        Showtime showtime = showtimeService.showtimeByID(id);
+        model.addAttribute("showtime", showtime);
+        return "showtime/showtime_detail";
     }
 }

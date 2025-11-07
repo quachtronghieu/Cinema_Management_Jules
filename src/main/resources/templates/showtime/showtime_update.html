@@ -45,7 +45,11 @@
                     <select id="roomId" class="form-select bg-dark text-white border-0"
                             th:field="*{roomId}" required>
                         <option value="">-- Select Room --</option>
-                        <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.id}"></option>
+                        <option th:each="r : ${rooms}"
+                                th:value="${r.id}"
+                                th:text="${r.template != null ? r.template.name : 'Unnamed Room'}"
+                                th:selected="${r.id == form.roomId}">
+                        </option>
                     </select>
                 </div>
 

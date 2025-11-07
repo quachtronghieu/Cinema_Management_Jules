@@ -159,9 +159,10 @@ public class ShowtimeService {
         int roundedDuration = (int) (Math.ceil(duration / 5.0) * 5);
         LocalTime endTime = startTime.plusMinutes(roundedDuration);
 
-        boolean overlap = repo.existsOverlap(room.getTemplate().getName(), showDate, startTime, endTime);
-        if (overlap && !existing.getRoom().getId().equals(roomId))
+        boolean overlap = repo.hasOverlapInRoom(roomId, showDate, startTime, endTime);
+        if (overlap && !existing.getShowtimeId().equals(showtimeId)) {
             throw new IllegalArgumentException("This time slot is already taken for this room.");
+        }
 
         boolean sameMovieOtherRoom = repo.hasSameMovieInOtherRoom(movieId, roomId, showDate, startTime, endTime);
         if (sameMovieOtherRoom)
@@ -216,6 +217,10 @@ public class ShowtimeService {
             slots.add(slot);
         }
         return grouped;
+    }
+
+    public Showtime showtimeByID(String id){
+        return repo.findByShowtimeId(id);
     }
 
 

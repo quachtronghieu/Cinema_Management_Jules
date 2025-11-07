@@ -17,6 +17,7 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, String> {
     List<Showtime> findByShowDate(LocalDate date);
     List<Showtime> findByRoom_IdAndShowDate(String roomId, LocalDate date);
     Optional<Showtime> findTopByOrderByShowtimeIdDesc();
+    Showtime findByShowtimeId(String showtimeId);
     boolean existsByMovieAndRoomAndShowDateAndStartTime(
             Movie movie,
             Room room,

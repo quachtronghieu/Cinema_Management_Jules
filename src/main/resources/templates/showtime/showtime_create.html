@@ -52,7 +52,7 @@
                         <option value="">-- Select Room --</option>
                         <option th:each="room : ${roomList}"
                                 th:value="${room.id}"
-                                th:text="${room.template != null ? room.template.name : 'Unnamed Room'}">
+                                th:text="${room.template != null ? room.getId() : 'Unnamed Room'}">
                         </option>
                     </select>
                     <p th:if="${roomIdError}" class="text-danger small mt-1" th:text="${roomIdError}"></p>
@@ -110,6 +110,7 @@
             });
         })();
     </script>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
