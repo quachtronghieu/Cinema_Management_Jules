@@ -49,20 +49,22 @@
                             <td th:text="*{position}"></td>
                             <td th:text="*{phone}"></td>
                             <td th:text="*{email}"></td>
-                            <td>
-                                <a class="btn btn-success btn-compact"
-                                   th:href="@{/staffs/update/{id}(id=*{staffID})}">
-                                    <i class="fa fa-edit"></i> Edit
-                                </a>
-                                <a class="btn btn-light btn-compact"
-                                   th:href="@{/staffs/detail/{id}(id=*{staffID})}">
-                                    <i class="bi bi-eye-fill"></i> Details
-                                </a>
-                                <button class="btn btn-danger btn-compact delete-staff-btn"
-                                        data-bs-toggle="modal" data-bs-target="#deleteStaffModal"
-                                        th:attr="data-id=*{staffID}, data-name=*{fullName}">
-                                    <i class="fa fa-trash"></i> Delete
-                                </button>
+                            <td class="col-action">
+                                <div class="d-flex flex-nowrap align-items-center justify-content-center">
+                                    <a class="btn btn-success btn-compact me-1"
+                                       th:href="@{/staffs/update/{id}(id=*{staffID})}">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </a>
+                                    <a class="btn btn-light btn-compact me-1"
+                                       th:href="@{/staffs/detail/{id}(id=*{staffID})}">
+                                        <i class="bi bi-eye-fill"></i> Details
+                                    </a>
+                                    <button class="btn btn-danger btn-compact delete-staff-btn"
+                                            data-bs-toggle="modal" data-bs-target="#deleteStaffModal"
+                                            th:attr="data-id=*{staffID}, data-name=*{fullName}">
+                                        <i class="fa fa-trash"></i> Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         </tbody>

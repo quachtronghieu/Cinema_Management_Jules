@@ -20,7 +20,7 @@
         <div class="container">
             <div class="section__header section-header">
                 <h2 class="section__title">Your Infomation</h2>
-                <a th:href="@{/profile/staff_profile}" class="btn btn-light btn-compact">
+                <a th:href="@{/staffs/staff_profile}" class="btn btn-light btn-compact">
                     <i class="fa fa-arrow-left me-1"></i> Back
                 </a>
             </div>
@@ -41,7 +41,7 @@
                         <p th:if="${error}" th:text="${error}" style="color:#9d1212;"></p>
                     </div>
 
-                    <form th:action="@{/profile/staff_profile/save}" th:object="${staff}" method="post">
+                    <form th:action="@{/staffs/staff_profile/save}" th:object="${staff}" method="post">
 
                         <!-- Hidden StaffID -->
 

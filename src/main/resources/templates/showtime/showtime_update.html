@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      th:replace="~{dashboard/dashboard :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Edit Showtime</title>
+</head>
+<body>
+<main th:fragment="content">
+    <div class="container-fluid pt-4 px-4">
+        <div class="bg-secondary rounded p-4 shadow-lg">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0 text-white">
+                    <i class="bi bi-pencil-square text-danger me-2"></i>Edit Showtime
+                </h5>
+                <a th:href="@{/showtime}" class="btn btn-light btn-compact">
+                    <i class="bi bi-arrow-left me-1"></i>Back
+                </a>
+            </div>
+
+            <!-- Alert -->
+            <div id="availabilityMsg" class="alert mt-3 text-center fw-semibold" style="display:none;"></div>
+
+            <!-- Form -->
+            <form th:action="@{/showtime/edit/{id}(id=${form.showtimeId})}"
+                  th:object="${form}" method="post" class="row g-3 needs-validation" novalidate>
+                <input type="hidden" th:field="*{showtimeId}"/>
+
+                <!-- Movie -->
+                <div class="col-md-4">
+                    <label class="form-label text-light fw-semibold">Movie *</label>
+                    <select id="movieId" class="form-select bg-dark text-white border-0"
+                            th:field="*{movieId}" required>
+                        <option value="">-- Select Movie --</option>
+                        <option th:each="m : ${movies}"
+                                th:value="${m.movieID}"
+                                th:data-duration="${m.duration}"
+                                th:text="${m.title}"></option>
+                    </select>
+                </div>
+
+                <!-- Room -->
+                <div class="col-md-3">
+                    <label class="form-label text-light fw-semibold">Room *</label>
+                    <select id="roomId" class="form-select bg-dark text-white border-0"
+                            th:field="*{roomId}" required>
+                        <option value="">-- Select Room --</option>
+                        <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.id}"></option>
+                    </select>
+                </div>
+
+                <!-- Date -->
+                <div class="col-md-3">
+                    <label class="form-label text-light fw-semibold">Date *</label>
+                    <input id="showDate" type="date"
+                           class="form-control bg-dark text-white border-0"
+                           th:field="*{showDate}" required>
+                </div>
+
+                <!-- Start Time -->
+                <div class="col-md-2">
+                    <label class="form-label text-light fw-semibold">Start Time *</label>
+                    <select id="startTime" class="form-select bg-dark text-white border-0"
+                            th:field="*{startTime}" required>
+                        <option value="">-- Select Time --</option>
+                        <option th:each="i : ${#numbers.sequence(9, 23)}"
+                                th:value="${i < 10 ? '0' + i + ':00' : i + ':00'}"
+                                th:text="${i < 10 ? '0' + i + ':00' : i + ':00'}"></option>
+                    </select>
+                </div>
+
+                <!-- Update -->
+                <div class="col-12 text-end mt-4">
+                    <button id="saveBtn" type="submit" class="btn btn-danger btn-sm">
+                        <i class="bi bi-save me-1"></i>Update Showtime
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Validation Script -->
+    <script>
+        (() => {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+
+    <!-- AJAX Check Overlap -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            function checkAvailability() {
+                const movieId = $("#movieId").val();
+                const roomId = $("#roomId").val();
+                const date = $("#showDate").val();
+                const startTime = $("#startTime").val();
+                if (!movieId || !roomId || !date || !startTime) return;
+
+                const duration = $("#movieId option:selected").data("duration");
+
+                $.ajax({
+                    url: "/showtime/check-available",
+                    type: "GET",
+                    data: {movieId, roomId, date, startTime, duration},
+                    success: function (res) {
+                        const alertBox = $("#availabilityMsg");
+                        alertBox.removeClass("alert-success alert-warning alert-danger");
+
+                        if (res.available) {
+                            alertBox.addClass("alert-success")
+                                .html("<i class='bi bi-check-circle me-2'></i>" + res.message)
+                                .slideDown();
+                        } else {
+                            alertBox.addClass("alert-warning")
+                                .html("<i class='bi bi-exclamation-triangle me-2'></i>" + res.message)
+                                .slideDown();
+                        }
+                    },
+                    error: function () {
+                        $("#availabilityMsg")
+                            .removeClass("alert-success alert-warning")
+                            .addClass("alert-danger")
+                            .html("<i class='bi bi-x-circle me-2'></i>Error checking slot availability.")
+                            .slideDown();
+                    }
+                });
+            }
+
+            $("#movieId, #roomId, #showDate, #startTime").on("change", checkAvailability);
+        });
+    </script>
+</main>
+</body>
+</html>
