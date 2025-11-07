@@ -28,6 +28,7 @@ public class RoomDetailDTO {
     public String getTemplateName() {
         return templateName;
     }
+    
 
     public void setTemplateName(String templateName) {
         this.templateName = templateName;

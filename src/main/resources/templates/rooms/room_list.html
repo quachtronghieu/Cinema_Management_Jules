@@ -39,7 +39,7 @@
                                 <tr th:each="room : ${rooms}">
                                     <td th:text="${room.roomId}">R01</td>
                                     <td th:text="${room.buildRoomName}"></td>
-                                    <td th:text="${room.templateName}">150</td>
+                                    <td th:text="${room.getTemplateName()}">150</td>
                                     <td th:text="${room.totalSeats}">Active</td>
                                     <td th:text="${room.status}"></td>
                                     <td class="text-end">

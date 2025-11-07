@@ -99,13 +99,14 @@ public class RoomController {
 
     @GetMapping("/delete/{roomId}")
     public String deleteRoom(@PathVariable("roomId") String roomId,
-                             RedirectAttributes redirectAttributes) {
+                             RedirectAttributes redirectAttributes, Model model) {
         try {
             roomService.deleteRoom(roomId);
             redirectAttributes.addFlashAttribute("message", "Xóa phòng thành công");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
         }
+
         return "redirect:/rooms";
     }
 
