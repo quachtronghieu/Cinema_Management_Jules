@@ -56,9 +56,9 @@
                                 <!-- Row A -->
                                 <div class="row">
                                     <div th:each="seats : ${entry.getValue()}" class="seat seat"
-                                         th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                         th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                         th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                     </div>
                                 </div>
 
@@ -75,9 +75,9 @@
                             <div class="row" th:each="entry : ${groupSeat}">
 
                                 <div th:each="seats, iterStat : ${entry.value}">
-                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                         th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                     </div>
                                     <div class="aisle" th:if="${iterStat.index == 3 or iterStat.index == 6}">
                                     </div>
@@ -93,9 +93,9 @@
 
                             <div class="seat-map__grid seat-map__grid--t3">
                                 <div th:each="seats : ${entry.getValue()}" class="seat seat"
-                                     th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                     th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                     th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                     th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                     th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                     th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                 </div>
                             </div>
                         </div>
@@ -106,9 +106,9 @@
                             <div class="row" th:each="entry : ${groupSeat}">
 
                                 <div th:each="seats, iterStat : ${entry.value}">
-                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                         th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                     </div>
                                     <div class="aisle" th:if="${iterStat.index == 3}">
                                     </div>

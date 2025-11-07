@@ -6,26 +6,39 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
+import vn.edu.fpt.cinemamanagement.entities.Room;
+import vn.edu.fpt.cinemamanagement.entities.Showtime;
+import vn.edu.fpt.cinemamanagement.entities.TemplateSeat;
 import vn.edu.fpt.cinemamanagement.services.ShowtimeService;
+import vn.edu.fpt.cinemamanagement.services.TemplateSeatService;
 import vn.edu.fpt.cinemamanagement.services.TimeSlotService;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping(value = "staffs")
 public class StaffHomeController {
 
     private final ShowtimeService showtimeService;
     private final TimeSlotService timeSlotService;
+    private final TemplateSeatService templateSeatService;
 
 
-    public StaffHomeController(ShowtimeService showtimeService, TimeSlotService timeSlotService) {
+    public StaffHomeController(ShowtimeService showtimeService, TimeSlotService timeSlotService, TemplateSeatService templateSeatService) {
         this.showtimeService = showtimeService;
         this.timeSlotService = timeSlotService;
+        this.templateSeatService = templateSeatService;
     }
+
 
     @GetMapping("/staff_home")
     public String staffHome(HttpServletRequest request, Model model) {
@@ -41,6 +54,7 @@ public class StaffHomeController {
         model.addAttribute("role", role);
         return "dashboard/staff_home";
     }
+
 
     @GetMapping("/cashier/showtimes")
     public String showShowtimesForCashier(
@@ -61,6 +75,28 @@ public class StaffHomeController {
         model.addAttribute("prevDate", date.minusDays(1));
         model.addAttribute("nextDate", date.plusDays(1));
 
-        return "dashboard/showtime_for_cashier";
+        return "cashier/showtime_for_cashier";
+    }
+
+    @GetMapping("/cashier/booking/{movieId}")
+    public String showSeatMap(
+            @PathVariable String movieId,
+            @RequestParam String time,
+            @RequestParam String date,
+            Model model) {
+        Showtime showtime = showtimeService.findByMovie(movieId, time, date);
+        Room room = showtime.getRoom();
+        String templateId = room.getTemplate().getId();
+        List<TemplateSeat> seats = templateSeatService.findAllSeatsByTemplateID(templateId);
+        Map<String, List<TemplateSeat>> groupedSeats = seats.stream()
+                .sorted(Comparator.comparingInt(TemplateSeat::getSeatNumber))
+                .collect(Collectors.groupingBy(
+                        TemplateSeat::getRowLabel,
+                        LinkedHashMap::new,
+                        Collectors.toList()));
+        model.addAttribute("groupSeat", groupedSeats);
+        model.addAttribute("template", templateId);
+        model.addAttribute("showtime", showtime);
+        return "cashier/cashier_seatMap";
     }
 }

@@ -9,6 +9,7 @@ import vn.edu.fpt.cinemamanagement.entities.Template;
 import vn.edu.fpt.cinemamanagement.repositories.ShowtimeRepository;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -223,5 +224,9 @@ public class ShowtimeService {
         return repo.findByShowtimeId(id);
     }
 
-
+    public Showtime findByMovie(String movieId , String times, String  dates){
+        LocalDate date= LocalDate.parse(dates);
+        LocalTime time = LocalTime.parse(times, DateTimeFormatter.ofPattern("HH:mm"));
+        return repo.findMovieAndDateTime(movieId, date, time);
+    }
 }
