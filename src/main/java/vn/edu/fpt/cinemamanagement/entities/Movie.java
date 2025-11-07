@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "Movie")
@@ -26,6 +27,10 @@ public class Movie {
 
     private String img;
     private String trailer;
+
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Showtime> showtimeList;
 
     public Movie(){
     }
@@ -111,5 +116,13 @@ public class Movie {
 
     public void setTrailer(String trailer) {
         this.trailer = trailer;
+    }
+
+    public List<Showtime> getShowtimeList() {
+        return showtimeList;
+    }
+
+    public void setShowtimeList(List<Showtime> showtimeList) {
+        this.showtimeList = showtimeList;
     }
 }

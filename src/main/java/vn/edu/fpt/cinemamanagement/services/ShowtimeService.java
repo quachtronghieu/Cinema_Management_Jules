@@ -224,4 +224,7 @@ public class ShowtimeService {
     }
 
 
+    public List<Showtime> getShowtimesByMovieAndDate(String movieId, LocalDate selectedDate) {
+        return repo.findAllByMovie_MovieIDAndShowDate(movieId, selectedDate);
+    }
 }

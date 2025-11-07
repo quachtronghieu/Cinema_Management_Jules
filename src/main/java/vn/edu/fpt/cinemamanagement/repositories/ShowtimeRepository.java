@@ -78,4 +78,6 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, String> {
             @Param("start") LocalTime start,
             @Param("end") LocalTime end
     );
+
+    List<Showtime> findAllByMovie_MovieIDAndShowDate(String movieId, LocalDate selectedDate);
 }

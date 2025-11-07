@@ -121,10 +121,10 @@ public class RoomController {
         Template template = room.getTemplate();
         List<TemplateSeat> seats = templateSeatService.findAllSeatsByTemplateID(template.getId());
 
-        seats.sort(Comparator.comparing(TemplateSeat::getRow_label).thenComparing(TemplateSeat::getSeat_number));
+        seats.sort(Comparator.comparing(TemplateSeat::getRowLabel).thenComparing(TemplateSeat::getSeatNumber));
 
         Map<String, List<TemplateSeat>> groupedSeats = seats.stream()
-                .collect(Collectors.groupingBy(TemplateSeat::getRow_label,
+                .collect(Collectors.groupingBy(TemplateSeat::getRowLabel,
                         LinkedHashMap::new, Collectors.toList()));
 
 
