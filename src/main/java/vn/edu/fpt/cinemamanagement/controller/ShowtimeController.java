@@ -12,10 +12,7 @@ import vn.edu.fpt.cinemamanagement.entities.Movie;
 import vn.edu.fpt.cinemamanagement.entities.Room;
 import vn.edu.fpt.cinemamanagement.entities.Showtime;
 import vn.edu.fpt.cinemamanagement.repositories.ShowtimeRepository;
-import vn.edu.fpt.cinemamanagement.services.MovieService;
-import vn.edu.fpt.cinemamanagement.services.RoomService;
-import vn.edu.fpt.cinemamanagement.services.ShowtimeService;
-import vn.edu.fpt.cinemamanagement.services.TimeSlotService;
+import vn.edu.fpt.cinemamanagement.services.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -31,6 +28,7 @@ public class ShowtimeController {
 
     @Autowired private ShowtimeRepository showtimeRepository;
     @Autowired private TimeSlotService timeSlotService;
+    @Autowired private ShowtimeSeatService showtimeSeatService;
 
     private final MovieService movieService;
     private final RoomService roomService;
@@ -167,12 +165,15 @@ public class ShowtimeController {
 
         //  Nếu hợp lệ thì gọi service
         try {
-            showtimeService.createShowtime(
+            Showtime show = showtimeService.createShowtime(
                     form.getMovieId(),
                     form.getRoomId(),
                     form.getShowDate(),
                     form.getStartTime()
             );
+            if (show != null) {
+                showtimeSeatService.createShowtimeSeats(show.getShowtimeId(), show.getRoom().getTemplate().getId());
+            }
             ra.addFlashAttribute("msg", "Showtime created successfully!");
             return "redirect:/showtime";
         } catch (Exception ex) {

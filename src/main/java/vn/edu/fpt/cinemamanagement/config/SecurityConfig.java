@@ -62,7 +62,7 @@ public class SecurityConfig {
                             } else if (roles.contains("ROLE_STAFF")
                                     || roles.contains("ROLE_CASHIER_STAFF")
                                     || roles.contains("ROLE_REDEMPTION_STAFF")) {
-                                response.sendRedirect("/staff_home");
+                                response.sendRedirect("/staffs/cashier/showtimes");
                             } else {
                                 response.sendRedirect("/homepage");
                             }

@@ -29,6 +29,10 @@ public class ConcessionService {
         return repo.findAll(Pageable.ofSize(pageSize).withPage(pageIndex));
     }
 
+    public List<Concession> findAll(){
+        return repo.findAll();
+    }
+
     /* ======================= CRUD ======================= */
     public Concession findById(String id) {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Concession not found: " + id));
