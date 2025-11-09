@@ -5,7 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.cinemamanagement.entities.ShiftSchedule;
+import vn.edu.fpt.cinemamanagement.entities.Staff;
 import vn.edu.fpt.cinemamanagement.repositories.ShiftScheduleRepository;
+import vn.edu.fpt.cinemamanagement.repositories.StaffRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +20,9 @@ public class ShiftScheduleService {
 
     @Autowired
     private ShiftScheduleRepository shiftScheduleRepository;
+
+    @Autowired
+    private StaffRepository staffRepository;
 
     // --- Lấy tất cả lịch làm việc (phân trang) ---
     public Page<ShiftSchedule> findAllSchedules(Pageable pageable) {
@@ -154,6 +159,20 @@ public class ShiftScheduleService {
     public List<ShiftSchedule> findByShiftDate(LocalDate date) {
         return shiftScheduleRepository.findByShiftDate(date);
     }
+
+    public Staff findByAccountUsername(String username) {
+        return staffRepository.findByUsername(username).orElse(null);
+    }
+
+    public List<ShiftSchedule> findByStaff(Staff staff) {
+        return shiftScheduleRepository.findByStaff(staff);
+    }
+
+    public List<ShiftSchedule> findByStaffAndShiftDate(Staff staff, LocalDate date) {
+        return shiftScheduleRepository.findByStaffAndShiftDate(staff, date);
+    }
+
+
 
 
 
