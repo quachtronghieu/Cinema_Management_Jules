@@ -79,7 +79,9 @@ public class HomepageController {
             startPage = ((currentPage - 1) / visiblePages) * visiblePages + 1;
             endPage = Math.min(startPage + visiblePages - 1, totalPages);
         }
-
+        if (voucherPage.isEmpty()){
+            model.addAttribute("voucherEmpty", "Voucher list is empty" );
+        }
         model.addAttribute("voucherPage", voucherPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("startPage", startPage);
@@ -136,6 +138,8 @@ public class HomepageController {
             startPage = ((currentPage - 1) / visiblePages) * visiblePages + 1;
             endPage = Math.min(startPage + visiblePages - 1, totalPages);
         }
+
+
 
         model.addAttribute("comingSoonPage", comingSoonPage);
         model.addAttribute("currentPage", currentPage);

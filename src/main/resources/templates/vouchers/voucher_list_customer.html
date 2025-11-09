@@ -24,10 +24,10 @@
         <div class="container">
             <div class="section__header section-header">
                 <h2 class="section__title">Vouchers</h2>
+                <p class="text-danger" th:if="${vouchersList.isEmpty()}" th:text="${voucherEmpty}"></p>
             </div>
         </div>
     </section>
-
     <!-- Movie grid only (full width) -->
     <section class="section" style="padding-top: 1rem;">
         <div class="voucher-container">
@@ -47,7 +47,8 @@
             </div>
         </div>
     </section>
-    <nav aria-label="Page navigation example">
+
+    <nav aria-label="Page navigation example" th:if="${vouchersList.isEmpty()}" th:classappend="hidden">
         <ul class="pagination justify-content-center">
             <!-- Previous -->
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">

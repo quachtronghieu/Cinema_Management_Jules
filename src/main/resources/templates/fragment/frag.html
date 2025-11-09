@@ -90,7 +90,7 @@
     </div>
 </div>
 
-<div th:fragment="navbar_dashboard">
+<div th:fragment="navbar_dashboard"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <!-- Topbar -->
     <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
         <a th:href="@{/admin}" class="navbar-brand d-flex d-lg-none me-4">
@@ -99,7 +99,7 @@
         <a href="#" class="sidebar-toggler flex-shrink-0"><i class="fa fa-bars"></i></a>
 
         <div class="navbar-nav align-items-center ms-auto">
-            <a th:href="@{/profile/my_profile}" class="dropdown-item">My Profile</a>
+            <a sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')" th:href="@{/staffs/staff_profile}" class="dropdown-item">My Profile</a>
 
             <form th:action="@{/logout}" method="post" class="d-inline">
                 <input th:if="${_csrf != null}"
