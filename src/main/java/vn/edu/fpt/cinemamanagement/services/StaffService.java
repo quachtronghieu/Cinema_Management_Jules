@@ -206,4 +206,10 @@ public class StaffService {
         return hasError;
     }
 
+    // Lấy staff theo username (dùng cho Principal)
+    public Staff findByAccountUsername(String username) {
+        return staffRepo.findByUsername(username).orElse(null);
+    }
+
+
 }
