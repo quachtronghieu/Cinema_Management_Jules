@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashier Seat Selection</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/seat_template.css}">
+</head>
+
+<body class="cashier-page">
+<nav>
+    <a class="fw-bold text-danger fs-4" th:href="@{/staffs/staff_home}">D&D Cashier</a>
+    <a th:href="@{/staffs/cashier/showtimes}" class="btn-back">← Back</a>
+</nav>
+
+<main>
+    <!-- ===== Movie Info ===== -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-danger" th:text="${showtime.movie.title}">MOVIE TITLE</h2>
+        <p class="text-light mt-2">
+            Room: <b th:text="${showtime.room.id}">4</b> |
+            Date: <b th:text="${#temporals.format(showtime.showDate, 'yyyy-MM-dd')}">2025-11-08</b> |
+            Time: <b th:text="${#temporals.format(showtime.startTime, 'HH:mm')}">11:00</b>
+        </p>
+    </div>
+
+    <!-- ===== Seat Map ===== -->
+    <div class="seat-map">
+        <div class="seat-map__screen"></div>
+
+        <div class="seat-map__grid">
+            <div th:each="entry : ${groupSeat}" class="seat-row">
+                <div th:each="seats : ${entry.value}"
+                     class="seat"
+                     th:classappend="|seat--${#strings.toLowerCase(seats.templateSeat.seatType)}
+               ${seatStatusMap[seats.templateSeat.id] == 'unavailable' ? ' seat--booked' :
+               (seatStatusMap[seats.templateSeat.id] == 'pending' ? ' seat--pending' :
+               ' seat--available')}|"
+                     th:text="|${seats.templateSeat.rowLabel}${seats.templateSeat.seatNumber}|"
+                     th:attr="data-seat=${seats.templateSeat.rowLabel + seats.templateSeat.seatNumber},
+                      data-id=${seats.showtimeSeatID}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="seat-map__legend">
+            <div class="legend-item">
+                <div class="legend-item__color legend-item__color--available"></div><span>Standard</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-item__color legend-item__color--vip"></div><span>VIP</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-item__color legend-item__color--booked"></div><span>Booked</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-item__color legend-item__color--selected"></div><span>Selected</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MiniCart dưới ===== -->
+    <div class="mini-cart">
+        <span>Room: <b th:text="${showtime.room.id}">R002</b></span>
+        <span>Showtime: <b th:text="${#temporals.format(showtime.showDate, 'yyyy-MM-dd')} + ' | ' + ${#temporals.format(showtime.startTime, 'HH:mm')}"></b></span>
+        <span>Seats: <b id="selectedSeatsText" class="highlight">None</b></span>
+        <span>Total: <b id="totalPrice" style="color: #00e676;">0 ₫</b></span>
+        <button class="btn-confirm" onclick="confirmBooking()">Confirm</button>
+    </div>
+</main>
+
+<input type="hidden" id="showtimeId" th:value="${showtime.showtimeId}">
+
+<script>
+    (function() {
+        const pricePerSeat = 80000;
+        let selectedSeats = [];
+
+        const selectedSeatsText = document.getElementById("selectedSeatsText");
+        const totalPrice = document.getElementById("totalPrice");
+
+        document.addEventListener("click", (e) => {
+            const seat = e.target.closest(".seat");
+            if (!seat || seat.classList.contains("seat--booked")) return;
+
+            const code = seat.dataset.seat;
+            seat.classList.toggle("selected");
+
+            if (seat.classList.contains("selected")) {
+                selectedSeats.push(code);
+            } else {
+                selectedSeats = selectedSeats.filter(s => s !== code);
+            }
+
+            selectedSeatsText.textContent = selectedSeats.length > 0 ? selectedSeats.join(", ") : "None";
+            totalPrice.textContent = (selectedSeats.length * pricePerSeat).toLocaleString("vi-VN") + " ₫";
+        });
+
+        window.confirmBooking = function() {
+            if (selectedSeats.length === 0) {
+                alert("Please select seats!");
+                return;
+            }
+
+            const showtimeId = document.getElementById("showtimeId").value;
+            const seatData = {
+                showtimeId: showtimeId,
+                seats: selectedSeats,
+                seatPrice: selectedSeats.length * pricePerSeat,
+                seatCount: selectedSeats.length
+            };
+
+            // Lưu sessionStorage để qua bước Concession
+            sessionStorage.setItem('cashierSeatData', JSON.stringify(seatData));
+
+            // Chuyển sang trang Concession
+            window.location.href = "/staffs/cashier/concessions";
+        };
+
+    })();
+</script>
+</body>
+</html>

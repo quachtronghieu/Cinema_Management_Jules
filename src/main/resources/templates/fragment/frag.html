@@ -81,12 +81,15 @@
                 <a th:href="@{/redemption}" class="nav-item nav-link"
                    sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
                         class="fa fa-ticket-alt me-2"></i>Redemption</a>
-                <a th:href="@{/schedule}" class="nav-item nav-link"
-                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
-                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
-                <a th:href="@{/schedule}" class="nav-item nav-link"
-                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i
-                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
+                <a th:href="@{/shift-schedules/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')">
+                    <i class="fa fa-calendar-alt me-2"></i>My Schedule
+                </a>
+                <a th:href="@{/shift-schedules/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')">
+                    <i class="fa fa-calendar-alt me-2"></i>My Schedule
+                </a>
+
             </div>
         </nav>
     </div>
@@ -245,10 +248,10 @@
                 <a th:href="@{/redemption}" class="nav-item nav-link"
                    sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
                         class="fa fa-ticket-alt me-2"></i>Redemption</a>
-                <a th:href="@{/schedule}" class="nav-item nav-link"
+                <a th:href="@{/shift-schedules/schedule}" class="nav-item nav-link"
                    sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
                         class="fa fa-calendar-alt me-2"></i>My Schedule</a>
-                <a th:href="@{/schedule}" class="nav-item nav-link"
+                <a th:href="@{/shift-schedules/schedule}" class="nav-item nav-link"
                    sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i
                         class="fa fa-calendar-alt me-2"></i>My Schedule</a>
             </div>

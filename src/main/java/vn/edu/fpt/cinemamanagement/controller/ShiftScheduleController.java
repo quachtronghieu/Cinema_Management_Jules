@@ -1,13 +1,16 @@
 package vn.edu.fpt.cinemamanagement.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.cinemamanagement.entities.ShiftSchedule;
+import vn.edu.fpt.cinemamanagement.entities.Staff;
 import vn.edu.fpt.cinemamanagement.services.ShiftScheduleService;
 import vn.edu.fpt.cinemamanagement.services.StaffService;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -121,6 +124,38 @@ public class ShiftScheduleController {
         shiftScheduleService.deleteShiftSchedule(id);
         return "redirect:/shift-schedules";
     }
+
+    @GetMapping("/schedule")
+    public String viewMyShifts(
+            Model model,
+            Principal principal,
+            @RequestParam(name = "date", required = false) LocalDate date) {
+
+        if (date == null) {
+            date = LocalDate.now(); // mặc định hôm nay
+        }
+
+        String username = principal.getName();
+        Staff staff = staffService.findByAccountUsername(username);
+        if (staff == null) {
+            model.addAttribute("error", "Staff not found");
+            return "error-page";
+        }
+
+        List<ShiftSchedule> shifts = shiftScheduleService.findByStaffAndShiftDate(staff, date);
+
+        model.addAttribute("staff", staff);
+        model.addAttribute("myShifts", shifts);
+        model.addAttribute("currentDate", date);
+        model.addAttribute("prevDate", date.minusDays(1));
+        model.addAttribute("nextDate", date.plusDays(1));
+
+        return "schedules/my_schedule";
+    }
+
+
+
+
 
 
 

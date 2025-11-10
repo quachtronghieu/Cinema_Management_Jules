@@ -9,6 +9,7 @@ import java.util.List;
 public interface TemplateSeatRepository extends JpaRepository<TemplateSeat, String> {
     List<TemplateSeat> findByTemplate_Id(String templateID);
     long countByTemplate_Id(String templateID);
+    TemplateSeat findByRowLabelAndSeatNumber(String rowLabel, int seatNumber);
 
 
 }
