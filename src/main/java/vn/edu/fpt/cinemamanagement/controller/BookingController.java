@@ -1,8 +1,13 @@
 package vn.edu.fpt.cinemamanagement.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +37,10 @@ public class BookingController {
     private ConcessionService concessionService;
     @Autowired
     private ShowtimeService showtimeService;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private CustomerService customerService;
 
     @GetMapping("/{movieId}")
     public String viewShowtimeByMovie(
@@ -118,10 +127,6 @@ public class BookingController {
     @PostMapping("/concessions")
     public String concessionsPage(@RequestParam Map<String, String> params, Model model){
         model.addAttribute("concessions" , concessionService.findAll());
-        System.out.println("🪑 Seats: " + params.get("selectedSeats"));
-        System.out.println("💰 Total: " + params.get("totalPrice"));
-        System.out.println("🎬 Showtime: " + params.get("showtimeId"));
-        System.out.println("⏰ Endtime: " + params.get("endtime"));
 
         Showtime showtime = showtimeService.showtimeByID(params.get("showtimeId"));
 
@@ -132,22 +137,99 @@ public class BookingController {
         return "concession/concession_list_forCus";
     }
 
-    @PostMapping("/payment")
-    public String paymentPage(@RequestParam Map<String, String> params, Model model){
-        System.out.println("Payment");
-        System.out.println("🪑 Seats: " + params.get("selectedSeats"));
-        System.out.println("💰 Total: " + params.get("totalPrice"));
-        System.out.println("🎬 Showtime: " + params.get("showtimeId"));
-        System.out.println("⏰ Endtime: " + params.get("endtime"));
-        System.out.println("ConcessionIds:" +  params.get("selectedConcessionIds"));
+    @PostMapping("/book")
+    public String bookingPage(@RequestParam Map<String, String> params, Model model) {
 
+        // Lấy showtime từ service
         Showtime showtime = showtimeService.showtimeByID(params.get("showtimeId"));
 
+        // Parse JSON concessionIds thành 2 list riêng
+        List<String> concessionIds = new ArrayList<>();
+        List<Integer> quantities = new ArrayList<>();
+
+        String concessionJson = params.get("selectedConcessionIds");
+        if (concessionJson != null && !concessionJson.isEmpty()) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                List<Map<String, Object>> concessions = mapper.readValue(
+                        concessionJson,
+                        new TypeReference<List<Map<String, Object>>>() {}
+                );
+
+                for (Map<String, Object> item : concessions) {
+                    concessionIds.add((String) item.get("id"));
+                    // Dữ liệu qty có thể là Integer hoặc Double tùy trình duyệt
+                    Object qtyObj = item.get("qty");
+                    int qty = (qtyObj instanceof Integer) ? (Integer) qtyObj : ((Number) qtyObj).intValue();
+                    quantities.add(qty);
+                }
+            } catch (Exception e) {
+                System.err.println("Error parsing selectedConcessionIds JSON: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        List<Concession> concessions = new ArrayList<>();
+        if (!concessionIds.isEmpty()) {
+            for (String concessionId : concessionIds) {
+                 concessions.add(concessionService.findById(concessionId));
+            }
+        }
+
+
+        // Truyền dữ liệu sang view
         model.addAttribute("selectedSeats", params.get("selectedSeats"));
         model.addAttribute("totalPrice", params.get("totalPrice"));
         model.addAttribute("showtime", showtime);
         model.addAttribute("endtime", params.get("endtime"));
-        return "concession/concession_list_forCus";
+        model.addAttribute("selectedConcessionIds", params.get("selectedConcessionIds"));
+        model.addAttribute("concessionIds", concessionIds);
+        model.addAttribute("concessions", concessions);
+        model.addAttribute("quantities", quantities);
+
+        return "booking/book";
+    }
+
+    @PostMapping("/payment")
+    public String paymentPage(@RequestParam Map<String, String> params, Model model) {
+        try {
+            String showtimeId = params.get("showtimeId");
+
+            List<String> seatIds = Arrays.stream(params.get("selectedSeats").split(","))
+                    .map(String::trim).toList();
+
+            // Làm sạch chuỗi JSON-like: [1, 2] -> 1, 2
+            String rawConIds = params.get("concessionIds");
+            String rawQtys = params.get("quantities");
+
+            List<String> concessionIds = (rawConIds == null || rawConIds.isBlank())
+                    ? List.of()
+                    : Arrays.stream(rawConIds.replaceAll("[\\[\\]\\s]", "").split(","))
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+
+            List<String> qtyList = (rawQtys == null || rawQtys.isBlank())
+                    ? List.of()
+                    : Arrays.stream(rawQtys.replaceAll("[\\[\\]\\s]", "").split(","))
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+
+            // Xác thực
+            System.out.println("Cleaned Concession IDs: " + concessionIds);
+            System.out.println("Cleaned Quantities: " + qtyList);
+
+            UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String userId = customerService.getCustomerByUsername(user.getUsername()).getUser_id();
+
+            Booking booking = bookingService.createBooking(showtimeId, seatIds, concessionIds, qtyList, userId);
+            model.addAttribute("booking", booking);
+
+            return "booking/payment";
+        } catch (Exception e) {
+            System.err.println("Error parsing selectedConcessionIds JSON: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/booking/" + params.get("showtimeId");
+        }
     }
 
 }

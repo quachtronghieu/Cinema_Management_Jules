@@ -36,7 +36,7 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking createBooking(String showtimeId,List<String> seatIds, List<String> concessionIds, List<String> qtyList) {
+    public Booking createBooking(String showtimeId,List<String> seatIds, List<String> concessionIds, List<String> qtyList, String userId) {
 
         // --- (1) Tạo Booking ---
         Booking booking = new Booking();
@@ -48,7 +48,7 @@ public class BookingService {
         booking.setId(newId);
         booking.setStatus("Booked");
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setUserId("KH000000");
+        booking.setUserId(userId);
         booking = bookingRepository.saveAndFlush(booking);
 
         BigDecimal totalPrice = BigDecimal.ZERO;

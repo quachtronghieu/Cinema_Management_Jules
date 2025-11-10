@@ -133,7 +133,7 @@ public class StaffHomeController {
             List<String> concessionIds = formData.get("concessionIds");
             List<String> qtyList = formData.get("qty");
 
-            bookingService.createBooking(showtimeId,seatIds, concessionIds, qtyList);
+            bookingService.createBooking(showtimeId,seatIds, concessionIds, qtyList, "KH000000");
 
             return ResponseEntity.ok("Order confirmed successfully!");
         } catch (Exception e) {
