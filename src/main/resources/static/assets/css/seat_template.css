@@ -1,0 +1,2421 @@
+/* Seat Map */
+.seat-map {
+    margin-top: 7rem;
+    background-color: var(--dark-gray);
+
+    padding: var(--spacing-lg);
+
+    border-radius: var(--border-radius);
+
+    margin-bottom: var(--spacing-xl);
+
+}
+
+
+.seat-map__title {
+
+    color: var(--primary);
+
+    text-align: center;
+
+    margin-bottom: var(--spacing-lg);
+
+}
+
+
+.seat-map__screen {
+
+    background: linear-gradient(to bottom, var(--accent), var(--primary));
+
+    height: 20px;
+
+    border-radius: 10px;
+    
+    margin-top: var(--spacing-lg);
+
+    margin-bottom: var(--spacing-lg);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: var(--white);
+
+    font-weight: bold;
+
+    font-size: 0.9rem;
+
+}
+
+
+.seat-map__grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(12, 1fr);
+
+    gap: 4px;
+
+    max-width: 600px;
+
+    margin: 0 auto var(--spacing-lg);
+
+}
+
+
+/* Ensure rows inside the seat-map grid lay out their seats horizontally
+
+and span the full width of the grid. This makes Row A (and all rows)
+
+appear in a horizontal line and centered within the seat map. */
+
+.seat-map__grid .row {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    grid-column: 1 / -1; /* make each row take the full width of the grid */
+
+}
+
+
+.seat {
+
+    width: 30px;
+
+    height: 30px;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    transition: var(--transition);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 0.8rem;
+
+    font-weight: bold;
+
+}
+
+
+.seat--available {
+
+    background-color: var(--dark);
+
+    color: var(--white);
+
+}
+
+
+.seat--available:hover {
+
+    background-color: var(--accent);
+
+    border-color: var(--accent);
+
+}
+
+.seat--standard {
+
+    background-color: var(--dark);
+
+    color: var(--white);
+
+}
+
+.seat--standard:hover {
+
+    background-color: var(--accent);
+
+    border-color: var(--accent);
+
+}
+
+
+
+.seat--selected {
+
+    background-color: var(--primary);
+
+    border-color: var(--primary);
+
+    color: var(--white);
+
+}
+
+
+.seat--booked {
+
+    background-color: var(--medium-gray);
+
+    border-color: var(--medium-gray);
+
+    color: var(--dark-gray);
+
+    cursor: not-allowed;
+
+}
+
+
+.seat--vip {
+
+    background-color: var(--accent);
+
+    border-color: var(--accent);
+
+    color: var(--dark);
+
+}
+
+
+.seat--vip:hover {
+
+    background-color: #b8941f;
+
+}
+
+
+.seat-map__legend {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: var(--spacing-md);
+
+    flex-wrap: wrap;
+
+}
+
+/* Seat templates switch (pure HTML/CSS) */
+
+.template-switch {
+    display: flex;
+    gap: .5rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.template-switch input {
+    display: none;
+}
+
+.template-switch label {
+    padding: .5rem 1rem;
+    border: 1px solid var(--dark-gray);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--light-gray);
+}
+
+#tpl1:checked ~ .seat-map .template-switch label[for="tpl1"],
+#tpl2:checked ~ .seat-map .template-switch label[for="tpl2"],
+#tpl3:checked ~ .seat-map .template-switch label[for="tpl3"],
+#tpl4:checked ~ .seat-map .template-switch label[for="tpl4"] {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.template-section {
+    display: none;
+}
+
+#tpl1:checked ~ .seat-map .templates #template-1 {
+    display: block;
+}
+
+#tpl2:checked ~ .seat-map .templates #template-2 {
+    display: block;
+}
+
+#tpl3:checked ~ .seat-map .templates #template-3 {
+    display: block;
+}
+
+#tpl4:checked ~ .seat-map .templates #template-4 {
+    display: block;
+}
+
+
+/* Template-specific helpers */
+
+.seat-map__grid--t2 .row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: .5rem;
+}
+
+.seat-map__grid--t2 .aisle {
+    visibility: hidden;
+    width: 8rem; /* hoặc 50px nếu muốn rộng hơn */
+}
+
+.seat-map__grid--t3 {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(32px, 1fr));
+    gap: .5rem;
+    justify-items: center;
+}
+
+.seat-map__grid--t4 .row {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: .5rem;
+}
+
+.seat-map__grid--t4 .aisle {
+    visibility: hidden;
+    display: block;
+    width: 10rem;
+}
+
+
+.legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--spacing-xs);
+
+    color: var(--light-gray);
+
+    font-size: 0.9rem;
+
+}
+
+
+.legend-item__color {
+
+    width: 20px;
+
+    height: 20px;
+
+    border-radius: 4px;
+
+    border: 1px solid var(--border-color);
+
+}
+
+
+.legend-item__color--available {
+
+    background-color: var(--dark);
+
+}
+
+
+.legend-item__color--selected {
+
+    background-color: var(--primary);
+
+}
+
+
+.legend-item__color--booked {
+
+    background-color: var(--medium-gray);
+
+}
+
+
+.legend-item__color--vip {
+
+    background-color: var(--accent);
+
+}
+
+
+/* Checkout */
+
+.checkout {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: var(--spacing-xl);
+
+}
+
+
+.checkout__summary {
+
+    background-color: var(--dark-gray);
+
+    padding: var(--spacing-lg);
+
+    border-radius: var(--border-radius);
+
+    height: fit-content;
+
+}
+
+
+.checkout__summary-title {
+
+    color: var(--primary);
+
+    margin-bottom: var(--spacing-md);
+
+}
+
+
+.checkout__item {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: var(--spacing-sm) 0;
+
+    border-bottom: 1px solid var(--border-color);
+
+}
+
+
+.checkout__item:last-child {
+
+    border-bottom: none;
+
+    font-weight: bold;
+
+    color: var(--accent);
+
+}
+
+
+.checkout__form {
+
+    background-color: var(--dark-gray);
+
+    padding: var(--spacing-lg);
+
+    border-radius: var(--border-radius);
+
+}
+
+
+.checkout__form-title {
+
+    color: var(--primary);
+
+    margin-bottom: var(--spacing-md);
+
+}
+
+
+/* Buttons */
+
+/*.btn {*/
+
+/*    background-color: var(--primary);*/
+
+/*    color: var(--white);*/
+
+/*    border: none;*/
+
+/*    padding: var(--spacing-sm) var(--spacing-lg);*/
+
+/*    border-radius: var(--border-radius);*/
+
+/*    font-weight: 600;*/
+
+/*    cursor: pointer;*/
+
+/*    transition: var(--transition);*/
+
+/*    text-align: center;*/
+
+/*    display: inline-block;*/
+
+/*}*/
+
+
+.btn:hover {
+
+    background-color: #b71c1c;
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow-hover);
+
+}
+
+
+/* Outline button variant for auth */
+
+.btn--outline {
+
+    background-color: transparent;
+
+    border: 2px solid var(--white);
+
+    color: var(--white);
+
+}
+
+
+.btn--outline:hover {
+
+    filter: brightness(1.1);
+
+}
+
+
+.btn--secondary {
+
+    background-color: transparent;
+
+    border: 2px solid var(--accent);
+
+    color: var(--accent);
+
+}
+
+
+.btn--secondary:hover {
+
+    background-color: var(--accent);
+
+    color: var(--dark);
+
+}
+
+
+.btn--large {
+
+    padding: var(--spacing-md) var(--spacing-xl);
+
+    font-size: 1.1rem;
+
+}
+
+
+.btn--full {
+
+    width: 100%;
+
+}
+
+
+/* Footer */
+
+.footer {
+
+    background-color: var(--dark-gray);
+
+    padding: var(--spacing-xl) 0;
+
+    margin-top: var(--spacing-xl);
+
+    border-top: 2px solid var(--primary);
+
+}
+
+
+.footer__container {
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 0 var(--spacing-sm);
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+    gap: var(--spacing-lg);
+
+}
+
+
+.footer__section-title {
+
+    color: var(--primary);
+
+    margin-bottom: var(--spacing-md);
+
+}
+
+
+.footer__list {
+
+    list-style: none;
+
+}
+
+
+.footer__list-item {
+
+    margin-bottom: var(--spacing-xs);
+
+}
+
+
+.footer__list-link {
+
+    color: var(--light-gray);
+
+    transition: var(--transition);
+
+}
+
+
+.footer__list-link:hover {
+
+    color: var(--accent);
+
+}
+
+
+.footer__contact {
+
+    color: var(--accent);
+
+    font-weight: 600;
+
+}
+
+
+.footer__social {
+
+    display: flex;
+
+    gap: var(--spacing-sm);
+
+    margin-top: var(--spacing-md);
+
+}
+
+
+.footer__social-link {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 40px;
+
+    height: 40px;
+
+    background-color: var(--dark);
+
+    border-radius: 50%;
+
+    color: var(--accent);
+
+    transition: var(--transition);
+
+}
+
+
+.footer__social-link:hover {
+
+    background-color: var(--primary);
+
+    color: var(--white);
+
+}
+
+
+.footer__bottom {
+
+    text-align: center;
+
+    padding-top: var(--spacing-lg);
+
+    border-top: 1px solid var(--border-color);
+
+    margin-top: var(--spacing-lg);
+
+    color: var(--medium-gray);
+
+}
+
+
+/* Responsive Design */
+
+
+/* Tablet (768px - 1199px) */
+
+@media (max-width: 1199px) {
+
+    .hero {
+
+        max-height: 460px;
+
+    }
+
+
+    .hero__title {
+
+        font-size: 2.25rem;
+
+    }
+
+
+    /* 3 columns on tablet */
+    .movie-grid {
+
+        grid-template-columns: repeat(3, 1fr);
+
+    }
+
+
+    .header__container {
+
+        flex-wrap: wrap;
+
+        height: auto;
+
+        padding: var(--spacing-sm);
+
+    }
+
+
+    .nav {
+
+        order: 3;
+
+        width: 100%;
+
+        justify-content: center;
+
+        margin-top: var(--spacing-sm);
+
+    }
+
+
+    .nav__list {
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+
+    }
+
+
+    .search__input {
+
+        width: 150px;
+
+    }
+
+
+    .movie-detail {
+
+        grid-template-columns: 1fr;
+
+        gap: var(--spacing-lg);
+
+    }
+
+
+    .checkout {
+
+        grid-template-columns: 1fr;
+
+        gap: var(--spacing-lg);
+
+    }
+
+
+    .seat-map__grid {
+
+        grid-template-columns: repeat(8, 1fr);
+
+        max-width: 400px;
+
+    }
+
+}
+
+
+/* Mobile (≤767px) */
+
+@media (max-width: 767px) {
+
+    .hero {
+
+        max-height: 380px;
+
+        min-height: 260px;
+
+    }
+
+
+    .hero__title {
+
+        font-size: 1.75rem;
+
+    }
+
+
+    .hero__arrow {
+
+        width: 34px;
+
+        height: 34px;
+
+    }
+
+
+    /* 1–2 columns on mobile */
+    .movie-grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: var(--spacing-md);
+
+    }
+
+
+    .header__container {
+
+        flex-direction: column;
+
+        gap: var(--spacing-sm);
+
+    }
+
+
+    .header__actions {
+
+        width: 100%;
+
+        justify-content: center;
+
+    }
+
+
+    .search__input {
+
+        width: 200px;
+
+    }
+
+
+    .nav__list {
+
+        flex-direction: column;
+
+        width: 100%;
+
+        text-align: center;
+
+    }
+
+
+    .hero__subtitle {
+
+        font-size: 1rem;
+
+    }
+
+
+    .section__title {
+
+        font-size: 2rem;
+
+    }
+
+
+    .filters {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .filter-group {
+
+        width: 100%;
+
+    }
+
+
+    .filter-group__select {
+
+        width: 100%;
+
+    }
+
+
+    .booking-form__grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .seat-map__grid {
+
+        grid-template-columns: repeat(6, 1fr);
+
+        max-width: 300px;
+
+    }
+
+
+    .seat {
+
+        width: 25px;
+
+        height: 25px;
+
+        font-size: 0.7rem;
+
+    }
+
+
+    .showtimes__times {
+
+        justify-content: center;
+
+    }
+
+
+    .footer__container {
+
+        grid-template-columns: 1fr;
+
+        text-align: center;
+
+    }
+
+
+    .footer__social {
+
+        justify-content: center;
+
+    }
+
+}
+
+
+/* Very small screens */
+
+@media (max-width: 480px) {
+
+    .movie-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+/* Movies Page (BEM) */
+
+
+.movies__hero {
+
+    padding: var(--spacing-xl) 0 var(--spacing-lg) 0;
+
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../assets/banner.jpg');
+
+    background-size: cover;
+
+    background-position: center;
+
+}
+
+
+.movies__search {
+
+    max-width: 720px;
+
+    margin: 0 auto var(--spacing-md) auto;
+
+    display: grid;
+
+    grid-template-columns: 1fr auto;
+
+    gap: var(--spacing-sm);
+
+}
+
+
+.movies__search-input {
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    border: 1px solid var(--border-color);
+
+    color: var(--white);
+
+    padding: var(--spacing-sm) var(--spacing-md);
+
+    border-radius: var(--border-radius);
+
+}
+
+
+.movies__search-button {
+
+    background-color: var(--primary);
+
+    color: var(--white);
+
+    border: none;
+
+    padding: var(--spacing-sm) var(--spacing-lg);
+
+    border-radius: var(--border-radius);
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: var(--transition);
+
+}
+
+
+.movies__search-button:hover {
+
+    filter: brightness(1.05);
+
+}
+
+
+.movies__tabs {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: var(--spacing-sm);
+
+    margin-top: var(--spacing-sm);
+
+}
+
+
+.movies__tab {
+
+    background-color: rgba(255, 255, 255, 0.06);
+
+    border: 1px solid var(--border-color);
+
+    color: var(--white);
+
+    padding: 0.5rem 1rem;
+
+    border-radius: 999px;
+
+    cursor: pointer;
+
+    transition: var(--transition);
+
+}
+
+
+.movies__tab--active,
+.movies__tab:hover {
+
+    background-color: var(--primary);
+
+    border-color: var(--primary);
+
+}
+
+
+.movies__layout {
+
+    display: contents;
+
+}
+
+
+.movies__bar {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: var(--spacing-sm);
+
+    max-width: 720px;
+
+    margin: var(--spacing-md) auto 0 auto;
+
+}
+
+
+.movies__bar-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    color: var(--light-gray);
+
+    font-size: 0.9rem;
+
+}
+
+
+.movies__select {
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    border: 1px solid var(--border-color);
+
+    color: var(--white);
+
+    padding: var(--spacing-sm);
+
+    border-radius: var(--border-radius);
+
+}
+
+
+.movies__grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(5, 1fr);
+
+    gap: var(--spacing-lg);
+
+    align-items: stretch;
+
+    grid-auto-rows: 1fr;
+
+}
+
+
+/* Responsive for Movies Page */
+
+@media (max-width: 1199px) {
+
+    .movies__grid {
+
+        grid-template-columns: repeat(3, 1fr);
+
+    }
+
+
+    .movies__bar {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+@media (max-width: 767px) {
+
+    .movies__search {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .movies__grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: var(--spacing-md);
+
+    }
+
+}
+
+
+/* Utility Classes */
+
+.text-center {
+
+    text-align: center;
+
+}
+
+
+.text-left {
+
+    text-align: left;
+
+}
+
+
+.text-right {
+
+    text-align: right;
+
+}
+
+
+.mb-0 {
+
+    margin-bottom: 0;
+
+}
+
+
+.mb-1 {
+
+    margin-bottom: var(--spacing-xs);
+
+}
+
+
+.mb-2 {
+
+    margin-bottom: var(--spacing-sm);
+
+}
+
+
+.mb-3 {
+
+    margin-bottom: var(--spacing-md);
+
+}
+
+
+.mb-4 {
+
+    margin-bottom: var(--spacing-lg);
+
+}
+
+
+.mb-5 {
+
+    margin-bottom: var(--spacing-xl);
+
+}
+
+
+.mt-0 {
+
+    margin-top: 0;
+
+}
+
+
+.mt-1 {
+
+    margin-top: var(--spacing-xs);
+
+}
+
+
+.mt-2 {
+
+    margin-top: var(--spacing-sm);
+
+}
+
+
+.mt-3 {
+
+    margin-top: var(--spacing-md);
+
+}
+
+
+.mt-4 {
+
+    margin-top: var(--spacing-lg);
+
+}
+
+
+.mt-5 {
+
+    margin-top: var(--spacing-xl);
+
+}
+
+
+.hidden {
+
+    display: none;
+
+}
+
+
+.visible {
+
+    display: block;
+
+}
+
+
+/* Loading States */
+
+.loading {
+
+    opacity: 0.6;
+
+    pointer-events: none;
+
+}
+
+
+/* Animation Classes */
+
+.fade-in {
+
+    animation: fadeIn 0.5s ease-in;
+
+}
+
+
+@keyframes fadeIn {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(20px);
+
+    }
+
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+.slide-in {
+
+    animation: slideIn 0.3s ease-out;
+
+}
+
+
+@keyframes slideIn {
+
+    from {
+
+        transform: translateX(-100%);
+
+    }
+
+
+    to {
+
+        transform: translateX(0);
+
+    }
+
+}
+
+
+/* modal cho đăng ký đăng nhập*/
+
+/* CSS cho Modal đăng ký - Đơn giản */
+
+
+/* 1. Modal nền */
+
+.modal {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.8);
+
+    display: none;
+
+    z-index: 1000;
+
+}
+
+
+/* Modal quên mật khẩu hiển thị trên modal đăng nhập */
+
+#forgotModal {
+
+    z-index: 1001;
+
+}
+
+
+/* 2. Hộp modal */
+
+.modal__content {
+
+    background-color: #1e1e1e;
+
+    margin: 50px auto;
+
+    padding: 30px;
+
+    width: 90%;
+
+    max-width: 500px;
+
+    border-radius: 10px;
+
+    position: relative;
+
+}
+
+
+/* 3. Nút đóng X */
+
+.modal__close {
+
+    position: absolute;
+
+    top: 15px;
+
+    right: 20px;
+
+    font-size: 25px;
+
+    color: #ccc;
+
+    cursor: pointer;
+
+    background: none;
+
+    border: none;
+
+}
+
+
+.modal__close:hover {
+
+    color: white;
+
+}
+
+
+/* 4. Tiêu đề */
+
+.modal__title {
+
+    color: #d32f2f;
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    font-size: 24px;
+
+}
+
+
+/* 5. Form fields */
+
+.form__field {
+
+    margin-bottom: 20px;
+
+}
+
+
+.form__label {
+
+    display: block;
+
+    color: white;
+
+    margin-bottom: 5px;
+
+    font-weight: bold;
+
+}
+
+
+.form__input {
+
+    width: 100%;
+
+    padding: 12px;
+
+    background-color: #333;
+
+    border: 1px solid #555;
+
+    border-radius: 5px;
+
+    color: white;
+
+    font-size: 16px;
+
+    box-sizing: border-box;
+
+}
+
+
+.form__input:focus {
+
+    border-color: #d32f2f;
+
+    outline: none;
+
+}
+
+
+/* 6. Container cho password */
+
+.form__password-container {
+
+    position: relative;
+
+}
+
+
+.form__password-toggle {
+
+    position: absolute;
+
+    right: 10px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    background: none;
+
+    border: none;
+
+    color: #ccc;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+}
+
+
+.form__password-toggle:hover {
+
+    color: white;
+
+}
+
+
+/* 7. Checkbox container */
+
+.form__checkbox-container {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.form__checkbox {
+
+    margin-top: 5px;
+
+}
+
+
+.form__checkbox-label {
+
+    color: #ccc;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+}
+
+
+.form__checkbox-label a {
+
+    color: #ff9800;
+
+    text-decoration: none;
+
+}
+
+
+.form__checkbox-label a:hover {
+
+    text-decoration: underline;
+
+}
+
+
+/* 8. Nút submit */
+
+.form__button {
+
+    width: 100%;
+
+    padding: 15px;
+
+    background-color: #d32f2f;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 5px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.form__button:hover {
+
+    background-color: #b71c1c;
+
+}
+
+
+/* 9. Thông báo lỗi/thành công */
+
+.form__message {
+
+    padding: 15px;
+
+    border-radius: 5px;
+
+    margin-bottom: 20px;
+
+    text-align: center;
+
+    display: none;
+
+}
+
+
+.form__message--success {
+
+    background-color: rgba(76, 175, 80, 0.2);
+
+    border: 1px solid #4caf50;
+
+    color: #4caf50;
+
+}
+
+
+.form__message--error {
+
+    background-color: rgba(244, 67, 54, 0.2);
+
+    border: 1px solid #f44336;
+
+    color: #f44336;
+
+}
+
+
+/* 10. Responsive cho mobile */
+
+@media (max-width: 600px) {
+
+    .modal__content {
+
+        margin: 20px auto;
+
+        padding: 20px;
+
+        width: 95%;
+
+    }
+
+
+    .modal__title {
+
+        font-size: 20px;
+
+    }
+
+}
+
+
+/* CSS bổ sung cho form đăng nhập - Thêm vào file styles.css */
+
+
+/* Thêm hiệu ứng chuyển đổi giữa các form */
+
+.modal__content {
+
+    transition: all 0.3s ease;
+
+}
+
+
+/* Auth pages */
+
+.auth-page {
+
+    min-height: calc(100vh - 140px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 40px 16px;
+
+}
+
+
+.auth-card {
+
+    max-width: 420px;
+
+    width: 100%;
+
+    background: #1f1f1f;
+
+    border-radius: 12px;
+
+    padding: 28px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+
+}
+
+
+.auth-title {
+
+    font-size: 24px;
+
+    font-weight: 600;
+
+    color: var(--white);
+
+    text-align: center;
+
+    margin-bottom: 16px;
+
+}
+
+
+.auth-subtitle {
+
+    color: #bdbdbd;
+
+    text-align: center;
+
+    margin-bottom: 24px;
+
+}
+
+
+.auth-extra {
+
+    text-align: center;
+
+    color: #bdbdbd;
+
+    margin-top: 16px;
+
+    font-size: 14px;
+
+}
+
+
+.auth-link {
+
+    color: #ff9800;
+
+    text-decoration: underline;
+
+}
+
+
+.auth-link:hover {
+
+    filter: brightness(1.1);
+
+}
+
+
+/* Style cho link chuyển đổi */
+
+.form-switch-link {
+
+    background: none;
+
+    border: none;
+
+    color: #ff9800;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+
+    font-size: inherit;
+
+    font-family: inherit;
+
+}
+
+
+.form-switch-link:hover {
+
+    color: #ffb74d;
+
+}
+
+
+/* Responsive cho form nhỏ hơn */
+
+@media (max-width: 480px) {
+
+    .modal__content {
+
+        padding: 15px;
+
+    }
+
+}
+
+
+/* Form error states (Register/Login) */
+
+.form__input--error {
+
+    border-color: #f44336 !important;
+
+}
+
+
+.form__error {
+
+    display: none;
+
+    color: #f44336;
+
+    font-size: 14px;
+
+    margin-top: 6px;
+
+}
+
+
+.form__error--visible {
+
+    display: block;
+
+}
+
+
+.form__error--terms {
+
+    margin: -10px 0 10px 0;
+
+}
+
+
+/* Booking Page */
+
+.breadcrumb {
+
+    background-color: var(--dark-gray);
+
+    padding: var(--spacing-sm) 0;
+
+}
+
+
+.breadcrumb__list {
+
+    display: flex;
+
+    list-style: none;
+
+    gap: 0.5rem;
+
+    color: var(--medium-gray);
+
+}
+
+
+.breadcrumb__link {
+
+    color: var(--accent);
+
+}
+
+
+.breadcrumb__current {
+
+    color: var(--white);
+
+}
+
+
+.booking-summary {
+
+    background-color: var(--dark-gray);
+
+    padding: var(--spacing-md);
+
+    border-radius: var(--border-radius);
+
+    margin-bottom: var(--spacing-lg);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--spacing-md);
+
+}
+
+
+.booking-summary__poster {
+
+    width: 80px;
+
+    height: 120px;
+
+    border-radius: 4px;
+
+    object-fit: cover;
+
+}
+
+
+.booking-summary__title {
+
+    color: var(--primary);
+
+    margin-bottom: 0.5rem;
+
+}
+
+
+.booking-summary__meta {
+
+    color: var(--accent);
+
+    margin-bottom: 0.5rem;
+
+}
+
+
+.booking-summary__rating {
+
+    color: var(--light-gray);
+
+}
+
+
+.price-summary {
+
+    background-color: var(--dark);
+
+    padding: var(--spacing-md);
+
+    border-radius: var(--border-radius);
+
+    margin: var(--spacing-md) 0;
+
+}
+
+
+.price-summary__title {
+
+    color: var(--primary);
+
+    margin-bottom: 1rem;
+
+}
+
+
+.price-summary__row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 0.5rem;
+
+}
+
+
+.price-summary__divider {
+
+    border: none;
+
+    border-top: 1px solid var(--border-color);
+
+    margin: 1rem 0;
+
+}
+
+
+.price-summary__total {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-weight: bold;
+
+    color: var(--accent);
+
+    font-size: 1.1rem;
+
+}
+
+
+.actions {
+
+    display: flex;
+
+    gap: 1rem;
+
+    justify-content: center;
+
+    margin-top: 2rem;
+
+}
+
+
+.cinema-info {
+
+    background-color: var(--dark-gray);
+
+    padding: var(--spacing-lg);
+
+    border-radius: var(--border-radius);
+
+    margin-top: var(--spacing-lg);
+
+}
+
+
+.cinema-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+    gap: var(--spacing-lg);
+
+}
+
+
+.cinema-details__name {
+
+    color: var(--accent);
+
+    margin-bottom: 1rem;
+
+}
+
+
+.cinema-details__text {
+
+    color: var(--light-gray);
+
+    margin-bottom: 0.5rem;
+
+}
+
+
+.tags {
+
+    display: flex;
+
+    gap: 0.5rem;
+
+    flex-wrap: wrap;
+
+}
+
+
+.tag {
+
+    padding: 0.25rem 0.5rem;
+
+    border-radius: 4px;
+
+    font-size: 0.8rem;
+
+}
+
+
+.tag--primary {
+
+    background-color: var(--primary);
+
+    color: var(--white);
+
+}
+
+
+.tag--accent {
+
+    background-color: var(--accent);
+
+    color: var(--dark);
+
+}
+
+
+.tag--muted {
+
+    background-color: var(--medium-gray);
+
+    color: var(--white);
+
+}
+
+
+.footer__note {
+
+    color: var(--light-gray);
+
+    margin-top: 1rem;
+
+}
+
+/* =========================================================
+
+ADMIN THEME — stable buttons, action column, responsive
+
+Áp dụng phạm vi .content (DarkPan admin wrapper)
+
+========================================================= */
+
+
+/* Reset nhẹ để .btn ở admin không bị rule homepage đè */
+
+.content .btn {
+
+    box-shadow: none !important;
+
+    transform: none !important;
+
+    border-radius: .75rem;
+
+    padding: .5rem .9rem;
+
+    font-weight: 600;
+
+    line-height: 1.15;
+
+}
+
+
+/* Màu nút theo theme */
+
+.content .btn-danger {
+
+    background: var(--primary) !important;
+
+    border-color: var(--primary) !important;
+
+    color: #fff !important;
+
+}
+
+.content .btn-danger:hover {
+    filter: brightness(1.06);
+}
+
+
+/* Nút Edit viền xám */
+
+.content .btn-outline-edit {
+
+    background: transparent;
+
+    border: 1px solid #4e5d78;
+
+    color: #cdd9ed;
+
+}
+
+.content .btn-outline-edit:hover {
+
+    background: #4e5d78;
+
+    color: #fff;
+
+    border-color: #4e5d78;
+
+}
+
+
+/* Huy hiệu trạng thái (Voucher/Staff/Food/Room…) */
+
+.status-badge {
+
+    display: inline-block;
+
+    padding: .35rem .65rem;
+
+    border-radius: .6rem;
+
+    font-weight: 700;
+
+    font-size: .85rem;
+
+    color: #fff;
+
+    white-space: nowrap;
+
+}
+
+.status-active {
+    background: #22a06b;
+}
+
+/* xanh Active */
+
+.status-inactive {
+    background: #7b8494;
+}
+
+/* xám Inactive */
+
+
+/* Bảng admin: căn giữa theo chiều dọc */
+
+.content .table td,
+.content .table th {
+    vertical-align: middle;
+}
+
+
+/* Cột Action: KHÔNG đặt width nhỏ cưỡng bức, dùng min-width */
+
+.content .table th:last-child,
+.content .table td:last-child {
+
+    white-space: nowrap;
+
+    min-width: 180px; /* đủ 2 nút không chồng nhau */
+
+}
+
+
+/* Bên trong ô Action dùng flex để căn phải trên desktop */
+
+.content .table td:last-child {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: .5rem;
+
+    flex-wrap: nowrap;
+
+}
+
+
+/* Trên tablet/mobile: căn trái + cho phép wrap 2 dòng */
+
+@media (max-width: 992px) {
+
+    .content .table td:last-child {
+
+        justify-content: flex-start;
+
+        flex-wrap: wrap;
+
+    }
+
+    .content .btn {
+
+        padding: .45rem .8rem;
+
+        font-size: .875rem; /* 14px */
+
+    }
+
+}
+
+
+/* Thanh công cụ trên cùng (search + add + bulk delete) */
+
+.top-action-bar {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: .75rem;
+
+    justify-content: space-between;
+
+}
+
+.top-action-bar .input-group {
+    min-width: 260px;
+}
+
+@media (max-width: 992px) {
+
+    .top-action-bar {
+        align-items: stretch;
+    }
+
+    .top-action-bar .input-group {
+        min-width: unset;
+        width: 100%;
+    }
+
+}
+
+
+/* Đảm bảo bảng không tràn khung trên màn nhỏ */
+
+.content .table-responsive {
+
+    overflow-x: auto;
+
+    border-radius: .5rem;
+
+}
+
+
+/* Navbar/header homepage có z-index cao — tránh đè nội dung */
+
+.header {
+    z-index: 1000;
+    position: sticky;
+    top: 0;
+}
+
+@media (max-width: 767px) {
+
+    main, .section, .container {
+        position: relative;
+        z-index: 1;
+    }
+
+}
+
+
+/* ==== Schedule: thanh nút dưới bảng ==== */
+
+.table-actions-bar {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: .6rem;
+
+}
+
+.table-actions-bar .right-actions {
+
+    margin-left: auto;
+
+    display: flex;
+
+    gap: .6rem;
+
+}
+
+
+/* Kích thước nút thống nhất với admin */
+
+.table-actions-bar .btn {
+
+    border-radius: .75rem;
+
+    font-weight: 600;
+
+    line-height: 1.15;
+
+    padding: .5rem .9rem;
+
+}
+
+
+/* Mobile: dàn theo cột, Add ở trên, 2 nút bên dưới */
+
+@media (max-width: 992px) {
+
+    .table-actions-bar {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: .5rem;
+
+    }
+
+    .table-actions-bar .right-actions {
+
+        margin-left: 0;
+
+        justify-content: flex-start;
+
+        flex-wrap: wrap;
+
+        gap: .5rem;
+
+    }
+
+    .table-actions-bar .btn {
+
+        padding: .45rem .8rem;
+
+        font-size: .875rem;
+
+    }
+
+
+}

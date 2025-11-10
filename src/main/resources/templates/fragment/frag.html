@@ -38,7 +38,7 @@
     <!-- Sidebar -->
     <div class="sidebar pe-4 pb-3">
         <nav class="navbar bg-secondary navbar-dark">
-            <a th:href="@{/homepage}" class="navbar-brand mx-4 mb-3">
+            <a th:href="@{/dashboard}" class="navbar-brand mx-4 mb-3">
                 <h2 class="text-primary">Dashboard</h2>
             </a>
 
@@ -46,7 +46,7 @@
                 <a th:href="@{/dashboard}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                 <a th:href="@{/staffs}" class="nav-item nav-link"><i class="fa fa-users me-2"></i>Staff</a>
                 <a th:href="@{/movies}" class="nav-item nav-link"><i class="fa fa-film me-2"></i>Movies</a>
-                <a th:href="@{/shift-schedules}" class="nav-item nav-link"><i
+                <a th:href="@{/showtime}" class="nav-item nav-link"><i
                         class="fa fa-calendar-alt me-2"></i>Showtimes</a>
                 <a th:href="@{/rooms}" class="nav-item nav-link"><i class="fa fa-chair me-2"></i>Rooms</a>
                 <a th:href="@{/vouchers}" class="nav-item nav-link"><i class="fa fa-ticket-alt me-2"></i>Vouchers</a>
@@ -54,6 +54,39 @@
                         class="fa fa-hamburger me-2"></i>Concessions</a>
                 <a th:href="@{/shift-schedules}" class="nav-item nav-link"><i
                         class="fa fa-calendar-alt me-2"></i>Staff Schedule</a>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<div th:fragment="sidebar_staff" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <!-- Spinner -->
+    <div id="spinner"
+         class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar pe-4 pb-3">
+        <nav class="navbar bg-secondary navbar-dark">
+            <a th:href="@{/homepage}" class="navbar-brand mx-4 mb-3">
+                <h2 class="text-primary">Staff Home</h2>
+            </a>
+
+            <div class="navbar-nav w-100">
+                <a th:href="@{/cashier_booking}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i class="fa fa-ticket-alt me-2"></i>Booking</a>
+                <a th:href="@{/redemption}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
+                        class="fa fa-ticket-alt me-2"></i>Redemption</a>
+                <a th:href="@{/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
+                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
+                <a th:href="@{/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i
+                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
             </div>
         </nav>
     </div>
@@ -101,7 +134,8 @@
                         <!--edit link Now Showing  trên homepage-->
                         <li class="nav__item"><a th:href="@{/homepage/movies_nowshowing}" class="nav__link">Now Showing</a></li>
                         <li class="nav__item"><a th:href="@{/homepage/coming-soon}" class="nav__link">Coming Soon</a></li>
-                        <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Promotions & Vouchers</a></li>
+                        <li class="nav__item"><a th:href="@{/homepage/vouchers}" class="nav__link">Promotions & Vouchers</a>
+                        <li class="nav__item"><a th:href="@{/homepage/showtimes}" class="nav__link">Showtimes</a></li>
                     </ul>
                 </nav>
             </div>
@@ -189,5 +223,36 @@
         </div>
     </footer>
 </div>
+<div th:fragment="sidebar_staff" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <!-- Spinner -->
+    <div id="spinner-staff"
+         class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
+    <!-- Sidebar -->
+    <div class="sidebar pe-4 pb-3">
+        <nav class="navbar bg-secondary navbar-dark">
+            <a th:href="@{/homepage}" class="navbar-brand mx-4 mb-3">
+                <h2 class="text-primary">Staff Home</h2>
+            </a>
+
+            <div class="navbar-nav w-100">
+                <a th:href="@{/staffs/cashier/showtimes}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i class="fa fa-ticket-alt me-2"></i>Booking</a>
+                <a th:href="@{/redemption}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
+                        class="fa fa-ticket-alt me-2"></i>Redemption</a>
+                <a th:href="@{/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')"><i
+                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
+                <a th:href="@{/schedule}" class="nav-item nav-link"
+                   sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')"><i
+                        class="fa fa-calendar-alt me-2"></i>My Schedule</a>
+            </div>
+        </nav>
+    </div>
+</div>
 

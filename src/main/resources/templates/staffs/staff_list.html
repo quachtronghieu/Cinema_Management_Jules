@@ -19,7 +19,7 @@
             <div class="bg-secondary rounded p-4">
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h6 class="mb-0">Staff Management</h6>
+                    <h4 class="mb-0">Staffs Management</h4>
                     <div class="d-flex align-items-center">
 
                         <a th:href="@{/staffs/create}" class="btn btn-primary btn-compact">
@@ -49,20 +49,22 @@
                             <td th:text="*{position}"></td>
                             <td th:text="*{phone}"></td>
                             <td th:text="*{email}"></td>
-                            <td>
-                                <a class="btn btn-success btn-compact"
-                                   th:href="@{/staffs/update/{id}(id=*{staffID})}">
-                                    <i class="fa fa-edit"></i> Edit
-                                </a>
-                                <a class="btn btn-light btn-compact"
-                                   th:href="@{/staffs/detail/{id}(id=*{staffID})}">
-                                    <i class="bi bi-eye-fill"></i> Details
-                                </a>
-                                <button class="btn btn-danger btn-compact delete-staff-btn"
-                                        data-bs-toggle="modal" data-bs-target="#deleteStaffModal"
-                                        th:attr="data-id=*{staffID}, data-name=*{fullName}">
-                                    <i class="fa fa-trash"></i> Delete
-                                </button>
+                            <td class="col-action">
+                                <div class="d-flex flex-nowrap align-items-center justify-content-center">
+                                    <a class="btn btn-success btn-compact me-1"
+                                       th:href="@{/staffs/update/{id}(id=*{staffID})}">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </a>
+                                    <a class="btn btn-light btn-compact me-1"
+                                       th:href="@{/staffs/detail/{id}(id=*{staffID})}">
+                                        <i class="bi bi-eye-fill"></i> Details
+                                    </a>
+                                    <button class="btn btn-danger btn-compact delete-staff-btn"
+                                            data-bs-toggle="modal" data-bs-target="#deleteStaffModal"
+                                            th:attr="data-id=*{staffID}, data-name=*{fullName}">
+                                        <i class="fa fa-trash"></i> Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -89,6 +91,7 @@
                         </ul>
                     </nav>
                 </div>
+
                 <!---Edit để hiển thị thông báo khi danh sách trống-->
                 <div class="alert alert-warning text-center" th:if="${staffList == null or staffList.isEmpty()}">
                     No staff available.

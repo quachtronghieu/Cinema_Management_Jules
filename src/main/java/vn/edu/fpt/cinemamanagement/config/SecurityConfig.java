@@ -36,7 +36,7 @@ public class SecurityConfig {
                         // Trang cho guest (không cần login)
                         .requestMatchers("/", "/homepage", "/homepage/**",
                                 "/movies/**", "/vouchers/**",
-                                "/login", "/register", "/forget_password", "/sendmail", "/verify/**").permitAll()
+                                "/login", "/register", "/forget_password", "/sendmail", "/verify/**", "/rooms/seat").permitAll()
 
                         // Trang yêu cầu quyền
                         .requestMatchers("/dashboard").hasAuthority("ROLE_ADMIN")
@@ -62,7 +62,7 @@ public class SecurityConfig {
                             } else if (roles.contains("ROLE_STAFF")
                                     || roles.contains("ROLE_CASHIER_STAFF")
                                     || roles.contains("ROLE_REDEMPTION_STAFF")) {
-                                response.sendRedirect("/staff_home");
+                                response.sendRedirect("/staffs/cashier/showtimes");
                             } else {
                                 response.sendRedirect("/homepage");
                             }
