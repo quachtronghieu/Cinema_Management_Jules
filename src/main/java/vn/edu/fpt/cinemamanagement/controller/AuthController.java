@@ -28,8 +28,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     @Autowired
-    private MailController mailController;
-    @Autowired
     private MailService mailService;
 
     // ========================== LOGIN ==========================
