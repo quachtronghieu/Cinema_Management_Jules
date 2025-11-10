@@ -2,20 +2,16 @@ package vn.edu.fpt.cinemamanagement.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import vn.edu.fpt.cinemamanagement.entities.Movie;
-import vn.edu.fpt.cinemamanagement.entities.Room;
-import vn.edu.fpt.cinemamanagement.entities.Showtime;
-import vn.edu.fpt.cinemamanagement.entities.TemplateSeat;
-import vn.edu.fpt.cinemamanagement.services.ShowtimeService;
-import vn.edu.fpt.cinemamanagement.services.TemplateSeatService;
-import vn.edu.fpt.cinemamanagement.services.TimeSlotService;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+import vn.edu.fpt.cinemamanagement.entities.*;
+import vn.edu.fpt.cinemamanagement.services.*;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -27,16 +23,20 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(value = "staffs")
 public class StaffHomeController {
-
+@Autowired
     private final ShowtimeService showtimeService;
     private final TimeSlotService timeSlotService;
     private final TemplateSeatService templateSeatService;
+    private CashierShowTimeSeatService cashierShowTimeSeatService;
+    @Autowired
+    private BookingService bookingService;
 
 
-    public StaffHomeController(ShowtimeService showtimeService, TimeSlotService timeSlotService, TemplateSeatService templateSeatService) {
+    public StaffHomeController(ShowtimeService showtimeService, TimeSlotService timeSlotService, TemplateSeatService templateSeatService, CashierShowTimeSeatService cashierShowTimeSeatService) {
         this.showtimeService = showtimeService;
         this.timeSlotService = timeSlotService;
         this.templateSeatService = templateSeatService;
+        this.cashierShowTimeSeatService = cashierShowTimeSeatService ;
     }
 
 
@@ -77,26 +77,68 @@ public class StaffHomeController {
 
         return "cashier/showtime_for_cashier";
     }
-
     @GetMapping("/cashier/booking/{movieId}")
     public String showSeatMap(
             @PathVariable String movieId,
             @RequestParam String time,
             @RequestParam String date,
             Model model) {
+
+        // Lấy suất chiếu cụ thể dựa trên movieId, date, time
         Showtime showtime = showtimeService.findByMovie(movieId, time, date);
-        Room room = showtime.getRoom();
-        String templateId = room.getTemplate().getId();
-        List<TemplateSeat> seats = templateSeatService.findAllSeatsByTemplateID(templateId);
-        Map<String, List<TemplateSeat>> groupedSeats = seats.stream()
-                .sorted(Comparator.comparingInt(TemplateSeat::getSeatNumber))
+        if (showtime == null) {
+            return "redirect:/staffs/cashier/showtimes"; // fallback nếu không tìm thấy
+        }
+
+        // Lấy danh sách ghế (ShowtimeSeat) tương ứng
+        String showtimeId = showtime.getShowtimeId();
+        List<ShowtimeSeat> showtimeSeats = cashierShowTimeSeatService.createShowtimeSeats(showtimeId);
+
+        // Tạo map trạng thái ghế: TemplateSeatID → status
+        Map<String, String> seatStatusMap = showtimeSeats.stream()
+                .collect(Collectors.toMap(
+                        s -> s.getTemplateSeat().getId(),
+                        ShowtimeSeat::getStatus
+                ));
+
+        // Gom nhóm theo hàng (A, B, C...) để hiển thị
+        Map<String, List<ShowtimeSeat>> groupedSeats = showtimeSeats.stream()
+                .sorted(Comparator.comparing(s -> s.getTemplateSeat().getSeatNumber()))
                 .collect(Collectors.groupingBy(
-                        TemplateSeat::getRowLabel,
+                        s -> s.getTemplateSeat().getRowLabel(),
                         LinkedHashMap::new,
-                        Collectors.toList()));
+                        Collectors.toList()
+                ));
+
+        //  Truyền dữ liệu sang view
         model.addAttribute("groupSeat", groupedSeats);
-        model.addAttribute("template", templateId);
+        model.addAttribute("template", showtime.getRoom().getTemplate().getId());
         model.addAttribute("showtime", showtime);
+        model.addAttribute("seatStatusMap", seatStatusMap); // thêm dòng này
+
         return "cashier/cashier_seatMap";
+    }
+
+    @GetMapping("/cashier/concessions")
+    public String showConcessions(Model model) {
+        model.addAttribute("concessions", cashierShowTimeSeatService.findAll());
+        return "concession/concession_list_forCashier";
+    }
+    @PostMapping("/cashier/order")
+    @ResponseBody
+    public ResponseEntity<String> confirmOrder(@RequestParam MultiValueMap<String, String> formData) {
+        try {
+            String showtimeId = formData.getFirst("showtimeId");
+            List<String> seatIds = formData.get("seatIds");
+            List<String> concessionIds = formData.get("concessionIds");
+            List<String> qtyList = formData.get("qty");
+
+            bookingService.createBooking(showtimeId,seatIds, concessionIds, qtyList);
+
+            return ResponseEntity.ok("Order confirmed successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
     }
 }
