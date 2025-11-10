@@ -34,35 +34,98 @@
                         <div class="row">
                             <div th:each="c : ${concessions}" class="col-md-6 mb-4">
                                 <div class="row align-items-start bg-dark rounded p-3">
-                                    <!-- Poster -->
                                     <div class="col-md-4 text-center">
-                                        <img th:src="${c.img}"
-                                             alt="img"
+                                        <img th:src="${c.img}" alt="img"
                                              class="w-100 h-auto rounded border border-dark d-block mx-auto"
                                              style="width: 100% !important; height: 200px !important; object-fit: cover !important; border-radius: 10px !important;">
                                     </div>
-
                                     <div class="col-md-8">
                                         <h2 th:text="${c.name}" class="text-primary mb-3"></h2>
-                                        <div hidden>
-                                            <strong>ID:</strong> <span th:text="*{c.concessionId}"></span>
-                                        </div>
                                         <div class="mb-2">
                                             <strong>Description:</strong> <span th:text="*{c.description}"></span>
                                         </div>
-                                        <div class="mb-2">
-                                            <strong>Price:</strong> <span
-                                                th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                                        <!-- Phần hiển thị concession -->
+                                        <div class="mb-2 d-flex align-items-center">
+                                            <strong class="me-1">Price:</strong>
+                                            <!-- Hiển thị cho user -->
+                                            <span th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')}" class="concession-price"></span> ₫
+
+                                            <!-- Input số lượng, dùng giá chuẩn cho JS -->
+                                            <input type="number" min="0" value="0"
+                                                   class="ms-2 form-control form-control-sm concession-qty"
+                                                   style="width:70px;"
+                                                   th:data-id="${c.concessionId}"
+                                                   th:data-price="${c.price != null ? c.price.doubleValue() : 0}">
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                     <p class="text-danger" th:if="${concessions == null}">Concession list are null</p>
 
                 </div>
+                <!-- Mini Cart -->
+                <form id="mini-cart" class="p-4 border rounded-3 bg-secondary shadow"
+                      th:action="@{/booking/book}" method="post">
+
+                    <h5 class="mb-3 fw-bold text-primary text-center"
+                        th:text="${showtime.movie.title}">
+                        The Last Guardian
+                    </h5>
+
+                    <div class="row mb-3 align-items-center text-start">
+                        <div class="col-12 col-md-1 d-flex align-items-center mb-2 mb-md-0">
+                            <strong class="me-1">Room:</strong>
+                            <span id="room-id" th:text="${showtime.getRoom().id}">2</span>
+                        </div>
+
+                        <div class="col-12 col-md-5 d-flex align-items-center mb-2 mb-md-0">
+                            <strong class="me-1">Showtime:</strong>
+                            <span id="showtime-info"
+                                  th:text="${showtime.showDate} + ' | ' + ${showtime.startTime} + ' - ' + ${endtime}">
+            </span>
+
+                            <input type="hidden" name="showtimeId" th:value="${showtime.showtimeId}">
+
+                            <input type="hidden" name="endtime" th:value="${endtime}">
+                        </div>
+
+                        <div class="col-12 col-md-3 d-flex align-items-center mb-2 mb-md-0">
+                            <strong class="me-1">Seats:</strong>
+                            <span id="selected-seats" class="text-danger text-truncate" th:text="${selectedSeats}"></span>
+                            <input type="hidden" name="selectedSeats" th:value="${selectedSeats}">
+                        </div>
+
+                        <div class="col-12 col-md-3 d-flex flex-column mb-2 mb-md-0">
+                            <div>
+                                <strong class="me-1">Total Seats Price:</strong>
+                                <span id="seatPriceDisplay" class="fw-bold text-success" th:text="${totalPrice}"></span> ₫
+                            </div>
+                            <div>
+                                <strong class="me-1">Grand Total:</strong>
+                                <span id="grandTotalDisplay" class="fw-bold text-success"></span> ₫
+                                <input type="hidden" id="totalPrice" name="totalPrice" th:value="${totalPrice}">
+                            </div>
+                        </div>
+
+                        <!-- Concession list in mini-cart -->
+                        <div id="selected-concessions" class="mb-2 text-white"></div>
+
+                        <input type="hidden" id="selectedConcessionIds" name="selectedConcessionIds">
+
+
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button id="confirm-btn" class="btn btn-primary btn-sm fw-semibold" type="submit">
+                            Next →
+                        </button>
+                    </div>
+                </form>
             </div>
+
         </div>
     </section>
 
@@ -71,6 +134,113 @@
 <footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
 
 <!-- JS -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const confirmBtn = document.getElementById('confirm-btn');
+        const seatPriceDisplay = document.getElementById('seatPriceDisplay'); // Giá ghế hiển thị
+        const grandTotalDisplay = document.getElementById('grandTotalDisplay'); // Tổng tiền hiển thị
+        const totalPriceInput = document.getElementById('totalPrice'); // hidden input gửi về server
+        const selectedConcessionsEl = document.getElementById('selected-concessions');
+        const selectedConcessionIdsInput = document.getElementById('selectedConcessionIds');
+        const concessionQtyInputs = Array.from(document.querySelectorAll('.concession-qty'));
+
+        // Robust price parser: giữ các chữ số (0-9) và dấu thập phân nếu có, loại bỏ tất cả ký tự khác
+        function parsePrice(str) {
+            if (!str && totalPriceInput && totalPriceInput.value) {
+                // fallback: nếu không có text, lấy từ hidden initial value (server)
+                return Number(String(totalPriceInput.value).replace(/\D/g, '')) || 0;
+            }
+            // loại bỏ tất cả ký tự không phải chữ số
+            const digits = String(str).replace(/[^\d.-]/g, '');
+            // nếu rỗng -> 0
+            if (digits === '') return 0;
+            // parse as number
+            const n = Number(digits);
+            return isNaN(n) ? 0 : n;
+        }
+
+        function debugLog(...args) {
+            if (window.console && console.log) console.log('[concession-debug]', ...args);
+        }
+
+        function updateConcessions() {
+            let totalConcession = 0;
+            const selectedList = [];
+            const selectedItems = []; // array of objects {id, qty}
+
+            concessionQtyInputs.forEach(input => {
+                // dataset may be undefined if attribute not set correctly
+                const qty = parseInt(input.value, 10) || 0;
+                const priceRaw = input.dataset ? input.dataset.price : input.getAttribute('data-price');
+                const idRaw = input.dataset ? input.dataset.id : input.getAttribute('data-id');
+                const price = Number(String(priceRaw || '').replace(/[^\d.-]/g, '')) || 0;
+                const id = idRaw ? String(idRaw).trim() : '';
+
+                const nameEl = input.closest('.col-md-8')?.querySelector('h2');
+                const name = nameEl ? nameEl.textContent.trim() : id;
+
+                if (qty > 0 && id) {
+                    selectedList.push(`${name} x ${qty} (${(qty * price).toLocaleString('vi-VN')} ₫)`);
+                    selectedItems.push({ id: id, qty: qty });
+                    totalConcession += qty * price;
+                }
+            });
+
+            // show selected concessions
+            selectedConcessionsEl.textContent = selectedList.join(' | ') || "No concessions";
+
+            // save selected items as JSON to hidden input (robust vs separators)
+            if (selectedConcessionIdsInput) {
+                selectedConcessionIdsInput.value = JSON.stringify(selectedItems);
+                debugLog('selectedConcessionIds set to', selectedConcessionIdsInput.value);
+            } else {
+                debugLog('No hidden input for selectedConcessionIds found');
+            }
+
+            // compute totals
+            const seatTotal = parsePrice(seatPriceDisplay ? seatPriceDisplay.textContent : '');
+            const grandTotal = seatTotal + totalConcession;
+
+            // display friendly string (with currency)
+            if (grandTotalDisplay) grandTotalDisplay.textContent = grandTotal.toLocaleString('vi-VN');
+            if (totalPriceInput) totalPriceInput.value = Math.round(grandTotal);
+
+            debugLog({ seatTotal, totalConcession, grandTotal, totalPriceSent: totalPriceInput ? totalPriceInput.value : null });
+
+            // enable/disable confirm
+            const selectedSeatsInput = document.querySelector('input[name="selectedSeats"]');
+            if (confirmBtn) confirmBtn.disabled = (!selectedSeatsInput?.value && totalConcession === 0);
+        }
+
+        // attach listeners (if inputs dynamic later, you can re-run)
+        concessionQtyInputs.forEach(input => input.addEventListener('input', updateConcessions));
+
+        // on submit: ensure total price is correct (recalc from displayed)
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                // ensure up-to-date
+                updateConcessions();
+
+                // final check logs
+                debugLog('Before submit — hidden totalPrice=', totalPriceInput ? totalPriceInput.value : null,
+                    'selectedConcessions=', selectedConcessionIdsInput ? selectedConcessionIdsInput.value : null);
+
+                // submit form
+                const form = document.getElementById('mini-cart');
+                if (form) form.submit();
+                else debugLog('Form #mini-cart not found');
+            });
+        }
+
+        // init
+        updateConcessions();
+    });
+</script>
+
+
+
 <script th:src="@{/assets/js/bootstrap.bundle.min.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/assets/js/hero.js}"></script>

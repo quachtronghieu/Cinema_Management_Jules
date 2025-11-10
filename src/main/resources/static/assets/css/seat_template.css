@@ -1,6 +1,6 @@
 /* Seat Map */
 .seat-map {
-    margin-top: 7rem;
+    margin-top: 2rem;
     background-color: var(--dark-gray);
 
     padding: var(--spacing-lg);
@@ -31,7 +31,7 @@
 
     border-radius: 10px;
     
-    margin-top: var(--spacing-lg);
+    margin-top: 1rem;
 
     margin-bottom: var(--spacing-lg);
 
@@ -268,9 +268,10 @@ appear in a horizontal line and centered within the seat map. */
 
 .seat-map__grid--t3 {
     display: grid;
-    grid-template-columns: repeat(10, minmax(32px, 1fr));
-    gap: .5rem;
+    grid-template-columns: repeat(10, 40px);
+    gap: 1rem;
     justify-items: center;
+    justify-content: center;
 }
 
 .seat-map__grid--t4 .row {
