@@ -46,12 +46,14 @@
                 <a th:href="@{/dashboard}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                 <a th:href="@{/staffs}" class="nav-item nav-link"><i class="fa fa-users me-2"></i>Staff</a>
                 <a th:href="@{/movies}" class="nav-item nav-link"><i class="fa fa-film me-2"></i>Movies</a>
-                <a th:href="@{/schedules}" class="nav-item nav-link"><i
+                <a th:href="@{/shift-schedules}" class="nav-item nav-link"><i
                         class="fa fa-calendar-alt me-2"></i>Showtimes</a>
                 <a th:href="@{/rooms}" class="nav-item nav-link"><i class="fa fa-chair me-2"></i>Rooms</a>
                 <a th:href="@{/vouchers}" class="nav-item nav-link"><i class="fa fa-ticket-alt me-2"></i>Vouchers</a>
                 <a th:href="@{/concessions}" class="nav-item nav-link"><i
                         class="fa fa-hamburger me-2"></i>Concessions</a>
+                <a th:href="@{/shift-schedules}" class="nav-item nav-link"><i
+                        class="fa fa-calendar-alt me-2"></i>Staff Schedule</a>
             </div>
         </nav>
     </div>
@@ -81,7 +83,6 @@
 </div>
 
 
-<div></div>
 
 <div th:fragment="navbar_homepage" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <header class="header" role="banner">
