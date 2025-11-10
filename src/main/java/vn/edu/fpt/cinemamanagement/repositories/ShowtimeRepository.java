@@ -18,6 +18,9 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, String> {
     List<Showtime> findByRoom_IdAndShowDate(String roomId, LocalDate date);
     Optional<Showtime> findTopByOrderByShowtimeIdDesc();
     Showtime findByShowtimeId(String showtimeId);
+    // Lấy tất cả showtime trong khoảng ngày start -> end
+    List<Showtime> findByShowDateBetween(LocalDate start, LocalDate end);
+
     boolean existsByMovieAndRoomAndShowDateAndStartTime(
             Movie movie,
             Room room,
