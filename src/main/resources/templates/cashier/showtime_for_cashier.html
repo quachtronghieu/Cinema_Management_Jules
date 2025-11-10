@@ -32,18 +32,18 @@
 
             <!-- 🔸 Week navigation -->
             <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
-                <a th:href="@{'/cashier/showtimes'(date=${#temporals.format(prevDate,'yyyy-MM-dd')})}"
+                <a th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(prevDate,'yyyy-MM-dd')})}"
                    class="btn btn-outline-light rounded-circle px-3">&laquo;</a>
 
                 <a th:each="d : ${days}"
-                   th:href="@{'/cashier/showtimes'(date=${#temporals.format(d,'yyyy-MM-dd')})}"
+                   th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(d,'yyyy-MM-dd')})}"
                    th:classappend="${d.equals(selectedDate)} ? 'active' : ''"
                    class="date-btn text-center">
                     <small th:text="${#temporals.format(d,'EEE').toUpperCase()}">MON</small>
                     <span th:text="${#temporals.format(d,'dd')}">04</span>
                 </a>
 
-                <a th:href="@{'/cashier/showtimes'(date=${#temporals.format(nextDate,'yyyy-MM-dd')})}"
+                <a th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(nextDate,'yyyy-MM-dd')})}"
                    class="btn btn-outline-light rounded-circle px-3">&raquo;</a>
             </div>
 
@@ -67,7 +67,7 @@
                             <div class="d-flex flex-wrap gap-2">
                                 <a th:each="slot : ${room['slots']}"
                                    th:text="|${#temporals.format(slot['startTime'],'HH:mm')} - ${#temporals.format(slot['endTime'],'HH:mm')}|"
-                                   th:href="@{'/cashier/booking/' + ${movie.movieID} + '?time=' + ${#temporals.format(slot['startTime'],'HH:mm')} + '&date=' + ${#temporals.format(selectedDate,'yyyy-MM-dd')}}"
+                                   th:href="@{'/staffs/cashier/booking/' + ${movie.movieID} + '?time=' + ${#temporals.format(slot['startTime'],'HH:mm')} + '&date=' + ${#temporals.format(selectedDate,'yyyy-MM-dd')}}"
                                    class="showtime-btn">
                                 </a>
                             </div>
