@@ -42,16 +42,14 @@ public class BookingController {
 
         LocalDate selectedDate = (date != null) ? date : LocalDate.now();
 
-        // ✅ Lấy phim theo ID
         Movie movie = movieService.findById(movieId);
         if (movie == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found");
         }
 
-        // ✅ Lấy showtime theo phim và ngày
         List<Showtime> showtimes = showtimeService.getShowtimesByMovieAndDate(movieId, selectedDate);
 
-        // ✅ Gom giờ chiếu theo phòng
+        // Gom giờ chiếu theo phòng
         Map<String, List<Map<String, Object>>> roomGroups = new HashMap<>();
         Map<String, List<Showtime>> byRoom = showtimes.stream()
                 .collect(Collectors.groupingBy(st -> st.getRoom().getTemplate().getName()));
@@ -64,17 +62,17 @@ public class BookingController {
                             "startTime", st.getStartTime(),
                             "endTime", st.getEndTime()
                     ))
-                    .toList(); // ✅ Chuẩn JDK 16+, compile ngon trên IntelliJ
+                    .toList();
 
             roomGroups.put(roomName, slots);
         });
 
-        // ✅ Tạo danh sách ngày
+        // Tạo danh sách ngày
         List<LocalDate> days = IntStream.rangeClosed(-3, 3)
                 .mapToObj(i -> selectedDate.plusDays(i))
                 .collect(Collectors.toList());
 
-        // ✅ Thêm attribute cho view
+        // Thêm attribute cho view
         model.addAttribute("movie", movie);
         model.addAttribute("scheduleGroups", roomGroups);
         model.addAttribute("days", days);
@@ -92,14 +90,14 @@ public class BookingController {
         Template template = showtimeService.showtimeByID(showtimeId).getRoom().getTemplate();
         List<TemplateSeat> seats = templateSeatService.findAllSeatsByTemplateID(template.getId());
 
-        // ✅ Lấy danh sách ghế chiếu phim hiện tại (để check status)
+        // Lấy danh sách ghế chiếu phim hiện tại (để check status)
         List<ShowtimeSeat> showtimeSeats = showtimeSeatService.getAllByShowtimeId(showtimeId);
 
-        // ✅ Tạo map: TemplateSeatID → status (để dễ lookup)
+        // Tạo map: TemplateSeatID → status (để dễ lookup)
         Map<String, String> seatStatusMap = showtimeSeats.stream()
                 .collect(Collectors.toMap(s -> s.getTemplateSeat().getId(), ShowtimeSeat::getStatus));
 
-        // ✅ Sắp xếp theo hàng, số ghế
+        // Sắp xếp theo hàng, số ghế
         seats.sort(Comparator.comparing(TemplateSeat::getRowLabel)
                 .thenComparing(TemplateSeat::getSeatNumber));
 
@@ -107,7 +105,8 @@ public class BookingController {
                 .collect(Collectors.groupingBy(TemplateSeat::getRowLabel,
                         LinkedHashMap::new, Collectors.toList()));
 
-        // ✅ Truyền thêm map trạng thái xuống view
+        // Truyền thêm map trạng thái xuống view
+        model.addAttribute("showtime", showtimeService.showtimeByID(showtimeId));
         model.addAttribute("template", template.getId());
         model.addAttribute("groupSeat", groupedSeats);
         model.addAttribute("seatStatusMap", seatStatusMap);
@@ -116,10 +115,38 @@ public class BookingController {
     }
 
 
-
-    @GetMapping("/concessions")
-    public String concessionsPage(Model model){
+    @PostMapping("/concessions")
+    public String concessionsPage(@RequestParam Map<String, String> params, Model model){
         model.addAttribute("concessions" , concessionService.findAll());
+        System.out.println("🪑 Seats: " + params.get("selectedSeats"));
+        System.out.println("💰 Total: " + params.get("totalPrice"));
+        System.out.println("🎬 Showtime: " + params.get("showtimeId"));
+        System.out.println("⏰ Endtime: " + params.get("endtime"));
+
+        Showtime showtime = showtimeService.showtimeByID(params.get("showtimeId"));
+
+        model.addAttribute("selectedSeats", params.get("selectedSeats"));
+        model.addAttribute("totalPrice", params.get("totalPrice"));
+        model.addAttribute("showtime", showtime);
+        model.addAttribute("endtime", params.get("endtime"));
+        return "concession/concession_list_forCus";
+    }
+
+    @PostMapping("/payment")
+    public String paymentPage(@RequestParam Map<String, String> params, Model model){
+        System.out.println("Payment");
+        System.out.println("🪑 Seats: " + params.get("selectedSeats"));
+        System.out.println("💰 Total: " + params.get("totalPrice"));
+        System.out.println("🎬 Showtime: " + params.get("showtimeId"));
+        System.out.println("⏰ Endtime: " + params.get("endtime"));
+        System.out.println("ConcessionIds:" +  params.get("selectedConcessionIds"));
+
+        Showtime showtime = showtimeService.showtimeByID(params.get("showtimeId"));
+
+        model.addAttribute("selectedSeats", params.get("selectedSeats"));
+        model.addAttribute("totalPrice", params.get("totalPrice"));
+        model.addAttribute("showtime", showtime);
+        model.addAttribute("endtime", params.get("endtime"));
         return "concession/concession_list_forCus";
     }
 
