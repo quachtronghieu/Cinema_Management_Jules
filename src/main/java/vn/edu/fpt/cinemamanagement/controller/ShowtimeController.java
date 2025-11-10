@@ -223,15 +223,10 @@ public class ShowtimeController {
         }
     }
 
-    // 🗑 DELETE
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id, RedirectAttributes ra) {
-        try {
-            showtimeRepository.deleteById(id);
-            ra.addFlashAttribute("msg", "Showtime deleted successfully!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("msg", "Delete failed: " + e.getMessage());
-        }
+
+    @PostMapping("/delete")
+    public String delete (@RequestParam("showtimeId") String id) {
+        showtimeService.deleteShowtime(id);
         return "redirect:/showtime";
     }
     @GetMapping("/detail/{id}")

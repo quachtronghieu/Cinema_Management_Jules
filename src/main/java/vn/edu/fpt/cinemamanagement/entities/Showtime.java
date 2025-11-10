@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Showtime")
@@ -30,6 +32,9 @@ public class Showtime {
     @Column(name = "end_time", columnDefinition = "time")
     private LocalTime endTime;
 
+    @OneToMany(mappedBy = "showtime", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShowtimeSeat> showtimeSeats = new ArrayList<>();
+
 
     // getter + setter
     public String getShowtimeId() { return showtimeId; }
@@ -44,6 +49,14 @@ public class Showtime {
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
     public LocalTime getEndTime() { return endTime; }
     public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
+
+    public List<ShowtimeSeat> getShowtimeSeats() {
+        return showtimeSeats;
+    }
+
+    public void setShowtimeSeats(List<ShowtimeSeat> showtimeSeats) {
+        this.showtimeSeats = showtimeSeats;
+    }
 
     // ===== Helper method: display status =====
     @Transient
