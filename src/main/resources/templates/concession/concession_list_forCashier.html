@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashier - Concessions</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/seat_template.css}">
+</head>
+
+<body class="cashier-page">
+
+<nav class="d-flex justify-content-between align-items-center p-3 bg-black">
+    <a class="fw-bold text-danger fs-4 text-decoration-none" th:href="@{/staffs/staff_home}">D&D Cashier</a>
+    <a th:href="@{/staffs/cashier/showtimes}" class="btn btn-back">← Back</a>
+</nav>
+
+<main class="container mt-4">
+    <h2 class="text-center text-danger mb-4 fw-bold text-uppercase">Concessions</h2>
+
+    <div class="container-fluid text-white bg-secondary rounded p-4" th:if="${concessions != null}">
+        <div class="row">
+            <div th:each="c : ${concessions}" class="col-md-6 mb-4">
+                <div class="row align-items-start bg-dark rounded p-3 shadow-sm">
+                    <div class="col-md-4 text-center">
+                        <img th:src="${c.img}" alt="Image" class="w-100 rounded" style="height:200px; object-fit:cover;">
+                    </div>
+                    <div class="col-md-8">
+                        <h5 th:text="${c.name}" class="text-warning fw-semibold mb-1"></h5>
+                        <p th:text="${c.description}" class="small text-light mb-2"></p>
+                        <p class="mb-2">
+                            <strong>Price:</strong>
+                            <span th:text="|${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')} ₫|"></span>
+                        </p>
+
+                        <button
+                                class="btn btn-outline-danger btn-sm mt-2 w-100 btn-add"
+                                th:attr="data-id=${c.concessionId}, data-name=${c.name}, data-price=${c.price}"
+                                type="button">
+                            + Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-danger text-center" th:if="${concessions == null}">No concessions found</p>
+
+    <div class="mini-cart mt-5 bg-dark text-white rounded p-4 shadow-lg">
+        <div id="seatInfo" class="mb-3" style="display:none;">
+            <div class="bg-secondary rounded p-2 mb-2">
+                <strong>Seats:</strong> <span id="seatList">None</span><br>
+                <strong>Seat Price:</strong> <span id="seatPrice" style="color:#00e676;">0 ₫</span>
+            </div>
+        </div>
+
+        <div id="cartContainer">
+            <p class="text-secondary">No items selected</p>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between align-items-center gap-3">
+            <span>Total: <b id="totalPrice" class="highlight">0 ₫</b></span>
+            <button class="btn-confirm" id="btnConfirm" type="button">Confirm Order</button>
+        </div>
+    </div>
+</main>
+
+<script>
+    const state = {
+        cart: [],
+        seatData: null
+    };
+
+    function normalizeId(raw) {
+        return String(raw);
+    }
+
+    function findItemIndexById(idStr) {
+        const target = normalizeId(idStr);
+        for (let i = 0; i < state.cart.length; i++) {
+            if (String(state.cart[i].id) === target) return i;
+        }
+        return -1;
+    }
+
+    function formatVND(n) {
+        return Number(n || 0).toLocaleString('vi-VN') + ' ₫';
+    }
+
+    function addToCart(id, name, price) {
+        const _id = normalizeId(id);
+        const _price = Number(price) || 0;
+
+        const idx = findItemIndexById(_id);
+        if (idx >= 0) {
+            state.cart[idx].qty += 1;
+        } else {
+            state.cart.push({ id: _id, name: String(name), price: _price, qty: 1 });
+        }
+        renderCart();
+    }
+
+    function increaseQty(id) {
+        const idx = findItemIndexById(id);
+        if (idx >= 0) {
+            state.cart[idx].qty += 1;
+            renderCart();
+        }
+    }
+
+    function decreaseQty(id) {
+        const idx = findItemIndexById(id);
+        if (idx >= 0) {
+            if (state.cart[idx].qty > 1) {
+                state.cart[idx].qty -= 1;
+            } else {
+                state.cart.splice(idx, 1);
+            }
+            renderCart();
+        }
+    }
+
+    function calcTotal() {
+        let total = 0;
+        for (let i = 0; i < state.cart.length; i++) {
+            total += state.cart[i].qty * state.cart[i].price;
+        }
+        if (state.seatData && state.seatData.seatPrice) {
+            total += Number(state.seatData.seatPrice) || 0;
+        }
+        return total;
+    }
+
+    function renderCart() {
+        const wrap = document.getElementById('cartContainer');
+
+        if (!state.cart.length) {
+            wrap.innerHTML = '<p class="text-secondary text-center mb-0">No items selected</p>';
+            updateTotal();
+            return;
+        }
+
+        let html = '<div class="bg-secondary rounded p-3">';
+        for (let i = 0; i < state.cart.length; i++) {
+            const item = state.cart[i];
+            html += `
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-light fw-semibold">${item.name}</span>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-outline-light px-2 py-0" type="button" data-action="dec" data-id="${String(item.id)}">−</button>
+            <span class="text-light fw-bold mx-2">${item.qty}</span>
+            <button class="btn btn-sm btn-outline-danger px-2 py-0" type="button" data-action="inc" data-id="${String(item.id)}">+</button>
+          </div>
+        </div>
+      `;
+            if (i < state.cart.length - 1) {
+                html += '<hr style="border-color:#555; margin:0.5rem 0;">';
+            }
+        }
+        html += '</div>';
+
+        wrap.innerHTML = html;
+        updateTotal();
+    }
+
+    function updateTotal() {
+        document.getElementById('totalPrice').textContent = formatVND(calcTotal());
+    }
+
+    function loadSeatData() {
+        const stored = sessionStorage.getItem('cashierSeatData');
+        if (stored) {
+            try {
+                state.seatData = JSON.parse(stored);
+            } catch (_) {
+                state.seatData = null;
+            }
+        }
+
+        if (state.seatData && Array.isArray(state.seatData.seats)) {
+            document.getElementById('seatList').textContent = state.seatData.seats.join(', ');
+            document.getElementById('seatPrice').textContent = formatVND(state.seatData.seatPrice || 0);
+            document.getElementById('seatInfo').style.display = 'block';
+        } else {
+            document.getElementById('seatInfo').style.display = 'none';
+        }
+        updateTotal();
+    }
+
+
+    async function confirmConcession() {
+
+        const seatIds = (state.seatData && Array.isArray(state.seatData.seats))
+            ? state.seatData.seats
+            : [];
+
+
+        const items = state.cart;
+
+        if (seatIds.length === 0 && items.length === 0) {
+            alert('Please select seats and/or concessions!');
+            return;
+        }
+
+
+        const form = new URLSearchParams();
+        // 🔹 Thêm showtimeId vào form
+        if (state.seatData && state.seatData.showtimeId) {
+            form.append('showtimeId', state.seatData.showtimeId);
+        }
+
+
+        seatIds.forEach(s => form.append('seatIds', String(s)));
+
+
+        items.forEach(it => {
+            form.append('concessionIds', String(it.id));
+            form.append('qty', String(it.qty));
+        });
+
+        try {
+            const res = await fetch('/staffs/cashier/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: form.toString()
+            });
+
+            if (!res.ok) {
+                const t = await res.text();
+                alert('Gửi thất bại: ' + t);
+                return;
+            }
+            alert('Đã gửi đơn thành công!');
+            // 🔹 Xoá sessionStorage để tránh tạo booking trùng
+            sessionStorage.removeItem('cashierSeatData');
+            window.location.href = '/staffs/cashier/showtimes'
+        } catch (e) {
+            console.error(e);
+            alert('Lỗi mạng!');
+        }
+    }
+
+    function bindEvents() {
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.btn-add');
+            if (!btn) return;
+            const { id, name, price } = btn.dataset;
+            addToCart(id, name, price);
+        });
+
+        const cartContainer = document.getElementById('cartContainer');
+        cartContainer.addEventListener('click', function (e) {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+            const action = btn.dataset.action;
+            const id = btn.dataset.id;
+            if (action === 'inc') increaseQty(id);
+            if (action === 'dec') decreaseQty(id);
+        });
+
+        document.getElementById('btnConfirm').addEventListener('click', confirmConcession);
+    }
+
+    window.addEventListener('load', function () {
+        loadSeatData();
+        renderCart();
+        bindEvents();
+    });
+</script>
+
+</body>
+</html>
