@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragment/frag :: head_dashboard}"></head>
+
+<style>
+    body.bg-dark { background-color: #0e0e0e; color: white; }
+    .date-btn { background-color: #1a1a1a; color: #fff; border: 1px solid #333;
+        transition: all 0.3s ease; width: 70px; height: 70px; border-radius: 15px; }
+    .date-btn:hover, .date-btn.active { background-color: #dc3545; color: #fff; transform: translateY(-3px); }
+    .showtime-btn { border: 2px solid #dc3545; color: #dc3545; padding: 6px 16px;
+        border-radius: 8px; font-weight: 600; min-width: 120px; text-align: center; transition: all 0.25s ease; }
+    .showtime-btn:hover { background-color: #dc3545; color: white; }
+    .poster-card img { width: 100%; height: 360px; object-fit: cover; border-radius: 15px; }
+
+</style>
+
+<body class="bg-dark">
+<div class="container-fluid position-relative d-flex p-0">
+
+    <!-- 🔹 Sidebar -->
+    <div th:replace="~{fragment/frag :: sidebar_staff}"></div>
+
+    <!-- 🔹 Content area -->
+    <div class="content">
+
+        <!-- Navbar -->
+        <div th:replace="~{fragment/frag :: navbar_dashboard}"></div>
+
+        <!-- 🔹 Main Content -->
+        <main class="container py-5">
+            <h1 class="text-center mb-5 text-danger fw-bold">Select Showtime</h1>
+
+            <!-- 🔸 Week navigation -->
+            <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
+                <a th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(prevDate,'yyyy-MM-dd')})}"
+                   class="btn btn-outline-light rounded-circle px-3">&laquo;</a>
+
+                <a th:each="d : ${days}"
+                   th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(d,'yyyy-MM-dd')})}"
+                   th:classappend="${d.equals(selectedDate)} ? 'active' : ''"
+                   class="date-btn text-center">
+                    <small th:text="${#temporals.format(d,'EEE').toUpperCase()}">MON</small>
+                    <span th:text="${#temporals.format(d,'dd')}">04</span>
+                </a>
+
+                <a th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(nextDate,'yyyy-MM-dd')})}"
+                   class="btn btn-outline-light rounded-circle px-3">&raquo;</a>
+            </div>
+
+            <!-- 🔸 Movie & showtime listing -->
+            <div th:each="movie : ${movieList}" class="border-top border-secondary py-5">
+                <div class="row align-items-start g-4">
+                    <div class="col-md-3">
+                        <div class="poster-card"><img th:src="@{${movie.img}}" alt=""></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h3 class="fw-bold text-light" th:text="${movie.title}">Movie Title</h3>
+                        <p><span class="badge bg-warning text-dark" th:text="${movie.ageRating}">T13</span></p>
+
+                        <div th:if="${#lists.isEmpty(scheduleGroups[movie.movieID])}">
+                            <span class="text-muted fst-italic">No showtimes available.</span>
+                        </div>
+
+                        <div th:each="room : ${scheduleGroups[movie.movieID]}" class="mb-3">
+                            <p class="fw-semibold text-light mb-1" th:text="'Room: ' + ${room['roomName']}"></p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a th:each="slot : ${room['slots']}"
+                                   th:text="|${#temporals.format(slot['startTime'],'HH:mm')} - ${#temporals.format(slot['endTime'],'HH:mm')}|"
+                                   th:href="@{'/staffs/cashier/booking/' + ${movie.movieID} + '?time=' + ${#temporals.format(slot['startTime'],'HH:mm')} + '&date=' + ${#temporals.format(selectedDate,'yyyy-MM-dd')}}"
+                                   class="showtime-btn">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center text-secondary py-3 border-top border-secondary">
+            © 2025 D&D Cinema | Cashier Panel
+        </footer>
+    </div>
+</div>
+
+<!-- 🔹 Scripts -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/assets/lib/chart/chart.min.js}"></script>
+<script th:src="@{/assets/lib/easing/easing.min.js}"></script>
+<script th:src="@{/assets/lib/waypoints/waypoints.min.js}"></script>
+<script th:src="@{/assets/lib/owlcarousel/owl.carousel.min.js}"></script>
+<script th:src="@{/assets/lib/tempusdominus/js/moment.min.js}"></script>
+<script th:src="@{/assets/lib/tempusdominus/js/moment-timezone.min.js}"></script>
+<script th:src="@{/assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+</body>
+</html>

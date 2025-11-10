@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:fragment="layout(title, content)">
+<head th:replace="~{fragment/frag :: head_dashboard}"></head>
+<body>
+<div class="container-fluid position-relative d-flex p-0">
+    <div th:replace="~{fragment/frag :: sidebar_dashboard}"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <div th:replace="~{fragment/frag :: navbar_dashboard}"></div>
+
+        <!-- SHIFT SCHEDULE MANAGEMENT -->
+        <div class="container-fluid pt-4 px-4">
+            <div class="bg-secondary rounded p-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="mb-0">Create Shift Schedule</h6>
+                    <a class="btn btn-light btn-compact" th:href="@{/shift-schedules}">
+                        <i class="fa fa-arrow-left me-1"></i> Back
+                    </a>
+                </div>
+
+                <form th:action="@{/shift-schedules/create}" method="post" th:object="${shiftSchedule}">
+                    <div class="form-group mb-3">
+                        <label for="staff" class="form-label">Staff:</label>
+                        <select id="staff" class="form-select" name="staffId" required>
+                            <option value="" disabled selected>-- Select Staff --</option>
+                            <option th:each="s : ${staffList}" th:value="${s.staffID}" th:text="${s.fullName}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Shift Date:</label>
+                        <input type="date" th:field="*{shiftDate}" th:attr="min=${minDate}, max=${maxDate}" class="form-control"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="shiftStart" class="form-label">Shift Start Time:</label>
+                        <input type="time" id="shiftStart" th:field="*{shiftStart}" class="form-control"/>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="status" class="form-label">Status:</label>
+                        <input type="text" id="status" th:field="*{status}" class="form-control">
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-save"></i> Create
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Shift Modal -->
+    <div class="modal fade" id="deleteShiftModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Shift Schedule</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p>
+                        Are you sure you want to delete the shift schedule of
+                        <strong class="text-warning fs-5" id="deleteShiftStaff"></strong>
+                        (<span id="deleteShiftIdDisplay"></span>)?
+                    </p>
+                    <p class="text-warning small">**Warning: Deleting this shift may affect staff attendance history.**</p>
+                </div>
+
+                <form th:action="@{/shift-schedules/delete}" method="post">
+                    <input type="hidden" id="deleteShiftId" name="shiftScheduleId" />
+                    <div class="modal-footer">
+                        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/assets/js/main.js}"></script>
+    <script th:src="@{/assets/js/dashboard.js}"></script>
+    <script th:src="@{/assets/js/shift_schedule.js}"></script>
+
+</div>
+</body>
+</html>

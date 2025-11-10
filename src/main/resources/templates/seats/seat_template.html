@@ -4,16 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Seats - The Last Guardian - CGV Cinema</title>
+    <title>Template Seat - The Last Guardian - CGV Cinema</title>
     <meta name="description"
           content="Select your seats for The Last Guardian at CGV Cinema. Choose from available seats with premium VIP options.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap"
+          rel="stylesheet"/>
+
     <link rel="stylesheet" th:href="@{/assets/css/style.css}">
     <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/assets/css/seat_template.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
 </head>
 
 <body>
@@ -25,6 +28,7 @@
 
     <!-- Seat Selection -->
     <section class="section pt-0">
+
         <div class="container">
             <input type="radio" id="tpl1" name="tpl" th:checked="${template == 'TM000001'}" hidden="">
             <input type="radio" id="tpl2" name="tpl" th:checked="${template == 'TM000002'}" hidden="">
@@ -32,11 +36,15 @@
             <input type="radio" id="tpl4" name="tpl" th:checked="${template == 'TM000004'}" hidden="">
 
             <div class="seat-map">
+                <a class="btn btn-light btn-compact" href="/rooms"> <i class="fa fa-arrow-left me-1 "></i>
+                    Back
+                </a>
                 <!-- Screen -->
                 <div class="seat-map__screen">SCREEN</div>
 
 
                 <div class="templates">
+
                     <!-- TEMPLATE 1: existing layout -->
                     <div id="template-1" class="template-section"
                          th:if="${template == 'TM000001'}">
@@ -48,9 +56,9 @@
                                 <!-- Row A -->
                                 <div class="row">
                                     <div th:each="seats : ${entry.getValue()}" class="seat seat"
-                                         th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                         th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                         th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                     </div>
                                 </div>
 
@@ -67,9 +75,9 @@
                             <div class="row" th:each="entry : ${groupSeat}">
 
                                 <div th:each="seats, iterStat : ${entry.value}">
-                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                         th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                     </div>
                                     <div class="aisle" th:if="${iterStat.index == 3 or iterStat.index == 6}">
                                     </div>
@@ -85,9 +93,9 @@
 
                             <div class="seat-map__grid seat-map__grid--t3">
                                 <div th:each="seats : ${entry.getValue()}" class="seat seat"
-                                     th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                     th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                     th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                     th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                     th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                     th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                 </div>
                             </div>
                         </div>
@@ -98,9 +106,9 @@
                             <div class="row" th:each="entry : ${groupSeat}">
 
                                 <div th:each="seats, iterStat : ${entry.value}">
-                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeat_type()}"
-                                         th:text="${seats.getRow_label()} + ${seats.getSeat_number()}"
-                                         th:attr="data-seat=${seats.getRow_label() + seats.getSeat_number()}">A1
+                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
+                                         th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()}">A1
                                     </div>
                                     <div class="aisle" th:if="${iterStat.index == 3}">
                                     </div>
@@ -123,6 +131,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+</main>
+
 </body>
 
 </html>

@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en" th:fragment="layout(title, content)">
 <head th:replace="~{fragment/frag :: head_dashboard}">
 </head>
+
 <body>
 <div class="container-fluid position-relative d-flex p-0">
     <div th:replace="~{fragment/frag :: sidebar_staff}"></div>
@@ -14,6 +15,16 @@
         <!-- Content slot - SAFE -->
         <div th:if="${content != null}">
             <th:block th:replace="${content}"></th:block>
+    <div class="row justify-content-center g-4">
+        <!-- Cashier Card -->
+        <div class="col-md-4">
+            <div class="card text-center p-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-danger">Cashier Area</h4>
+                    <p class="text-secondary">Handle ticket and food sales for customers.</p>
+                    <a th:href="@{/staffs/cashier/showtimes}" class="btn btn-danger w-100">Go to Cashier</a>
+                </div>
+            </div>
         </div>
 
         <!-- Fallback khi mở trực tiếp /admin (không có 'content') -->

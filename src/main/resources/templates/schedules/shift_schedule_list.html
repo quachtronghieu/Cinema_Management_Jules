@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:fragment="layout(title, content)">
+<head th:replace="~{fragment/frag :: head_dashboard}"></head>
+<body>
+<div class="container-fluid position-relative d-flex p-0">
+    <div th:replace="~{fragment/frag :: sidebar_dashboard}"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <div th:replace="~{fragment/frag :: navbar_dashboard}"></div>
+
+        <!-- SHIFT SCHEDULE MANAGEMENT -->
+        <div class="container-fluid pt-4 px-4">
+            <div class="bg-secondary rounded p-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="mb-0">Shift Schedule Management</h6>
+                    <div class="d-flex align-items-center">
+                        <a th:href="@{/shift-schedules/create}" class="btn btn-primary btn-compact">
+                            <i class="fa fa-plus me-2"></i>Add Shift
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive" th:if="${shiftSchedules != null and !shiftSchedules.isEmpty()}">
+                    <table class="table text-start align-middle table-bordered table-hover mb-0">
+                        <thead>
+                        <tr class="text-white">
+                            <th scope="col">ID</th>
+                            <th scope="col">Staff ID</th>
+                            <th scope="col">Staff Name</th>
+                            <th scope="col">Shift Date</th>
+                            <th scope="col">Shift Start</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Late Minutes</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="shiftTableBody">
+                        <tr th:each="shift : ${shiftSchedules}">
+                            <td th:text="${shift.shiftScheduleId}"></td>
+                            <td th:text="${shift.staff != null ? shift.staff.staffID : 'N/A'}"></td>
+                            <td th:text="${shift.staff != null ? shift.staff.fullName : 'N/A'}"></td>
+                            <td th:text="${shift.shiftDate}"></td>
+                            <td th:text="${shift.shiftStart}"></td> <!-- Cột giờ bắt đầu -->
+                            <td th:text="${shift.status}"></td>
+                            <td th:text="${shift.status == 'Late' ? shift.lateMinutes : ''}"></td>
+                            <td>
+                                <button class="btn btn-primary btn-compact"
+                                        th:if="${shift.shiftDate >= T(java.time.LocalDate).now() and shift.status == ''}"
+                                        th:attr="data-id=${shift.shiftScheduleId}"
+                                        onclick="checkInShift(this.dataset.id)">
+                                    <i class="fa fa-check"></i>Check-in
+                                </button>
+                                <a class="btn btn-success btn-compact" th:if="${shift.shiftDate >= T(java.time.LocalDate).now()}"
+                                   th:href="@{/shift-schedules/edit/{id}(id=${shift.shiftScheduleId})}"><i class="fa fa-edit"></i>Edit</a>
+                                <button class="btn btn-danger btn-compact btn-delete-shift"
+                                        th:if="${shift.shiftDate >= T(java.time.LocalDate).now()}"
+                                        th:attr="data-id=${shift.shiftScheduleId}, data-staff=${shift.staff != null ? shift.staff.fullName : 'N/A'}">
+                                    <i class="fa fa-trash"></i>Delete
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- Empty table message -->
+                <div>
+                    <div class="alert alert-warning text-center" th:if="${shiftSchedules == null or shiftSchedules.isEmpty()}">
+                    No shift schedules available.
+                    </div>
+                    <br>
+                    <nav aria-label="Page navigation example">
+                        <div class="d-flex justify-content-center mb-3">
+                            <a class="btn btn-outline-primary me-2"
+                               th:href="@{/shift-schedules(date=${prevDate})}">Previous Day</a>
+
+                            <span class="btn btn-light disabled" th:text="${#temporals.format(currentDate, 'dd/MM/yyyy')}">
+                                08/11/2025
+                            </span>
+
+                            <a class="btn btn-outline-primary ms-2"
+                               th:href="@{/shift-schedules(date=${nextDate})}">Next Day</a>
+                        </div>
+
+                    </nav>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Shift Modal -->
+    <div class="modal fade" id="deleteShiftModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Shift Schedule</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p>
+                        Are you sure you want to delete the shift schedule of
+                        <strong class="text-warning fs-5" id="deleteShiftStaff"></strong>
+                        (<span id="deleteShiftIdDisplay"></span>)?
+                    </p>
+                    <p class="text-warning small">**Warning: Deleting this shift may affect staff attendance history.**</p>
+                </div>
+
+                <form th:action="@{/shift-schedules/delete}" method="post">
+                    <input type="hidden" id="deleteShiftId" name="shiftScheduleId" />
+                    <div class="modal-footer">
+                        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/assets/js/main.js}"></script>
+    <script th:src="@{/assets/js/dashboard.js}"></script>
+    <script th:src="@{/assets/js/shift_schedule.js}"></script>
+
+</div>
+</body>
+</html>

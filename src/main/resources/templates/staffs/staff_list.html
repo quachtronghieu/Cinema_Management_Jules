@@ -19,7 +19,7 @@
             <div class="bg-secondary rounded p-4">
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h6 class="mb-0">Staff Management</h6>
+                    <h4 class="mb-0">Staffs Management</h4>
                     <div class="d-flex align-items-center">
 
                         <a th:href="@{/staffs/create}" class="btn btn-primary btn-compact">
@@ -91,6 +91,7 @@
                         </ul>
                     </nav>
                 </div>
+
                 <!---Edit để hiển thị thông báo khi danh sách trống-->
                 <div class="alert alert-warning text-center" th:if="${staffList == null or staffList.isEmpty()}">
                     No staff available.

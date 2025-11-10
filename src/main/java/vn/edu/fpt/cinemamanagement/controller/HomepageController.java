@@ -3,18 +3,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
+import vn.edu.fpt.cinemamanagement.entities.Showtime;
 import vn.edu.fpt.cinemamanagement.entities.Voucher;
 import vn.edu.fpt.cinemamanagement.services.MovieService;
+import vn.edu.fpt.cinemamanagement.services.ShowtimeService;
 import vn.edu.fpt.cinemamanagement.services.VoucherService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.*;
+import java.util.*;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -25,6 +32,8 @@ public class HomepageController {
     private MovieService movieService;
     @Autowired
     private VoucherService voucherService;
+    @Autowired
+    private ShowtimeService showtimeService;
 
     //Huynh Anh add
     @GetMapping({"", "/"})
@@ -152,6 +161,198 @@ public class HomepageController {
         return "movies/movie_detail_guest";
     }
 
+//    @GetMapping("/showtimes")
+//    public String showtimeGuestPage(
+//            @RequestParam(required = false)
+//            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+//            Model model) {
+//
+//        LocalDate selectedDate = (date != null) ? date : LocalDate.now();
+//
+//        // 🔹 Tạo danh sách 7 ngày để người dùng chọn (TH2 -> CN)
+//        LocalDate today = LocalDate.now();
+//        List<Map<String, Object>> days = new ArrayList<>();
+//        for (int i = 0; i < 7; i++) { // 7 ngày từ hôm nay
+//            LocalDate day = today.plusDays(i);
+//            Map<String, Object> dayMap = new HashMap<>();
+//            dayMap.put("date", day);
+//            dayMap.put("isPast", day.isBefore(today)); // luôn false trong trường hợp này
+//            days.add(dayMap);
+//        }
+//
+//
+//        // 🔹 Lấy danh sách showtime theo ngày
+////        List<Showtime> showtimes = showtimeService.getShowtimesByDate(selectedDate);
+//        List<Showtime> showtimes = showtimeService.getShowtimesByDateRange(today, today.plusDays(6));
+//
+//
+//        // 🔹 Gom các suất chiếu theo phim
+//        Map<String, List<Showtime>> movieMap = showtimes.stream()
+//                .collect(Collectors.groupingBy(st -> st.getMovie().getMovieID()));
+//
+//        // 🔹 Danh sách phim
+//        List<Movie> movieList = movieMap.keySet().stream()
+//                .map(id -> showtimes.stream()
+//                        .filter(st -> st.getMovie().getMovieID().equals(id))
+//                        .findFirst()
+//                        .map(Showtime::getMovie)
+//                        .orElse(null))
+//                .filter(Objects::nonNull)
+//                .collect(Collectors.toList());
+//
+//        // 🔹 Gom giờ chiếu theo phim & phòng
+//        Map<String, List<Map<String, Object>>> scheduleGroups = new HashMap<>();
+//
+//        for (var entry : movieMap.entrySet()) {
+//            String movieId = entry.getKey();
+//            List<Showtime> list = entry.getValue();
+//
+//            // nhóm theo room
+//            Map<String, List<Showtime>> byRoom = list.stream()
+//                    .collect(Collectors.groupingBy(st -> {
+//                        if (st.getRoom() != null && st.getRoom().getTemplate() != null) {
+//                            return st.getRoom().getTemplate().getName(); //  hiển thị template
+//                        } else if (st.getRoom() != null) {
+//                            return st.getRoom().getId(); // fallback nếu template null
+//                        } else {
+//                            return "Unknown Room";
+//                        }
+//                    }));
+//
+//            List<Map<String, Object>> roomGroups = new ArrayList<>();
+//
+//            for (var roomEntry : byRoom.entrySet()) {
+//                Map<String, Object> roomData = new HashMap<>();
+//                roomData.put("roomName", roomEntry.getKey());
+//
+//                // danh sách khung giờ của room này
+//                List<Map<String, LocalTime>> slots = roomEntry.getValue().stream()
+//                        .sorted(Comparator.comparing(Showtime::getStartTime))
+//                        .map(st -> {
+//                            Map<String, LocalTime> timeSlot = new HashMap<>();
+//                            timeSlot.put("startTime", st.getStartTime());
+//                            timeSlot.put("endTime", st.getEndTime());
+//                            return timeSlot;
+//                        })
+//                        .collect(Collectors.toList());
+//
+//                roomData.put("slots", slots);
+//                roomGroups.add(roomData);
+//            }
+//            scheduleGroups.put(movieId, roomGroups);
+//        }
+//
+//        model.addAttribute("days", days);
+//        model.addAttribute("selectedDate", selectedDate);
+//        model.addAttribute("prevDate", selectedDate.minusDays(7));
+//        model.addAttribute("nextDate", selectedDate.plusDays(7));
+//        model.addAttribute("movieList", movieList);
+//        model.addAttribute("scheduleGroups", scheduleGroups);
+//
+//        return "showtime/showtime_for_guest";
+//    }
 
+@GetMapping("/showtimes")
+public String showtimeGuestPage(
+        @RequestParam(required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+        Model model) {
+
+    LocalDate selectedDate = (date != null) ? date : LocalDate.now();
+
+    // 🔹 Tạo danh sách 7 ngày để người dùng chọn (TH2 -> CN)
+    LocalDate today = LocalDate.now();
+    List<LocalDate> days = new ArrayList<>();
+    for (int i = 0; i < 7; i++) {
+        days.add(today.plusDays(i));
+    }
+
+    // 🔹 Lấy danh sách showtime trong 7 ngày
+    List<Showtime> showtimes = showtimeService.getShowtimesByDateRange(today, today.plusDays(6));
+
+    // 🔹 Gom theo phim
+    Map<String, List<Showtime>> movieMap = showtimes.stream()
+            .collect(Collectors.groupingBy(st -> st.getMovie().getMovieID()));
+
+    // 🔹 Danh sách phim
+    List<Movie> movieList = movieMap.keySet().stream()
+            .map(id -> showtimes.stream()
+                    .filter(st -> st.getMovie().getMovieID().equals(id))
+                    .findFirst()
+                    .map(Showtime::getMovie)
+                    .orElse(null))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+    // 🔹 Gom giờ chiếu theo phim & phòng
+    Map<String, List<Map<String, Object>>> scheduleGroups = new HashMap<>();
+    for (var entry : movieMap.entrySet()) {
+        String movieId = entry.getKey();
+        List<Showtime> list = entry.getValue();
+
+        // nhóm theo room
+        Map<String, List<Showtime>> byRoom = list.stream()
+                .collect(Collectors.groupingBy(st -> {
+                    if (st.getRoom() != null && st.getRoom().getTemplate() != null) {
+                        return st.getRoom().getTemplate().getName();
+                    } else if (st.getRoom() != null) {
+                        return st.getRoom().getId();
+                    } else {
+                        return "Unknown Room";
+                    }
+                }));
+
+        List<Map<String, Object>> roomGroups = new ArrayList<>();
+
+        for (var roomEntry : byRoom.entrySet()) {
+            Map<String, Object> roomData = new HashMap<>();
+            roomData.put("roomName", roomEntry.getKey());
+
+            // Lọc slots theo selectedDate
+            List<Map<String, LocalTime>> slots = roomEntry.getValue().stream()
+                    .filter(st -> st.getShowDate().isEqual(selectedDate)) // chỉ show selectedDate
+                    .sorted(Comparator.comparing(Showtime::getStartTime))
+                    .map(st -> {
+                        Map<String, LocalTime> timeSlot = new HashMap<>();
+                        timeSlot.put("startTime", st.getStartTime());
+                        timeSlot.put("endTime", st.getEndTime());
+                        return timeSlot;
+                    })
+                    .collect(Collectors.toList());
+
+            if (!slots.isEmpty()) {
+                roomData.put("slots", slots);
+                roomGroups.add(roomData);
+            }
+        }
+
+        if (!roomGroups.isEmpty()) {
+            scheduleGroups.put(movieId, roomGroups);
+        }
+
+    }
+    boolean hasShowtimes = scheduleGroups.values().stream()
+            .flatMap(List::stream)
+            .anyMatch(room -> !((List<?>)room.get("slots")).isEmpty());
+
+    // 🔹 Ưu tiên phim có suất chiếu
+    movieList.sort((m1, m2) -> {
+        boolean m1HasShow = scheduleGroups.containsKey(m1.getMovieID());
+        boolean m2HasShow = scheduleGroups.containsKey(m2.getMovieID());
+        // true (có suất chiếu) lên trước false
+        return Boolean.compare(m2HasShow, m1HasShow);
+    });
+
+
+    model.addAttribute("days", days);
+    model.addAttribute("selectedDate", selectedDate);
+    model.addAttribute("prevDate", selectedDate.minusDays(7));
+    model.addAttribute("nextDate", selectedDate.plusDays(7));
+    model.addAttribute("movieList", movieList);
+    model.addAttribute("scheduleGroups", scheduleGroups);
+    model.addAttribute("hasShowtimes", hasShowtimes);
+
+    return "showtime/showtime_for_guest";
+}
 
 }

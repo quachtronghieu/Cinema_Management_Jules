@@ -18,11 +18,18 @@
 
         <!-- HEADER + ADD -->
             <div class="container-fluid pt-4 px-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h6 class="mb-0">Room list</h6>
-                </div>
 
                 <div class="bg-secondary rounded p-3">
+
+
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0">Rooms Management</h4>
+                        <div class="d-flex align-items-center">
+                        </div>
+                    </div>
+
+
                     <div class="table-responsive">
                         <table class="table text-start align-middle table-bordered table-hover mb-0">
                             <thead>
@@ -39,7 +46,7 @@
                                 <tr th:each="room : ${rooms}">
                                     <td th:text="${room.roomId}">R01</td>
                                     <td th:text="${room.buildRoomName}"></td>
-                                    <td th:text="${room.templateName}">150</td>
+                                    <td th:text="${room.getTemplateName()}">150</td>
                                     <td th:text="${room.totalSeats}">Active</td>
                                     <td th:text="${room.status}"></td>
                                     <td class="text-end">
