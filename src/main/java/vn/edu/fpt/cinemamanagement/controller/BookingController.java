@@ -41,6 +41,8 @@ public class BookingController {
     private BookingService bookingService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private VoucherService voucherService;
 
     @GetMapping("/{movieId}")
     public String viewShowtimeByMovie(
@@ -192,6 +194,8 @@ public class BookingController {
 
     @PostMapping("/payment")
     public String paymentPage(@RequestParam Map<String, String> params, Model model) {
+        double finalTotal = Double.parseDouble(params.getOrDefault("totalPrice", "0"));
+        String voucherCode = params.getOrDefault("voucherCode", "").trim();
         try {
             String showtimeId = params.get("showtimeId");
 
@@ -222,6 +226,7 @@ public class BookingController {
             String userId = customerService.getCustomerByUsername(user.getUsername()).getUser_id();
 
             Booking booking = bookingService.createBooking(showtimeId, seatIds, concessionIds, qtyList, userId);
+            bookingService.applyVoucherAndUpdateTotal(booking, finalTotal, voucherCode);
             model.addAttribute("booking", booking);
 
             return "booking/payment";
@@ -231,5 +236,35 @@ public class BookingController {
             return "redirect:/booking/" + params.get("showtimeId");
         }
     }
+    @PostMapping("/apply-voucher")
+    @ResponseBody
+    public ResponseEntity<String> applyVoucherForBooking(
+            @RequestParam("code") String code,
+            @RequestParam("totalPrice") double totalPrice) {
 
+        // Log để kiểm tra request có vào không
+        System.out.println(">>> [APPLY VOUCHER REQUEST] code=" + code + ", total=" + totalPrice);
+
+        // Tìm voucher trong DB
+        Optional<Voucher> optionalVoucher = voucherService.findByVoucherCode(code);
+        if (optionalVoucher.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Voucher is invalid or expired!");
+        }
+
+        Voucher voucher = optionalVoucher.get();
+
+        // Kiểm tra trạng thái và giới hạn
+        if (!voucher.isStatus() || voucher.getUsedCount() >= voucher.getUsageLimit()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Voucher is invalid or expired!");
+        }
+
+        // Tính giá sau khi giảm
+        double newTotal = voucherService.applyDiscount(voucher, totalPrice);
+
+
+        // Trả kết quả về JS
+        return ResponseEntity.ok(String.valueOf(newTotal));
+    }
 }

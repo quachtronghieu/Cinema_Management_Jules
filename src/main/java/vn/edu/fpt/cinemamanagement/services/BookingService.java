@@ -9,6 +9,7 @@ import vn.edu.fpt.cinemamanagement.repositories.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -24,6 +25,8 @@ public class BookingService {
     private ShowtimeSeatRepository showtimeSeatRepository;
     @Autowired
     TemplateSeatRepository templateSeatRepository;
+    @Autowired
+    private VoucherRepository voucherRepository;
 
     // 🔹 Hàm sinh ID cho BookingDetail
     private String generateBookingDetailId() {
@@ -123,6 +126,25 @@ public class BookingService {
         return booking;
     }
 
+    @Transactional
+    public Booking applyVoucherAndUpdateTotal(Booking booking, double finalTotal, String voucherCode) {
+        // cập nhật tổng tiền đã giảm
+        booking.setTotalAmount(BigDecimal.valueOf(finalTotal));
 
+        // nếu muốn lưu thông tin voucher vào booking và tăng used_count
+        if (voucherCode != null && !voucherCode.isBlank()) {
+            booking.setTotalAmount(BigDecimal.valueOf(finalTotal));
+            if (voucherCode != null && !voucherCode.isBlank()) {
+                Voucher v = voucherRepository.findByVoucherCode(voucherCode);
+                if (v != null) {
+                    v.setUsedCount(v.getUsedCount() + 1);
+                    voucherRepository.save(v);
+                }
+            }
+        }
+
+        // lưu lại booking với tổng tiền mới
+        return bookingRepository.save(booking);
+    }
 
 }

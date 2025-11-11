@@ -8,6 +8,7 @@ import vn.edu.fpt.cinemamanagement.entities.Voucher;
 import vn.edu.fpt.cinemamanagement.repositories.VoucherRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VoucherService {
@@ -139,5 +140,26 @@ public class VoucherService {
 
     public void delete(String id) {
         voucherRepo.deleteById(id);
+    }
+
+
+    public double applyDiscount(Voucher voucher, double totalPrice) {
+        double discountValue = voucher.getDiscountValue();
+        String type = voucher.getDiscountType();
+
+        double newPrice;
+
+        if ("Percentage".equalsIgnoreCase(type)) {
+            newPrice = totalPrice * (1 - (discountValue / 100));
+        } else {
+            newPrice = totalPrice - discountValue;
+        }
+
+        if (newPrice < 0) newPrice = 0;
+        return newPrice;
+    }
+
+    public Optional<Voucher> findByVoucherCode(String code) {
+        return Optional.ofNullable(voucherRepo.findByVoucherCode(code));
     }
 }
