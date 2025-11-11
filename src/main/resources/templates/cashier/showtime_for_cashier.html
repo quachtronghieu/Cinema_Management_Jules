@@ -33,17 +33,20 @@
             <!-- 🔸 Week navigation -->
             <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
                 <a th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(prevDate,'yyyy-MM-dd')})}"
+                   th:if="${prevDate >= T(java.time.LocalDate).now()}"
                    class="btn btn-outline-light rounded-circle px-3">&laquo;</a>
 
                 <a th:each="d : ${days}"
+                   th:if="${d >= T(java.time.LocalDate).now() and d <= T(java.time.LocalDate).now().plusDays(6)}"
                    th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(d,'yyyy-MM-dd')})}"
                    th:classappend="${d.equals(selectedDate)} ? 'active' : ''"
-                   class="date-btn text-center">
+                   class="date-btn">
                     <small th:text="${#temporals.format(d,'EEE').toUpperCase()}">MON</small>
                     <span th:text="${#temporals.format(d,'dd')}">04</span>
                 </a>
 
                 <a th:href="@{'/staffs/cashier/showtimes'(date=${#temporals.format(nextDate,'yyyy-MM-dd')})}"
+                   th:if="${nextDate <= T(java.time.LocalDate).now().plusDays(6)}"
                    class="btn btn-outline-light rounded-circle px-3">&raquo;</a>
             </div>
 
