@@ -24,29 +24,32 @@ public class Booking {
     @Column(name = "status")
     private String status;
 
-
-    @Column(name = "payment_id")
-    private String paymentId;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     private List<BookingDetail> bookingDetails;
 
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    private Payment payment;
+
     public Booking() {
     }
 
-    public Booking(String id, String userId, String voucherId, BigDecimal totalAmount, String status, String paymentId, LocalDateTime createdAt, List<BookingDetail> bookingDetails) {
+    public Booking(String id, String userId, String voucherId,
+                   BigDecimal totalAmount, String status,
+                   LocalDateTime createdAt, List<BookingDetail> bookingDetails,
+                   Payment payment) {
         this.id = id;
         this.userId = userId;
         this.voucherId = voucherId;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.paymentId = paymentId;
         this.createdAt = createdAt;
         this.bookingDetails = bookingDetails;
+        this.payment = payment;
     }
+
 
     public String getId() {
         return id;
@@ -88,14 +91,6 @@ public class Booking {
         this.status = status;
     }
 
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -110,5 +105,13 @@ public class Booking {
 
     public void setBookingDetails(List<BookingDetail> bookingDetails) {
         this.bookingDetails = bookingDetails;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }

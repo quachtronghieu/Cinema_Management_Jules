@@ -173,10 +173,7 @@
 
                     <!-- Trang staff -->
                     <li sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
-                        <a class="dropdown-item" th:href="@{/profile/staff_profile}">My Profile</a>
-                    </li>
-                    <li sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
-                        <a class="dropdown-item" th:href="@{/staff_home}">Staff Home</a>
+                        <a class="dropdown-item" th:href="@{staffs/staff_home}">Staff Home</a>
                     </li>
 
                     <!-- Logout dùng POST + CSRF (không dùng #request, null-safe) -->

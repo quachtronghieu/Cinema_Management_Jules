@@ -8,4 +8,6 @@ import vn.edu.fpt.cinemamanagement.entities.Booking;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Booking findTopByOrderByIdDesc();
+
+    Booking findById(String id);
 }

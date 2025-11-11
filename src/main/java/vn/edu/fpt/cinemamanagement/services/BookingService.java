@@ -3,6 +3,7 @@ package vn.edu.fpt.cinemamanagement.services;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import vn.edu.fpt.cinemamanagement.entities.*;
 import vn.edu.fpt.cinemamanagement.repositories.*;
 
@@ -121,6 +122,11 @@ public class BookingService {
         System.out.println("💰 TOTAL PRICE = " + totalPrice);
 
         return booking;
+    }
+
+
+    public Booking findById(String id) {
+        return bookingRepository.findById(id);
     }
 
 
