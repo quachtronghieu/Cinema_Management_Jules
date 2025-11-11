@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
 import vn.edu.fpt.cinemamanagement.entities.Showtime;
 import vn.edu.fpt.cinemamanagement.entities.Voucher;
+import vn.edu.fpt.cinemamanagement.repositories.MovieRatingRepository;
 import vn.edu.fpt.cinemamanagement.services.MovieService;
 import vn.edu.fpt.cinemamanagement.services.ShowtimeService;
 import vn.edu.fpt.cinemamanagement.services.VoucherService;
@@ -52,6 +53,11 @@ public class HomepageController {
         }
         Page<Movie> movie = movieService.getAllMovies(pageable);
         model.addAttribute("movies", movie);
+
+        // 🔹 Lấy Top 5 movies rating cao nhất
+        List<Movie> top5Movies = movieService.getTop5Movies();
+        model.addAttribute("top5Movies", top5Movies);
+
         return "homepage/homepage";
     }
 
