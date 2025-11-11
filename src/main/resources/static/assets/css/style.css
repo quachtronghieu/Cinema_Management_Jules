@@ -658,7 +658,7 @@
 
 /* CSS Variables */
 :root {
-    --primary: #d32f2f;
+    --primary: #a52121;
     --dark: #111;
     --accent: #c7a262;
     --white: #ffffff;
@@ -1386,9 +1386,9 @@ select:focus {
 }
 
 .seat--selected {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: var(--white);
+    background-color: var(--primary)!important;
+    border-color: var(--primary)!important;
+    color: var(--white)!important;
 }
 
 .seat--booked {

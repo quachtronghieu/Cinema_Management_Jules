@@ -233,4 +233,18 @@ public class ShowtimeService {
         LocalTime time = LocalTime.parse(times, DateTimeFormatter.ofPattern("HH:mm"));
         return repo.findMovieAndDateTime(movieId, date, time);
     }
+
+    @Transactional
+    public void deleteShowtime(String showtimeId) {
+        Showtime showtime = repo.findById(showtimeId)
+                .orElseThrow(() -> new IllegalArgumentException("Showtime not found"));
+
+        // Hibernate sẽ tự xóa tất cả seat liên quan nhờ cascade
+        repo.delete(showtime);
+    }
+
+    public List<Showtime> getShowtimesByDateRange(LocalDate start, LocalDate end) {
+        return repo.findByShowDateBetween(start, end);
+    }
+
 }
