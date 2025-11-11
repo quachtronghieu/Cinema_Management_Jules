@@ -217,4 +217,11 @@ public class ConcessionService {
         }
         return String.format("%s%06d", prefix, next);
     }
+
+    // THÊM: DÙNG TRONG RECEIPT
+    public String getName(String id) {
+        return repo.findById(id)
+                .map(Concession::getName)
+                .orElse("Unknown Item");
+    }
 }

@@ -147,4 +147,12 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    public Booking getReceipt() {
+       Booking booking = bookingRepository.findTopByOrderByIdDesc();
+       return booking;
+    }
+
+
+
+
 }

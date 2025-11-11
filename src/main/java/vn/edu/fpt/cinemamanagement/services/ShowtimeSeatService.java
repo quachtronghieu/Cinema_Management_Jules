@@ -54,4 +54,17 @@ public class ShowtimeSeatService {
             showtimeSeatRepository.save(seat);
         }
     }
+
+    @Transactional
+    public String getSeatName(String showtimeSeatId) {
+        return showtimeSeatRepository.findById(showtimeSeatId)
+                .map(showtimeSeat -> {
+                    TemplateSeat templateSeat = showtimeSeat.getTemplateSeat();
+                    if (templateSeat != null) {
+                        return templateSeat.getRowLabel() + templateSeat.getSeatNumber(); // ví dụ: "A" + "1" → "A1"
+                    }
+                    return "Unknown Seat";
+                })
+                .orElse("Seat Not Found");
+    }
 }
