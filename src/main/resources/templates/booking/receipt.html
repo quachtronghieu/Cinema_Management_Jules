@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGV Movies - Receipt</title>
+    <meta name="description" content="Your movie ticket receipt from CGV Cinemas.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        body {
+            background-color: #000; /* nền đen */
+            color: #fff; /* chữ trắng */
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            line-height: 1.8; /* 🔹 giãn dòng toàn trang */
+            letter-spacing: 0.3px; /* 🔹 thêm chút giãn chữ nhẹ cho dễ đọc */
+        }
+
+        .receipt-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .ticket-header h2 {
+            margin: 0;
+            color: #fff;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        .invoice {
+            width: 100%;
+            border-collapse: collapse;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .invoice th, .invoice td {
+            padding: 12px 0; /* 🔹 tăng khoảng cách giữa các dòng */
+            color: #fff;
+            vertical-align: middle;
+        }
+
+        .invoice thead th {
+            border-bottom: 1px solid #555;
+            font-weight: 600;
+        }
+
+        .invoice .total td {
+            font-weight: 600;
+            border-top: 2px solid #666;
+            padding-top: 15px;
+        }
+
+        .btn-payment {
+            display: inline-block;
+            margin: 15px 8px 0;
+            padding: 12px 24px;
+            background: #e50914;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 17px;
+            transition: background 0.2s;
+        }
+
+        .btn-payment:hover {
+            background: #c30711;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+                color: #000;
+            }
+            .btn-payment { display: none; }
+        }
+    </style>
+
+
+</head>
+<body>
+
+<header></header>
+
+<main role="main">
+    <section class="section" aria-labelledby="receipt-title">
+        <div class="container">
+            <div class="section__header section-header text-center mb-4">
+                <h2 class="section__title">Receipt</h2>
+                <a th:href="@{/staffs/cashier/showtimes}" class="btn btn-primary">Back</a>
+            </div>
+
+            <div class="">
+                <div class="ticket-header">
+                    <h2>Booking Information</h2>
+                </div>
+
+                <div class="mb-3">
+                    <p class="mb-1"><strong>Customer:</strong> <span th:text="${walkInCustomer}">Walk-in Customer</span></p>
+                    <p class="mb-1"><strong>Staff:</strong> <span th:text="${staff.fullName}">Staff Name</span></p>
+                    <p class="mb-1"><strong>Booking ID:</strong> <span th:text="${booking.id}">123456</span></p>
+                </div>
+
+
+
+                <table class="invoice">
+                    <thead>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <th style="text-align: left;">Seat/Concession</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">Unit Price</th>
+                        <th style="text-align: right;">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="detail : ${bookingDetails}">
+                        <td>
+                                <span th:if="${detail.showtimeSeat != null}"
+                                      th:text="${detail.showtimeSeat.templateSeat.rowLabel + detail.showtimeSeat.templateSeat.seatNumber}">
+
+                                </span>
+                            <span th:if="${detail.concession != null}" th:text="${detail.concession.name}">
+
+                                </span>
+                        </td>
+                        <td style="text-align: center;" th:text="${detail.quantity}">1</td>
+                        <td style="text-align: right;"
+                            th:text="${#numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}">
+
+                        </td>
+                        <td style="text-align: right;"
+                            th:text="${#numbers.formatDecimal(detail.unitPrice * detail.quantity, 0, 'COMMA', 0, 'POINT') + ' VND'}">
+
+                        </td>
+                    </tr>
+                    <tr class="total">
+                        <td colspan="3" class="text-right"><strong>Total Amount</strong></td>
+                        <td class="text-right"
+                            th:text="${#numbers.formatDecimal(booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}">
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="text-center mt-4">
+                    <p><strong>Choose Payment Method:</strong></p>
+                    <a href="#" class="btn-payment" >Cash</a>
+                    <a href="#" class="btn-payment" >Online Banking</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
+
+<script th:src="@{/assets/js/hero.js}"></script>
+<script th:src="@{/assets/js/movies.js}"></script>
+</body>
+</html>
