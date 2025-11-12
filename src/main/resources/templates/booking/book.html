@@ -1,136 +1,206 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CGV Movies - Your Movie Experience Begins Here</title>
-    <meta name="description"
-          content="Book movie tickets online at CGV. Watch the latest movies in premium cinemas with the best sound and picture quality.">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <title>Booking | CGV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
-
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <style>
+        .booking-card {
+            background-color: #1c1f26;
+            border-radius: 16px;
+            padding: 30px;
+            color: #d4d7dc;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        .booking-card h5 {
+            color: #e50914;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #9da3af;
+        }
+        #voucherMessage {
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        .btn-apply {
+            border-color: #fff;
+            color: #fff;
+        }
+        .btn-apply:hover {
+            background-color: #e50914;
+            border-color: #e50914;
+        }
+        .btn-book {
+            background-color: #e50914;
+            color: white;
+            font-weight: 600;
+            padding: 6px 24px;
+            border-radius: 8px;
+        }
+        .btn-book:hover {
+            background-color: #ff4040;
+        }
+        .btn-back {
+            background-color: transparent;
+            border: 1.5px solid #ccc;
+            color: #ccc;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 6px 18px;
+            transition: 0.25s ease;
+        }
+        .btn-back:hover {
+            background-color: #e50914;
+            border-color: #e50914;
+            color: #fff;
+            text-decoration: none;
+        }
+        .total-price {
+            color: #ffcc00;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        select#voucherSelect {
+            background-color: #2a2e38;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            color: #fff;
+            width: 220px;
+            margin-right: 6px;
+        }
+    </style>
 </head>
-
 <body>
-
 <header th:replace="~{fragment/frag :: navbar_homepage}"></header>
 
-<!-- Main Content -->
 <main role="main" class="movies">
     <section id="promotions" class="section">
-        <div class="container">
-            <div class="section__header section-header">
-                <h2 class="section__title">Booking</h2>
-                <a th:href="@{/homepage}" class="btn btn-light btn-sm mt-2">
-                    ← Back
-                </a>
+        <div class="container mt-4">
+            <div class="section__header d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section__title text-light mb-0">Booking Summary</h2>
+                <a th:href="@{/homepage}" class="btn-back">Back</a>
             </div>
-            <div class="container-fluid pt-4 px-4">
-                <!-- Mini Cart -->
-                <form id="mini-cart" class="p-4 border rounded-3 bg-secondary shadow"
-                      th:action="@{/booking/payment}" method="post">
 
-                    <h5 class="mb-3 fw-bold text-primary text-center"
-                        th:text="${showtime.movie.title}">
-                        The Last Guardian
-                    </h5>
+            <div class="booking-card">
+                <form id="mini-cart" th:action="@{/booking/payment}" method="post">
+                    <h5 th:text="${showtime.movie.title}">The Last Guardian</h5>
+                    <hr class="border-light">
 
-                    <div class="row mb-3 align-items-center text-start">
-                        <div class="col-12 col-md-3 d-flex align-items-center mb-2 mb-md-0">
-                            <strong class="me-1">Room:</strong>
-                            <span id="room-id" th:text="${showtime.getRoom().id}">2</span>
+                    <div class="row mb-3">
+                        <div class="col-md-3 mb-2">
+                            <span class="info-label">Room:</span>
+                            <span th:text="${showtime.getRoom().id}">4</span>
                         </div>
-
-                        <div class="col-12 col-md-5 d-flex align-items-center mb-2 mb-md-0">
-                            <strong class="me-1">Showtime:</strong>
-                            <span id="showtime-info"
-                                  th:text="${showtime.showDate} + ' | ' + ${showtime.startTime} + ' - ' + ${endtime}">
-            </span>
-
+                        <div class="col-md-5 mb-2">
+                            <span class="info-label">Showtime:</span>
+                            <span th:text="${showtime.showDate} + ' | ' + ${showtime.startTime} + ' - ' + ${endtime}"></span>
                             <input type="hidden" name="showtimeId" th:value="${showtime.showtimeId}">
-
                             <input type="hidden" name="endtime" th:value="${endtime}">
                         </div>
-
-                        <div class="col-12 col-md-4 d-flex align-items-center mb-2 mb-md-0">
-                            <strong class="me-1">Seats:</strong>
-                            <span id="selected-seats" class="text-danger text-truncate" th:text="${selectedSeats}"></span>
+                        <div class="col-md-4 mb-2">
+                            <span class="info-label">Seats:</span>
+                            <span class="text-danger" th:text="${selectedSeats}"></span>
                             <input type="hidden" name="selectedSeats" th:value="${selectedSeats}">
                         </div>
+                    </div>
 
-                        <!-- Concession list in mini-cart -->
-                        <div th:each="c, iterStat : ${concessions}" class="col-12 col-md-3 d-flex align-items-center mb-2 mb-md-0 ">
-                            <strong class="me-1">Concessions:</strong>
-                            <span id="selectedConcession" class="text-danger text-truncate" th:text="${c.name}"></span>
-                            <span th:text=" x "></span>
-                            <span id="quantities" class="text-danger text-truncate" th:text="${quantities[iterStat.index]}"></span>
-                            <input type="hidden" name="concessionIds" th:value="${concessionIds}">
+                    <div class="row mb-3">
+                        <div th:each="c, iterStat : ${concessions}" class="col-md-4 mb-2">
+                            <span class="info-label">Concession:</span>
+                            <span class="text-danger" th:text="${c.name}"></span> x
+                            <span class="text-warning" th:text="${quantities[iterStat.index]}"></span>
                         </div>
-                        <div class="col-12 col-md-5 d-flex flex-column mb-2 mb-md-0">
-                            <div>
-                                <strong class="me-1">Grand Total:</strong>
-                                <span  id="totalPrice" class="fw-bold text-warning" th:text="${totalPrice}"></span> ₫
-                                <input type="hidden" name="totalPrice" th:value="${totalPrice}">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-4 d-flex flex-column mb-2 mb-md-0">
-                            <div>
-                                <strong class="me-1">Voucher Code:</strong>
-                                <input  id="voucherCode" name="voucherCode" type="text" class="bg-secondary text-white" th:value="null" disabled>
-                            </div>
+                    </div>
+
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-4 mb-2">
+                            <span class="info-label">Grand Total:</span>
+                            <span id="totalPrice" class="total-price" th:text="${totalPrice}"></span> ₫
+                            <input type="hidden" id="originalTotal" th:value="${totalPrice}">
+                            <input type="hidden" name="totalPrice" th:value="${totalPrice}">
                         </div>
 
-                        <input type="hidden" id="concessionIds" name="concessionIds" th:value="${concessionIds}">
-                        <input type="hidden" name="quantities" th:value="${quantities}">
+                        <!-- VOUCHER SELECT -->
+                        <div class="col-md-8 mb-2 d-flex flex-wrap align-items-center">
+                            <span class="info-label me-2">Voucher:</span>
 
+                            <select id="voucherSelect" name="voucherCode" class="form-select bg-dark text-light me-2" style="width: 200px;">
+                                <option value="">-- Select a voucher --</option>
+                                <option th:each="v : ${availableVouchers}"
+                                        th:value="${v.code}"
+                                        th:text="${v.voucherName + ' (' + v.discountValue + (v.discountType == 'Percentage' ? '% OFF' : '₫ OFF') + ')'}">
+                                </option>
+                            </select>
+
+                            <button id="applyVoucherBtn" type="button" class="btn btn-apply btn-sm">Apply</button>
+                            <p id="voucherMessage" class="fw-bold ms-3 mb-0"></p>
+                        </div>
 
                     </div>
 
-                    <div class="d-flex justify-content-end">
-                        <button id="confirm-btn" class="btn btn-primary btn-sm fw-semibold" type="submit">
-                            Book
-                        </button>
+                    <div class="text-end mt-3">
+                        <button id="confirm-btn" class="btn-book" type="submit">Book</button>
                     </div>
                 </form>
             </div>
-
         </div>
     </section>
-
 </main>
 
 <footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("mini-cart");
+        const applyBtn = document.getElementById("applyVoucherBtn");
+        const totalEl = document.getElementById("totalPrice");
+        const voucherSelect = document.getElementById("voucherSelect");
+        const msgEl = document.getElementById("voucherMessage");
+        const originalInput = document.getElementById("originalTotal");
 
-        form.addEventListener("submit", function (e) {
-            // Lấy 2 hidden inputs
-            const concessionInput = document.getElementById("concessionIds");
-            const qtyInput = document.querySelector('input[name="quantities"]');
+        if (applyBtn && totalEl && voucherSelect) {
+            applyBtn.addEventListener("click", function () {
+                const code = voucherSelect.value.trim();
+                if (!code) {
+                    msgEl.textContent = "Please select a voucher.";
+                    msgEl.style.color = "orange";
+                    return;
+                }
 
-            // Nếu dữ liệu đang ở dạng JSON "[1,2,3]" thì loại bỏ ngoặc vuông
-            if (concessionInput && concessionInput.value.startsWith("[")) {
-                concessionInput.value = JSON.parse(concessionInput.value).join(",");
-            }
-            if (qtyInput && qtyInput.value.startsWith("[")) {
-                qtyInput.value = JSON.parse(qtyInput.value).join(",");
-            }
+                const baseTotal = parseFloat(originalInput.value.replace(/[^\d.]/g, '')) || 0;
 
-            console.log("Form ready to submit with:");
-            console.log("concessionIds =", concessionInput.value);
-            console.log("quantities =", qtyInput.value);
-        });
+                fetch(`/booking/apply-voucher?code=${encodeURIComponent(code)}&totalPrice=${baseTotal}`, {
+                    method: "POST"
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Invalid voucher");
+                        return response.text();
+                    })
+                    .then(newPrice => {
+                        const cleanPrice = parseFloat(newPrice);
+                        totalEl.textContent = cleanPrice.toLocaleString('vi-VN');
+                        const totalInput = document.querySelector('input[name="totalPrice"]');
+                        if (totalInput) totalInput.value = cleanPrice;
+
+                        msgEl.textContent = "Voucher applied successfully.";
+                        msgEl.style.color = "lightgreen";
+                    })
+                    .catch(() => {
+                        msgEl.textContent = "Voucher is invalid or expired.";
+                        msgEl.style.color = "red";
+                    });
+            });
+        }
     });
+
 </script>
 
-
 <script th:src="@{/assets/js/bootstrap.bundle.min.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/assets/js/hero.js}"></script>
 </body>
 </html>
