@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
+import vn.edu.fpt.cinemamanagement.repositories.MovieRatingRepository;
 import vn.edu.fpt.cinemamanagement.repositories.MovieRepository;
 
 import java.io.File;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
+    @Autowired
+    private MovieRatingRepository movieRatingRepository;
 
     // ============================================
 // REGEX PATTERNS - Movie Validation
@@ -421,5 +424,19 @@ private void validateAgeRating(String ageRating, Map<String, String> errors) {
     }
 
 
+
+    // Lấy Top 5 movies theo rating cao nhất
+    @Transactional
+    public List<Movie> getTop5Movies() {
+        List<Object[]> result = movieRatingRepository.findTop5RatedMovies();
+        List<Movie> topMovies = new ArrayList<>();
+
+        for (Object[] row : result) {
+            String movieId = (String) row[0];
+            movieRepository.findById(movieId).ifPresent(topMovies::add);
+            if (topMovies.size() >= 5) break; // chỉ lấy 5 phim
+        }
+        return topMovies;
+    }
 }
 

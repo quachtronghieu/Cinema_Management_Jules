@@ -5,6 +5,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.cinemamanagement.entities.Booking;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Booking findTopByOrderByIdDesc();

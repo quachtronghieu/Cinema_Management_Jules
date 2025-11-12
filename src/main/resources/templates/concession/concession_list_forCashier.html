@@ -67,6 +67,7 @@
             <span>Total: <b id="totalPrice" class="highlight">0 ₫</b></span>
             <button class="btn-confirm" id="btnConfirm" type="button">Confirm Order</button>
         </div>
+
     </div>
 </main>
 
@@ -238,7 +239,7 @@
             alert('Đã gửi đơn thành công!');
             // 🔹 Xoá sessionStorage để tránh tạo booking trùng
             sessionStorage.removeItem('cashierSeatData');
-            window.location.href = '/staffs/cashier/showtimes'
+            window.location.href = '/staffs/cashier/showtimes/receipt'
         } catch (e) {
             console.error(e);
             alert('Lỗi mạng!');
