@@ -147,6 +147,10 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    public List<Voucher> getAvailableVouchers() {
+        return voucherRepository.findAvailableVouchers();
+    }
+
     public Booking getReceipt() {
        Booking booking = bookingRepository.findTopByOrderByIdDesc();
        return booking;

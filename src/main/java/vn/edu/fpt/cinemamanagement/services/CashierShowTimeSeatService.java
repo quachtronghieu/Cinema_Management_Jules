@@ -49,19 +49,19 @@ public class CashierShowTimeSeatService {
     /**
      * Khi nhấn Payment → đổi các ghế được chọn thành PENDING
      */
-    @Transactional
-    public void changeSeatStatus(String showtimeId, List<String> selectedSeatCodes) {
-        List<ShowtimeSeat> seats = showtimeSeatRepository.getAllByShowtime_ShowtimeId(showtimeId);
-
-        for (ShowtimeSeat seat : seats) {
-            String code = seat.getTemplateSeat().getRowLabel() + seat.getTemplateSeat().getSeatNumber();
-            if (selectedSeatCodes.contains(code) && "available".equals(seat.getStatus())) {
-                seat.setStatus("pending");
-            }
-        }
-
-        showtimeSeatRepository.saveAll(seats);
-    }
+//    @Transactional
+//    public void changeSeatStatus(String showtimeId, List<String> selectedSeatCodes) {
+//        List<ShowtimeSeat> seats = showtimeSeatRepository.getAllByShowtime_ShowtimeId(showtimeId);
+//
+//        for (ShowtimeSeat seat : seats) {
+//            String code = seat.getTemplateSeat().getRowLabel() + seat.getTemplateSeat().getSeatNumber();
+//            if (selectedSeatCodes.contains(code) && "available".equals(seat.getStatus())) {
+//                seat.setStatus("pending");
+//            }
+//        }
+//
+//        showtimeSeatRepository.saveAll(seats);
+//    }
 
     /**
      * Khi thanh toán thành công → đổi PENDING → UNAVAILABLE

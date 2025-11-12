@@ -6,6 +6,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.cinemamanagement.entities.Voucher;
 
+import java.util.List;
+
 @Repository
 public interface VoucherRepository extends JpaRepository<Voucher, String> {
 
@@ -17,4 +19,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, String> {
 
     @Query(value = "SELECT * FROM Voucher WHERE code = :code", nativeQuery = true)
     Voucher findByVoucherCode(@Param("code") String code);
+
+    @Query(value = "SELECT * FROM Voucher WHERE status = 1 AND used_count < usage_limit", nativeQuery = true)
+    List<Voucher> findAvailableVouchers();
 }

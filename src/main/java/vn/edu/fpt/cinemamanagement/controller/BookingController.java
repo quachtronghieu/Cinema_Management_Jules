@@ -178,6 +178,8 @@ public class BookingController {
             }
         }
 
+        List<Voucher> availableVouchers = bookingService.getAvailableVouchers();
+
 
         // Truyền dữ liệu sang view
         model.addAttribute("selectedSeats", params.get("selectedSeats"));
@@ -188,6 +190,7 @@ public class BookingController {
         model.addAttribute("concessionIds", concessionIds);
         model.addAttribute("concessions", concessions);
         model.addAttribute("quantities", quantities);
+        model.addAttribute("availableVouchers", availableVouchers);
 
         return "booking/book";
     }

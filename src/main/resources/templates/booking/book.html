@@ -66,19 +66,20 @@
             font-weight: 700;
             font-size: 1.1rem;
         }
-        input#voucherCode {
+        select#voucherSelect {
             background-color: #2a2e38;
             border: none;
             border-radius: 6px;
             padding: 5px 10px;
             color: #fff;
-            width: 140px;
+            width: 220px;
             margin-right: 6px;
         }
     </style>
 </head>
 <body>
 <header th:replace="~{fragment/frag :: navbar_homepage}"></header>
+
 <main role="main" class="movies">
     <section id="promotions" class="section">
         <div class="container mt-4">
@@ -86,10 +87,12 @@
                 <h2 class="section__title text-light mb-0">Booking Summary</h2>
                 <a th:href="@{/homepage}" class="btn-back">Back</a>
             </div>
+
             <div class="booking-card">
                 <form id="mini-cart" th:action="@{/booking/payment}" method="post">
                     <h5 th:text="${showtime.movie.title}">The Last Guardian</h5>
                     <hr class="border-light">
+
                     <div class="row mb-3">
                         <div class="col-md-3 mb-2">
                             <span class="info-label">Room:</span>
@@ -107,6 +110,7 @@
                             <input type="hidden" name="selectedSeats" th:value="${selectedSeats}">
                         </div>
                     </div>
+
                     <div class="row mb-3">
                         <div th:each="c, iterStat : ${concessions}" class="col-md-4 mb-2">
                             <span class="info-label">Concession:</span>
@@ -114,6 +118,7 @@
                             <span class="text-warning" th:text="${quantities[iterStat.index]}"></span>
                         </div>
                     </div>
+
                     <div class="row align-items-center mb-3">
                         <div class="col-md-4 mb-2">
                             <span class="info-label">Grand Total:</span>
@@ -121,13 +126,25 @@
                             <input type="hidden" id="originalTotal" th:value="${totalPrice}">
                             <input type="hidden" name="totalPrice" th:value="${totalPrice}">
                         </div>
+
+                        <!-- VOUCHER SELECT -->
                         <div class="col-md-8 mb-2 d-flex flex-wrap align-items-center">
                             <span class="info-label me-2">Voucher:</span>
-                            <input id="voucherCode" name="voucherCode" type="text" placeholder="Enter code">
+
+                            <select id="voucherSelect" name="voucherCode" class="form-select bg-dark text-light me-2" style="width: 200px;">
+                                <option value="">-- Select a voucher --</option>
+                                <option th:each="v : ${availableVouchers}"
+                                        th:value="${v.code}"
+                                        th:text="${v.voucherName + ' (' + v.discountValue + (v.discountType == 'Percentage' ? '% OFF' : '₫ OFF') + ')'}">
+                                </option>
+                            </select>
+
                             <button id="applyVoucherBtn" type="button" class="btn btn-apply btn-sm">Apply</button>
                             <p id="voucherMessage" class="fw-bold ms-3 mb-0"></p>
                         </div>
+
                     </div>
+
                     <div class="text-end mt-3">
                         <button id="confirm-btn" class="btn-book" type="submit">Book</button>
                     </div>
@@ -136,20 +153,22 @@
         </div>
     </section>
 </main>
+
 <footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const applyBtn = document.getElementById("applyVoucherBtn");
         const totalEl = document.getElementById("totalPrice");
-        const voucherInput = document.getElementById("voucherCode");
+        const voucherSelect = document.getElementById("voucherSelect");
         const msgEl = document.getElementById("voucherMessage");
         const originalInput = document.getElementById("originalTotal");
 
-        if (applyBtn && totalEl && voucherInput) {
+        if (applyBtn && totalEl && voucherSelect) {
             applyBtn.addEventListener("click", function () {
-                const code = voucherInput.value.trim();
+                const code = voucherSelect.value.trim();
                 if (!code) {
-                    msgEl.textContent = "Please enter a voucher code.";
+                    msgEl.textContent = "Please select a voucher.";
                     msgEl.style.color = "orange";
                     return;
                 }
@@ -177,14 +196,11 @@
                         msgEl.style.color = "red";
                     });
             });
-
-            voucherInput.addEventListener("input", () => {
-                msgEl.textContent = "";
-                totalEl.textContent = parseFloat(originalInput.value).toLocaleString('vi-VN');
-            });
         }
     });
+
 </script>
+
 <script th:src="@{/assets/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
