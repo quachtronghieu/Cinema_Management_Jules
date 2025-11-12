@@ -18,7 +18,7 @@ public class BookingDetail {
     @Column(name = "item_type", length = 20)
     private String itemType; // "seat" hoặc "concession"
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "showtime_seat_id", nullable = true)
     private ShowtimeSeat showtimeSeat;
 

@@ -30,6 +30,14 @@
             margin-bottom: 25px;
         }
 
+        img {
+            width: 300px;
+            height: 300px;
+            border: 5px solid #fff;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
         .ticket-header h2 {
             margin: 0;
             color: #fff;
@@ -102,78 +110,19 @@
     <section class="section" aria-labelledby="receipt-title">
         <div class="container">
             <div class="section__header section-header text-center mb-4">
-                <h2 class="section__title">Receipt</h2>
+                <h2 class="section__title">Online Banking</h2>
                 <a th:href="@{/staffs/cashier/showtimes}" class="btn btn-primary">Back</a>
             </div>
 
             <div class="">
                 <div class="ticket-header">
-                    <h2>Booking Information</h2>
+                    <h2>QR CODE</h2>
                 </div>
-
-                <div class="mb-3">
-                    <p class="mb-1"><strong>Customer:</strong> <span th:text="${walkInCustomer}">Walk-in Customer</span></p>
-                    <p class="mb-1"><strong>Staff:</strong> <span th:text="${staff.fullName}">Staff Name</span></p>
-                    <p class="mb-1"><strong>Booking ID:</strong> <span th:text="${booking.id}">123456</span></p>
-                </div>
-
-
-
-                <table class="invoice">
-                    <thead>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <th style="text-align: left;">Seat/Concession</th>
-                        <th style="text-align: center;">Qty</th>
-                        <th style="text-align: right;">Unit Price</th>
-                        <th style="text-align: right;">Total</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="detail : ${bookingDetails}">
-                        <td>
-                                <span th:if="${detail.showtimeSeat != null}"
-                                      th:text="${detail.showtimeSeat.templateSeat.rowLabel + detail.showtimeSeat.templateSeat.seatNumber}">
-
-                                </span>
-                            <span th:if="${detail.concession != null}" th:text="${detail.concession.name}">
-
-                                </span>
-                        </td>
-                        <td style="text-align: center;" th:text="${detail.quantity}">1</td>
-                        <td style="text-align: right;"
-                            th:text="${#numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}">
-
-                        </td>
-                        <td style="text-align: right;"
-                            th:text="${#numbers.formatDecimal(detail.unitPrice * detail.quantity, 0, 'COMMA', 0, 'POINT') + ' VND'}">
-
-                        </td>
-                    </tr>
-                    <tr class="total">
-                        <td colspan="3" class="text-right"><strong>Total Amount</strong></td>
-                        <td class="text-right"
-                            th:text="${#numbers.formatDecimal(booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <div class="text-center mt-4">
-                    <p><strong>Choose Payment Method:</strong></p>
-                    <a href="#" class="btn-payment" >Cash</a>
-                    <p th:text ="${booking.id}"></p>
-                    <a th:href="@{/payments/ebanking/{bookingId}/{staffId}(bookingId=${booking.id}, staffId=${staff.staffID})}"
-                       class="btn-payment">
-                        Online Banking
-                    </a>
-                </div>
-
+                <img class="" th:src="@{https://api.qrserver.com/v1/create-qr-code/?size=500x500&data={data}(data=${content})}" />
             </div>
         </div>
     </section>
 </main>
-
-<footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
 
 <script th:src="@{/assets/js/hero.js}"></script>
 <script th:src="@{/assets/js/movies.js}"></script>

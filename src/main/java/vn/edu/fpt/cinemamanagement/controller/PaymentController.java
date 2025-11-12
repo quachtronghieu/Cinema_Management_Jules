@@ -7,55 +7,96 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import vn.edu.fpt.cinemamanagement.services.BookingService;
+import org.springframework.web.bind.annotation.RequestParam;
+import vn.edu.fpt.cinemamanagement.entities.*;
+import vn.edu.fpt.cinemamanagement.repositories.*;
+import vn.edu.fpt.cinemamanagement.services.TicketService;
 
-import java.security.MessageDigest;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping(value = "/payments")
 public class PaymentController {
 
+
     @Autowired
-    private QRController qrController;
+    BookingRepository bookingRepository;
     @Autowired
-    BookingService bookingService;
+    StaffRepository staffRepository;
+    @Autowired
+    PaymentRepository paymentRepository;
+    @Autowired
+    BookingDetailRepository bookingDetailRepository;
+    @Autowired
+    ShowtimeSeatRepository showtimeSeatRepository;
+    @Autowired
+    TicketService ticketService;
 
 
 
-    @GetMapping("/ebanking/{id}/{staff}")
-    public String ebanking(@PathVariable String id, @PathVariable String staff, Model model) {
+    @GetMapping("/ebanking/{bookingId}/{staffId}")
+    public String ebanking(@PathVariable String bookingId, @PathVariable String staffId, Model model) {
+        Booking booking = bookingRepository.findById(bookingId);
 
-        return "";
-    }
+        String paymentId = UUID.randomUUID().toString().substring(0, 8);
 
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        payment.setBooking(booking);
+        payment.setPaymentMethod("E-Banking");
+        payment.setPaymentStatus("Pending");
+        payment.setPaymentTime(LocalDateTime.now());
+        payment.setAmount(booking.getTotalAmount());
+        payment.setStaff(staffRepository.findById(staffId)
+                .orElseThrow(() -> new RuntimeException("Staff not found")));
 
-    @GetMapping("/{id}/{code}")
-    public String paymentPage(@PathVariable(value = "id")String id, @PathVariable(value = "code") String code, Model model) {
+        paymentRepository.save(payment);
+        String qrContent = "https://unquivering-latrice-semisentimental.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
 
-
-        String input = "wait"+ id;
-        String fi;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(input.getBytes());
-
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
-            }
-            fi= sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-       return "redirect:/qrpayment/qrpayment?idpay="+" https://unquivering-latrice-semisentimental.ngrok-free.dev/payments/paymentsuccess";
-
-
+        model.addAttribute("content", qrContent);
+        return "/payment/QR_payment";
     }
 
     @GetMapping("/paymentsuccess")
-    public String paymentSuccessPage( Model model) {
+    public String paymentSuccessPage(@RequestParam("pay") String paymentId, Model model) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        return "payment/payment";
+        // Cập nhật payment
+        payment.setPaymentStatus("success");
+        payment.setAmount(payment.getBooking().getTotalAmount());
+        paymentRepository.save(payment);
+
+        // Cập nhật booking
+        Booking booking = payment.getBooking();
+        booking.setStatus("paid");
+        bookingRepository.save(booking);
+
+        // Cập nhật trạng thái ghế
+        List<BookingDetail> details = bookingDetailRepository.findByBooking(booking);
+        for (BookingDetail d : details) {
+            ShowtimeSeat seat = d.getShowtimeSeat();
+            if (seat != null) {  // chỉ cập nhật khi là ghế
+                seat.setStatus("unavailable");
+                showtimeSeatRepository.save(seat);
+            }
+        }
+
+        Ticket ticket = new Ticket();
+        ticket.setId(ticketService.generateTicketId());
+        ticket.setBooking(booking);
+        ticket.setPrice(payment.getAmount());
+        ticket.setRedemptionStatus(true);
+        ticket.setCheckedInTime(LocalDateTime.now());
+        ticketService.saveTicket(ticket);
+
+
+
+        model.addAttribute("booking", booking);
+        model.addAttribute("payment", payment);
+        model.addAttribute("ticket", ticket);
+        return "payment/payment_success";
     }
 }
