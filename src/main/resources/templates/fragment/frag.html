@@ -43,17 +43,19 @@
             </a>
 
             <div class="navbar-nav w-100">
+
                 <a th:href="@{/dashboard}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                <a th:href="@{/staffs}" class="nav-item nav-link"><i class="fa fa-users me-2"></i>Staff</a>
-                <a th:href="@{/movies}" class="nav-item nav-link"><i class="fa fa-film me-2"></i>Movies</a>
-                <a th:href="@{/showtime}" class="nav-item nav-link"><i
-                        class="fa fa-calendar-alt me-2"></i>Showtimes</a>
-                <a th:href="@{/rooms}" class="nav-item nav-link"><i class="fa fa-chair me-2"></i>Rooms</a>
-                <a th:href="@{/vouchers}" class="nav-item nav-link"><i class="fa fa-ticket-alt me-2"></i>Vouchers</a>
-                <a th:href="@{/concessions}" class="nav-item nav-link"><i
-                        class="fa fa-hamburger me-2"></i>Concessions</a>
                 <a th:href="@{/shift-schedules}" class="nav-item nav-link"><i
                         class="fa fa-calendar-alt me-2"></i>Staff Schedule</a>
+                <a th:href="@{/showtime}" class="nav-item nav-link"><i
+                        class="fa fa-calendar-alt me-2"></i>Showtimes</a>
+                <a th:href="@{/movies}" class="nav-item nav-link"><i class="fa fa-film me-2"></i>Movies</a>
+                <a th:href="@{/rooms}" class="nav-item nav-link"><i class="fa fa-chair me-2"></i>Rooms</a>
+                <a th:href="@{/concessions}" class="nav-item nav-link"><i
+                        class="fa fa-hamburger me-2"></i>Concessions</a>
+                <a th:href="@{/vouchers}" class="nav-item nav-link"><i class="fa fa-ticket-alt me-2"></i>Vouchers</a>
+                <a th:href="@{/staffs}" class="nav-item nav-link"><i class="fa fa-users me-2"></i>Staff</a>
+
             </div>
         </nav>
     </div>
@@ -105,6 +107,7 @@
 
         <div class="navbar-nav align-items-center ms-auto">
             <a sec:authorize="hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')" th:href="@{/staffs/staff_profile}" class="dropdown-item">My Profile</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/homepage}" class="dropdown-item">Homepage</a>
 
             <form th:action="@{/logout}" method="post" class="d-inline">
                 <input th:if="${_csrf != null}"
@@ -163,7 +166,7 @@
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
                     <!-- Nếu là CUSTOMER (không phải staff) -->
-                    <li sec:authorize="isAuthenticated() and !hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF')">
+                    <li sec:authorize="isAuthenticated() and !hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF', 'ADMIN')">
                         <a class="dropdown-item" th:href="@{customer/profile/my_profile}">My Profile</a>
                     </li>
                     <!-- Dashboard cho admin -->
@@ -235,7 +238,10 @@
     <!-- Sidebar -->
     <div class="sidebar pe-4 pb-3">
         <nav class="navbar bg-secondary navbar-dark">
-            <a th:href="@{/homepage}" class="navbar-brand mx-4 mb-3">
+            <a th:href="@{/staffs/cashier/showtimes}"  sec:authorize="isAuthenticated() and hasRole('CASHIER_STAFF')" class="navbar-brand mx-4 mb-3">
+                <h2 class="text-primary">Staff Home</h2>
+            </a>
+            <a th:href="@{/staffs/staff_home}"  sec:authorize="isAuthenticated() and hasRole('REDEMPTION_STAFF')" class="navbar-brand mx-4 mb-3">
                 <h2 class="text-primary">Staff Home</h2>
             </a>
 

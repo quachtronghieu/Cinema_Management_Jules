@@ -48,7 +48,7 @@ public class PaymentController {
             throw new RuntimeException(e);
         }
 
-       return "redirect:/qrpayment/qrpayment?idpay="+"localhost:8080/payments/paymentsuccess";
+       return "redirect:/qrpayment/qrpayment?idpay="+" https://unquivering-latrice-semisentimental.ngrok-free.dev/payments/paymentsuccess";
 
 
     }
