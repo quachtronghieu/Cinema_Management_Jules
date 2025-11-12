@@ -37,6 +37,13 @@
             border-radius: 12px;
             margin-bottom: 25px;
         }
+        .qr-container {
+            display: flex;
+            justify-content: center; /* Căn giữa ngang */
+            align-items: center;      /* Căn giữa dọc (nếu muốn toàn trang thì thêm height) */
+            flex-direction: column;
+            text-align: center;
+        }
 
         .ticket-header h2 {
             margin: 0;
@@ -118,7 +125,7 @@
                 <div class="ticket-header">
                     <h2>QR CODE</h2>
                 </div>
-                <img class="" th:src="@{https://api.qrserver.com/v1/create-qr-code/?size=500x500&data={data}(data=${content})}" />
+                <img class="qr-container" th:src="@{https://api.qrserver.com/v1/create-qr-code/?size=500x500&data={data}(data=${content})}" />
             </div>
         </div>
     </section>

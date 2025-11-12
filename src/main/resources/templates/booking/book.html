@@ -122,7 +122,7 @@
                     <div class="row align-items-center mb-3">
                         <div class="col-md-4 mb-2">
                             <span class="info-label">Grand Total:</span>
-                            <span id="totalPrice" class="total-price" th:text="${totalPrice}"></span> ₫
+                            <span id="totalPrice" class="total-price" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
                             <input type="hidden" id="originalTotal" th:value="${totalPrice}">
                             <input type="hidden" name="totalPrice" th:value="${totalPrice}">
                         </div>

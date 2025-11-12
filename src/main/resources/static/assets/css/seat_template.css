@@ -2648,3 +2648,9 @@ body.cashier-page nav a.btn-back:hover {
 .mini-cart .fw-semibold {
     color: #fff !important;
 }
+.seat--vip.seat--booked {
+    background-color: var(--medium-gray);
+    border-color: var(--medium-gray);
+    color: var(--dark-gray);
+    cursor: not-allowed;
+}

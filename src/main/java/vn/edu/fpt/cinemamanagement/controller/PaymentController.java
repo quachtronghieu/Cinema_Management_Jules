@@ -88,7 +88,11 @@ public class PaymentController {
         ticket.setId(ticketService.generateTicketId());
         ticket.setBooking(booking);
         ticket.setPrice(payment.getAmount());
-        ticket.setRedemptionStatus(true);
+        if(booking.getUserId().equalsIgnoreCase("KH000000")){
+            ticket.setRedemptionStatus(true);
+        } else {
+            ticket.setRedemptionStatus(false);
+        }
         ticket.setCheckedInTime(LocalDateTime.now());
         ticketService.saveTicket(ticket);
 
@@ -98,5 +102,26 @@ public class PaymentController {
         model.addAttribute("payment", payment);
         model.addAttribute("ticket", ticket);
         return "payment/payment_success";
+    }
+
+    @GetMapping("/ebanking/{bookingId}")
+    public String customerEbanking(@PathVariable String bookingId, Model model) {
+        Booking booking = bookingRepository.findById(bookingId);
+
+        String paymentId = UUID.randomUUID().toString().substring(0, 8);
+
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        payment.setBooking(booking);
+        payment.setPaymentMethod("E-Banking");
+        payment.setPaymentStatus("Pending");
+        payment.setPaymentTime(LocalDateTime.now());
+        payment.setAmount(booking.getTotalAmount());
+
+        paymentRepository.save(payment);
+        String qrContent = "https://unquivering-latrice-semisentimental.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
+
+        model.addAttribute("content", qrContent);
+        return "/booking/payment";
     }
 }

@@ -232,7 +232,7 @@ public class BookingController {
             bookingService.applyVoucherAndUpdateTotal(booking, finalTotal, voucherCode);
             model.addAttribute("booking", booking);
 
-            return "booking/payment";
+            return "redirect:/payments/ebanking/" + booking.getId();
         } catch (Exception e) {
             System.err.println("Error parsing selectedConcessionIds JSON: " + e.getMessage());
             e.printStackTrace();

@@ -48,7 +48,7 @@
                                         <div class="mb-2 d-flex align-items-center">
                                             <strong class="me-1">Price:</strong>
                                             <!-- Hiển thị cho user -->
-                                            <span th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')}" class="concession-price"></span> ₫
+                                            <span th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT') + ' VND'}" class="concession-price"></span>
 
                                             <!-- Input số lượng, dùng giá chuẩn cho JS -->
                                             <input type="number" min="0" value="0"
@@ -101,11 +101,11 @@
                         <div class="col-12 col-md-3 d-flex flex-column mb-2 mb-md-0">
                             <div>
                                 <strong class="me-1">Total Seats Price:</strong>
-                                <span id="seatPriceDisplay" class="fw-bold text-success" th:text="${totalPrice}"></span> ₫
+                                <span id="seatPriceDisplay" class="fw-bold text-success" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
                             </div>
                             <div>
                                 <strong class="me-1">Grand Total:</strong>
-                                <span id="grandTotalDisplay" class="fw-bold text-success"></span> ₫
+                                <span id="grandTotalDisplay" class="fw-bold text-success"></span> VND
                                 <input type="hidden" id="totalPrice" name="totalPrice" th:value="${totalPrice}">
                             </div>
                         </div>
