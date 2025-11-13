@@ -319,11 +319,11 @@ public String showtimeGuestPage(
             roomData.put("roomName", roomEntry.getKey());
 
             // Lọc slots theo selectedDate
-            List<Map<String, LocalTime>> slots = roomEntry.getValue().stream()
-                    .filter(st -> st.getShowDate().isEqual(selectedDate)) // chỉ show selectedDate
+            List<Map<String, Object>> slots = roomEntry.getValue().stream()
                     .sorted(Comparator.comparing(Showtime::getStartTime))
                     .map(st -> {
-                        Map<String, LocalTime> timeSlot = new HashMap<>();
+                        Map<String, Object> timeSlot = new HashMap<>();
+                        timeSlot.put("showtimeId", st.getShowtimeId());
                         timeSlot.put("startTime", st.getStartTime());
                         timeSlot.put("endTime", st.getEndTime());
                         return timeSlot;

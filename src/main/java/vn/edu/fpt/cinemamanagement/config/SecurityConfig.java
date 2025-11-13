@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/homepage", "/homepage/**",
                                 "/movies/**", "/vouchers/**",
                                 "/login", "/register", "/forget_password", "/sendmail", "/verify/**", "/rooms/seat", "/qrpayment/**", "/payments/paymentsuccess/**", "/ticket/**").permitAll()
+                        .requestMatchers("/booking/**").authenticated()
 
                         // Trang yêu cầu quyền
                         .requestMatchers("/dashboard").hasAuthority("ROLE_ADMIN")
