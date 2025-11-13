@@ -320,6 +320,7 @@ public String showtimeGuestPage(
 
             // Lọc slots theo selectedDate
             List<Map<String, Object>> slots = roomEntry.getValue().stream()
+                    .filter(st -> st.getShowDate().isEqual(selectedDate))
                     .sorted(Comparator.comparing(Showtime::getStartTime))
                     .map(st -> {
                         Map<String, Object> timeSlot = new HashMap<>();

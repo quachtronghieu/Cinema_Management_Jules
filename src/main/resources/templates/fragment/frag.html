@@ -169,6 +169,9 @@
                     <li sec:authorize="isAuthenticated() and !hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF', 'ADMIN')">
                         <a class="dropdown-item" th:href="@{customer/profile/my_profile}">My Profile</a>
                     </li>
+                    <li sec:authorize="isAuthenticated() and !hasAnyRole('CASHIER_STAFF','REDEMPTION_STAFF', 'ADMIN')">
+                        <a class="dropdown-item" th:href="@{/ticket}">My History</a>
+                    </li>
                     <!-- Dashboard cho admin -->
                     <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" th:href="@{/dashboard}">Admin Dashboard</a>

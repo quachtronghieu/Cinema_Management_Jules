@@ -3099,3 +3099,15 @@ body, html {
     .table th.col-action,
     .table td.col-action { min-width: 280px; }
 }
+
+.detail_link {
+    color: white;
+}
+
+.text-green {
+    color: green;
+}
+
+.text-red {
+    color: red;
+}
