@@ -53,7 +53,7 @@ public class PaymentController {
                 .orElseThrow(() -> new RuntimeException("Staff not found")));
 
         paymentRepository.save(payment);
-        String qrContent = "https://unquivering-latrice-semisentimental.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
+        String qrContent = " https://annmarie-unparted-hyponastically.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
 
         model.addAttribute("content", qrContent);
         return "/payment/QR_payment";
@@ -90,10 +90,10 @@ public class PaymentController {
         ticket.setPrice(payment.getAmount());
         if(booking.getUserId().equalsIgnoreCase("KH000000")){
             ticket.setRedemptionStatus(true);
+            ticket.setCheckedInTime(LocalDateTime.now());
         } else {
             ticket.setRedemptionStatus(false);
         }
-        ticket.setCheckedInTime(LocalDateTime.now());
         ticketService.saveTicket(ticket);
 
 
@@ -119,7 +119,7 @@ public class PaymentController {
         payment.setAmount(booking.getTotalAmount());
 
         paymentRepository.save(payment);
-        String qrContent = "https://unquivering-latrice-semisentimental.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
+        String qrContent = " https://annmarie-unparted-hyponastically.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
 
         model.addAttribute("content", qrContent);
         return "/booking/payment";

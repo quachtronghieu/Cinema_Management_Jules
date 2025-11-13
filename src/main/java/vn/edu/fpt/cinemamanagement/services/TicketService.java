@@ -1,9 +1,17 @@
 package vn.edu.fpt.cinemamanagement.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.edu.fpt.cinemamanagement.entities.Ticket;
+import vn.edu.fpt.cinemamanagement.entities.*;
 import vn.edu.fpt.cinemamanagement.repositories.TicketRepository;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class TicketService {
@@ -26,6 +34,76 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    public List<Map<String, Object>> displayData() {
+        // 🔹 Chỉ lấy vé chưa check-in (đặt online)
+        List<Ticket> tickets = ticketRepository.findByRedemptionStatusFalse();
+        List<Map<String, Object>> displayList = new ArrayList<>();
+
+        for (Ticket t : tickets) {
+            Map<String, Object> row = new HashMap<>();
+
+            // ====== THÔNG TIN CƠ BẢN ======
+            row.put("ticketId", t.getId());
+            row.put("bookingId", t.getBooking() != null ? t.getBooking().getId() : "N/A");
+            row.put("checkedIn", t.isRedemptionStatus());
+
+            // ====== MOVIE / SHOWTIME / ROOM / SEAT ======
+            String movieTitle = "N/A";
+            String showtimeHour = "-";
+            String roomSeat = "-";
+
+            if (t.getBooking() != null && t.getBooking().getBookingDetails() != null && !t.getBooking().getBookingDetails().isEmpty()) {
+                List<BookingDetail> details = t.getBooking().getBookingDetails();
+                BookingDetail firstDetail = details.get(0);
+
+                if (firstDetail.getShowtimeSeat() != null && firstDetail.getShowtimeSeat().getShowtime() != null) {
+                    Showtime st = firstDetail.getShowtimeSeat().getShowtime();
+
+                    //  Movie title
+                    if (st.getMovie() != null)
+                        movieTitle = st.getMovie().getTitle();
+
+                    // Chỉ hiển thị giờ chiếu
+                    if (st.getStartTime() != null)
+                        showtimeHour = st.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+
+                    //  Room +  Gộp các ghế
+                    String roomName = (st.getRoom() != null) ? st.getRoom().getId() : "N/A";
+                    List<String> seatLabels = new ArrayList<>();
+
+                    for (BookingDetail bd : details) {
+                        if (bd.getShowtimeSeat() != null && bd.getShowtimeSeat().getTemplateSeat() != null) {
+                            TemplateSeat ts = bd.getShowtimeSeat().getTemplateSeat();
+                            seatLabels.add(ts.getRowLabel() + ts.getSeatNumber());
+                        }
+                    }
+
+                    String seatJoined = seatLabels.isEmpty() ? "-" : String.join(", ", seatLabels);
+                    roomSeat = roomName + " / " + seatJoined;
+                }
+            }
+
+            row.put("movieTitle", movieTitle);
+            row.put("showtime", showtimeHour);
+            row.put("roomSeat", roomSeat);
+
+            displayList.add(row);
+        }
+
+        return displayList;
+    }
+
+
+    @Transactional
+    public String Checkin_Ticket(String ticketId, Staff staff) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
+        if (ticket != null) {
+            ticket.setRedemptionStatus(true);
+            ticket.setCheckedInTime(LocalDateTime.now());
+            ticket.setRedemptionStaff(staff);
+            return null;
+        } else return "Ticket not found";
+    }
 
 
 

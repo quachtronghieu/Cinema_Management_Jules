@@ -12,4 +12,6 @@ public interface TicketRepository extends JpaRepository<Ticket,String> {
 
     @Query("SELECT MAX(t.id) FROM Ticket t")
     String findMaxTicketId();
+
+    List<Ticket> findByRedemptionStatusFalse();
 }
