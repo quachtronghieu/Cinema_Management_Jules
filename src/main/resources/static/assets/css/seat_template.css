@@ -2649,8 +2649,8 @@ body.cashier-page nav a.btn-back:hover {
     color: #fff !important;
 }
 .seat--vip.seat--booked {
-    background-color: var(--medium-gray);
-    border-color: var(--medium-gray);
-    color: var(--dark-gray);
+    background-color: #555;
+    border-color: #666;
+    color: #bbb;
     cursor: not-allowed;
 }

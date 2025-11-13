@@ -94,10 +94,10 @@ public class PaymentController {
         ticket.setPrice(payment.getAmount());
         if(booking.getUserId().equalsIgnoreCase("KH000000")){
             ticket.setRedemptionStatus(true);
+            ticket.setCheckedInTime(LocalDateTime.now());
         } else {
             ticket.setRedemptionStatus(false);
         }
-        ticket.setCheckedInTime(LocalDateTime.now());
         ticketService.saveTicket(ticket);
 
 

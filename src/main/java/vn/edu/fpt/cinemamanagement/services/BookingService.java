@@ -166,7 +166,8 @@ public class BookingService {
         List<BookingDetail> detail = bookingDetailRepository.findByBookingId(id);
         return detail;
     }
-    public Booking finBookingById(String id) {
+
+    public Booking findBookingById(String id) {
         Booking booking = bookingRepository.findById(id);
         return booking;
     }

@@ -27,7 +27,7 @@ public class TicketController {
     @RequestMapping("ticket/{bookingId}")
     public String ticket(Model model, @PathVariable String bookingId) {
         Ticket ticket =  ticketService.findTicketByBookingId(bookingId);
-        Booking booking = bookingService.finBookingById(bookingId);
+        Booking booking = bookingService.findBookingById(bookingId);
         List<BookingDetail> details = bookingService.getBookingDetail(bookingId);
         model.addAttribute("booking",booking);
         model.addAttribute("tickets", ticket);
