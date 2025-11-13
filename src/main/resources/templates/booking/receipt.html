@@ -160,7 +160,8 @@
 
                 <div class="text-center mt-4">
                     <p><strong>Choose Payment Method:</strong></p>
-                    <a href="#" class="btn-payment" >Cash</a>
+                    <a th:href="@{/payments/receive-cash/{bookingId}/{staffId}(bookingId=${booking.id}, staffId=${staff.staffID})}"
+                       class="btn-payment">Pay by Cash</a>
                     <a th:href="@{/payments/ebanking/{bookingId}/{staffId}(bookingId=${booking.id}, staffId=${staff.staffID})}"
                        class="btn-payment">
                         Online Banking
