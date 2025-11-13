@@ -30,6 +30,10 @@ public class TicketService {
         return String.format("TK%06d", nextNumber); // TK000124
     }
 
+    public Ticket findTicketByBookingId(String bookingId) {
+        return ticketRepository.findByBookingId(bookingId);
+    }
+
     public Ticket saveTicket(Ticket ticket) {
         return ticketRepository.save(ticket);
     }

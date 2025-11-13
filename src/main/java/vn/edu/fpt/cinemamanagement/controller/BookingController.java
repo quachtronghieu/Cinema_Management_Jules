@@ -51,7 +51,8 @@ public class BookingController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             Model model) {
 
-        LocalDate selectedDate = (date != null) ? date : LocalDate.now();
+        LocalDate today = LocalDate.now();
+        LocalDate selectedDate = (date != null) ? date : today;
 
         Movie movie = movieService.findById(movieId);
         if (movie == null) {
@@ -78,22 +79,20 @@ public class BookingController {
             roomGroups.put(roomName, slots);
         });
 
-        // Tạo danh sách ngày
-        List<LocalDate> days = IntStream.rangeClosed(-3, 3)
-                .mapToObj(i -> selectedDate.plusDays(i))
+        // 🔹 Tạo danh sách ngày từ hôm nay đến 7 ngày sau
+        List<LocalDate> days = IntStream.rangeClosed(0, 6)
+                .mapToObj(today::plusDays)
                 .collect(Collectors.toList());
 
-        // Thêm attribute cho view
         model.addAttribute("movie", movie);
         model.addAttribute("scheduleGroups", roomGroups);
         model.addAttribute("days", days);
-        model.addAttribute("prevDate", selectedDate.minusDays(7));
-        model.addAttribute("nextDate", selectedDate.plusDays(7));
         model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute("prevDate", selectedDate.minusDays(1));
+        model.addAttribute("nextDate", selectedDate.plusDays(1));
 
         return "booking/showtime";
     }
-
 
 
     @GetMapping("/seatMap/{showtimeId}")

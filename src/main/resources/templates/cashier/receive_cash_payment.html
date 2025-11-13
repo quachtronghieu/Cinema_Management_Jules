@@ -1,10 +1,213 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive Cash Payment | D&D Cinema</title>
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 750px;
+            margin-top: 60px;
+            background: #161616;
+            padding: 40px 45px;
+            border-radius: 18px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            color: #e50914;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 30px;
+            color: #fff;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            border-bottom: 1px solid #555;
+        }
+
+        th, td {
+            padding: 10px 5px;
+            font-size: 15px;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        .total-row {
+            border-top: 2px solid #777;
+            font-weight: 600;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+        .form-control {
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #e50914;
+            box-shadow: 0 0 8px rgba(229, 9, 20, 0.7);
+        }
+
+        .summary {
+            font-size: 18px;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .summary span {
+            color: #00e676;
+            font-weight: 600;
+        }
+
+        .btn-confirm {
+            width: 100%;
+            background-color: #e50914;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 25px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-confirm:hover {
+            background-color: #c30711;
+            transform: scale(1.02);
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: #ccc;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .btn-back:hover {
+            color: #fff;
+        }
+
+        .alert-error {
+            background: rgba(229, 9, 20, 0.15);
+            border: 1px solid #e50914;
+            color: #ff7777;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
+<div class="container">
+    <a th:href="@{'/staffs/cashier/showtimes/receipt'(bookingId=${booking.id})}" class="btn-back">← Back to Receipt</a>
+    <h2>Receive Cash Payment</h2>
+
+    <!-- Error message -->
+    <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
+    <!-- Booking Info -->
+    <div class="mb-3">
+        <p><strong>Customer:</strong> <span th:text="${walkInCustomer}">Walk-in Customer</span></p>
+        <p><strong>Staff:</strong> <span th:text="${staff.fullName}">Staff Name</span></p>
+        <p><strong>Booking ID:</strong> <span th:text="${booking.id}">BK00012</span></p>
+    </div>
+
+    <!-- Booking Details Table -->
+    <table>
+        <thead>
+        <tr>
+            <th style="text-align:left;">Seat / Concession</th>
+            <th style="text-align:center;">Qty</th>
+            <th style="text-align:right;">Unit Price</th>
+            <th style="text-align:right;">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="detail : ${bookingDetails}">
+            <td>
+                <span th:if="${detail.showtimeSeat != null}"
+                      th:text="${detail.showtimeSeat.templateSeat.rowLabel + detail.showtimeSeat.templateSeat.seatNumber}"></span>
+                <span th:if="${detail.concession != null}"
+                      th:text="${detail.concession.name}"></span>
+            </td>
+            <td style="text-align:center;" th:text="${detail.quantity}"></td>
+            <td style="text-align:right;"
+                th:text="${#numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
+            <td style="text-align:right;"
+                th:text="${#numbers.formatDecimal(detail.unitPrice * detail.quantity, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
+        </tr>
+        <tr class="total-row">
+            <td colspan="3" style="text-align:right;">Total Amount</td>
+            <td style="text-align:right;"
+                th:text="${#numbers.formatDecimal(booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Payment Form -->
+    <form th:action="@{/payments/receive-cash/{bookingId}/{staffId}(
+                     bookingId=${booking.id},
+                     staffId=${staff.staffID})}"
+          method="post">
+        <input type="hidden" name="bookingId" th:value="${booking.id}">
+        <div class="mb-3">
+            <label for="cashGiven">Customer Paid (VND)</label>
+            <input type="number" class="form-control" id="cashGiven" name="cashGiven"
+                   placeholder="Enter the amount the customer gives" required min="0">
+        </div>
+
+        <div class="summary">
+            Change to Return: <span id="changeText">0 VND</span>
+        </div>
+
+        <button type="submit" class="btn-confirm">Confirm Payment</button>
+    </form>
+</div>
+
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const total = /*[[${booking.totalAmount}]]*/ 0;
+        const inputCash = document.getElementById("cashGiven");
+        const changeDisplay = document.getElementById("changeText");
+
+        inputCash.addEventListener("input", function () {
+            const cash = parseFloat(inputCash.value || 0);
+            let change = cash - total;
+            if (change < 0) change = 0;
+            changeDisplay.textContent = change.toLocaleString("vi-VN") + " VND";
+        });
+    });
+</script>
 
 </body>
 </html>
