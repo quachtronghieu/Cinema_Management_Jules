@@ -1,5 +1,6 @@
 package vn.edu.fpt.cinemamanagement.controller;
 
+import org.hibernate.annotations.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import vn.edu.fpt.cinemamanagement.entities.Booking;
 import vn.edu.fpt.cinemamanagement.entities.BookingDetail;
 import vn.edu.fpt.cinemamanagement.entities.Ticket;
+import vn.edu.fpt.cinemamanagement.repositories.TicketRepository;
 import vn.edu.fpt.cinemamanagement.repositories.BookingDetailRepository;
 import vn.edu.fpt.cinemamanagement.services.BookingService;
 import vn.edu.fpt.cinemamanagement.services.TicketService;
@@ -59,6 +61,12 @@ public class TicketController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("totalPages", totalPages);
 
+    @RequestMapping("ticket/{bookingId}")
+    public String ticket(Model model, @PathVariable String bookingId) {
+        Ticket ticket =  ticketService.findTicketByBookingId(bookingId);
+        Booking booking = bookingService.finBookingById(bookingId);
+        List<BookingDetail> details = bookingService.getBookingDetail(bookingId);
+        model.addAttribute("booking",booking);
         return "customers/my_booking_history";
     }
 
@@ -74,6 +82,8 @@ public class TicketController {
         model.addAttribute("booking", booking);
         model.addAttribute("bookingDetails", bookingDetails);
         model.addAttribute("tickets", ticket);
+        model.addAttribute("details", details);
+        return "tickets/ticket";
         return "customers/detail_ticket";
     }
 
