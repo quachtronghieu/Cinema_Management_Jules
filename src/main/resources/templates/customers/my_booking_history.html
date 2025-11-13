@@ -34,13 +34,16 @@
                     <div>
                         <h5 class="fw-bold mb-1" th:text="'Booking ID: ' + ${ticketlist.booking.id}"></h5>
                         <p class="mb-1 text-muted" th:text="'Checked-in Time: ' + ${#temporals.format(ticketlist.checkedInTime, 'dd/MM/yyyy HH:mm')}"></p>
+                        <p th:text="${ticketlist.redemptionStatus ? 'Redeemed' : 'Not Redeem Yet'}"
+                           th:class="${ticketlist.redemptionStatus} ? 'text-green' : 'text-red'">
+                        </p>
                     </div>
 
                     <!-- Right info -->
                     <div class="text-end">
                         <p class="fw-bold text-danger mb-1"
                            th:text="${#numbers.formatDecimal(ticketlist.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"></p>
-                        <a th:href="@{/ticket/ticket_detail/{id}(id=${ticketlist.booking.id})}">Detail</a>
+                        <a  class="detail_link" th:href="@{/ticket/ticket_detail/{id}(id=${ticketlist.booking.id})}">Detail</a>
 
                     </div>
 

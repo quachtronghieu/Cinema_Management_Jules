@@ -19,6 +19,7 @@ import vn.edu.fpt.cinemamanagement.repositories.BookingDetailRepository;
 import vn.edu.fpt.cinemamanagement.services.BookingService;
 import vn.edu.fpt.cinemamanagement.services.TicketService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,10 +37,13 @@ public class TicketController {
 
     @GetMapping
     public String listTicket(Model model,
-                             @RequestParam(name = "page", defaultValue = "1") int page) {
+                             @RequestParam(name = "page", defaultValue = "1") int page,
+                             Principal principal) { // 👈 thêm principal vào
+
         int size = 5;
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Ticket> ticketPage = ticketService.findAllTickets(pageable);
+
+        Page<Ticket> ticketPage = ticketService.findAllTickets(pageable, principal);
 
         model.addAttribute("tickets", ticketPage.getContent());
 
@@ -60,8 +64,13 @@ public class TicketController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("totalPages", totalPages);
+        System.out.println(">>> principal.getName() = " + principal.getName());
 
-    @RequestMapping("ticket/{bookingId}")
+        return "customers/my_booking_history";
+    }
+
+
+    @GetMapping("/{bookingId}")
     public String ticket(Model model, @PathVariable String bookingId) {
         Ticket ticket =  ticketService.findTicketByBookingId(bookingId);
         Booking booking = bookingService.finBookingById(bookingId);
@@ -79,11 +88,10 @@ public class TicketController {
 
         List<BookingDetail> bookingDetails = bookingDetailRepository.findByBookingId(booking.getId());
         Ticket ticket = ticketService.findTicketByBookingId(bookingId);
+
         model.addAttribute("booking", booking);
         model.addAttribute("bookingDetails", bookingDetails);
         model.addAttribute("tickets", ticket);
-        model.addAttribute("details", details);
-        return "tickets/ticket";
         return "customers/detail_ticket";
     }
 
