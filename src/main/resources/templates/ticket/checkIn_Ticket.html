@@ -27,8 +27,8 @@
                     <table id="checkinTable" class="table text-start align-middle table-bordered table-hover mb-0">
                         <thead>
                         <tr class="text-white">
-                            <th scope="col">Booking ID</th>
                             <th scope="col">Ticket ID</th>
+<!--                            <th scope="col">Booking ID</th>-->
                             <th scope="col">Movie</th>
                             <th scope="col">Showtime</th>
                             <th scope="col">Room / Seat</th>
@@ -39,8 +39,8 @@
                         <tbody>
                         <!-- Lặp qua danh sách vé -->
                         <tr th:each="t : ${tickets}">
-                            <td th:text="${t['bookingId']}"></td>
                             <td th:text="${t['ticketId']}"></td>
+<!--                            <td th:text="${t['bookingId']}"></td>-->
                             <td th:text="${t['movieTitle']}"></td>
                             <td th:text="${t['showtime']}"></td>
                             <td th:text="${t['roomSeat']}"></td>
@@ -48,7 +48,7 @@
                                 <a th:href="@{/staffs/checkIn_Ticket/{ticketId}(ticketId=${t['ticketId']})}" class="btn btn-danger btn-sm checkin-btn"
                                         th:if="${!t['checkedIn']}"
                                         th:attr="data-id=${t['ticketId']}">
-                                    <i class="fa fa-check"></i> Check-in
+                                    <i class="fa fa-check"></i> Redeem Ticket
                                 </a>
                                 <span class="badge bg-success" th:if="${t['checkedIn']}">Checked</span>
                             </td>

@@ -76,7 +76,9 @@ public class TicketController {
         Booking booking = bookingService.findBookingById(bookingId);
         List<BookingDetail> details = bookingService.getBookingDetail(bookingId);
         model.addAttribute("booking",booking);
-        return "customers/my_booking_history";
+        model.addAttribute("details",details);
+        model.addAttribute("ticket",ticket);
+        return "tickets/ticket";
     }
 
 
