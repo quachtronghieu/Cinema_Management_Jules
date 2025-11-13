@@ -95,6 +95,7 @@ public class PaymentController {
         if(booking.getUserId().equalsIgnoreCase("KH000000")){
             ticket.setRedemptionStatus(true);
             ticket.setCheckedInTime(LocalDateTime.now());
+            ticket.setRedemptionStaff(booking.getPayment().getStaff());
         } else {
             ticket.setRedemptionStatus(false);
         }

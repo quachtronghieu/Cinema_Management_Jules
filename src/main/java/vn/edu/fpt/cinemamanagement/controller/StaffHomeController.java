@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -23,20 +25,24 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(value = "staffs")
 public class StaffHomeController {
-@Autowired
+    @Autowired
     private final ShowtimeService showtimeService;
     private final TimeSlotService timeSlotService;
     private final TemplateSeatService templateSeatService;
     private CashierShowTimeSeatService cashierShowTimeSeatService;
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private TicketService ticketService;
+    @Autowired
+    private StaffService staffService;
 
 
     public StaffHomeController(ShowtimeService showtimeService, TimeSlotService timeSlotService, TemplateSeatService templateSeatService, CashierShowTimeSeatService cashierShowTimeSeatService) {
         this.showtimeService = showtimeService;
         this.timeSlotService = timeSlotService;
         this.templateSeatService = templateSeatService;
-        this.cashierShowTimeSeatService = cashierShowTimeSeatService ;
+        this.cashierShowTimeSeatService = cashierShowTimeSeatService;
     }
 
 
@@ -77,6 +83,7 @@ public class StaffHomeController {
 
         return "cashier/showtime_for_cashier";
     }
+
     @GetMapping("/cashier/booking/{movieId}")
     public String showSeatMap(
             @PathVariable String movieId,
@@ -124,6 +131,7 @@ public class StaffHomeController {
         model.addAttribute("concessions", cashierShowTimeSeatService.findAll());
         return "concession/concession_list_forCashier";
     }
+
     @PostMapping("/cashier/order")
     @ResponseBody
     public ResponseEntity<String> confirmOrder(@RequestParam MultiValueMap<String, String> formData) {
@@ -133,7 +141,7 @@ public class StaffHomeController {
             List<String> concessionIds = formData.get("concessionIds");
             List<String> qtyList = formData.get("qty");
 
-            bookingService.createBooking(showtimeId,seatIds, concessionIds, qtyList, "KH000000");
+            bookingService.createBooking(showtimeId, seatIds, concessionIds, qtyList, "KH000000");
 
             return ResponseEntity.ok("Order confirmed successfully!");
         } catch (Exception e) {
@@ -141,4 +149,22 @@ public class StaffHomeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/checkIn_Ticket")
+    public String checkInTicket(Model model) {
+        model.addAttribute("tickets", ticketService.displayData());
+        return "ticket/checkIn_Ticket";
+    }
+
+    @GetMapping("/checkIn_Ticket/{ticketId}")
+    public String checkInTicket(Model model, @PathVariable String ticketId) {
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Staff staff = staffService.findByAccountUsername(user.getUsername());
+        String error = ticketService.Checkin_Ticket(ticketId, staff);
+        if (error != null) {
+            model.addAttribute("error", error);
+        }
+        return "redirect:/staffs/checkIn_Ticket";
+    }
+
 }

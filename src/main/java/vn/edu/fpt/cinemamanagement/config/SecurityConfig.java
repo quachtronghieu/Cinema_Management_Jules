@@ -60,9 +60,10 @@ public class SecurityConfig {
                             if (roles.contains("ROLE_ADMIN")) {
                                 response.sendRedirect("/dashboard");
                             } else if (roles.contains("ROLE_STAFF")
-                                    || roles.contains("ROLE_CASHIER_STAFF")
-                                    || roles.contains("ROLE_REDEMPTION_STAFF")) {
+                                    || roles.contains("ROLE_CASHIER_STAFF")) {
                                 response.sendRedirect("/staffs/cashier/showtimes");
+                            } else if (roles.contains("ROLE_REDEMPTION_STAFF")) {
+                                response.sendRedirect("/staffs/checkIn_Ticket");
                             } else {
                                 response.sendRedirect("/homepage");
                             }
