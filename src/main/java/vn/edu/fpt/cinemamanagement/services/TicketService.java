@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.cinemamanagement.entities.Customer;
 import vn.edu.fpt.cinemamanagement.entities.Ticket;
 import vn.edu.fpt.cinemamanagement.repositories.BookingRepository;
