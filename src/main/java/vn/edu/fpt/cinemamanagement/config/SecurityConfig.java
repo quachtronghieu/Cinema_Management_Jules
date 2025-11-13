@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/homepage", "/homepage/**",
                                 "/movies/**", "/vouchers/**",
                                 "/login", "/register", "/forget_password", "/sendmail", "/verify/**", "/rooms/seat", "/qrpayment/**", "/payments/paymentsuccess/**", "/ticket/**").permitAll()
+                        .requestMatchers("/booking/**").authenticated()
 
                         // Trang yêu cầu quyền
                         .requestMatchers("/dashboard").hasAuthority("ROLE_ADMIN")
@@ -60,9 +61,10 @@ public class SecurityConfig {
                             if (roles.contains("ROLE_ADMIN")) {
                                 response.sendRedirect("/dashboard");
                             } else if (roles.contains("ROLE_STAFF")
-                                    || roles.contains("ROLE_CASHIER_STAFF")
-                                    || roles.contains("ROLE_REDEMPTION_STAFF")) {
+                                    || roles.contains("ROLE_CASHIER_STAFF")) {
                                 response.sendRedirect("/staffs/cashier/showtimes");
+                            } else if (roles.contains("ROLE_REDEMPTION_STAFF")) {
+                                response.sendRedirect("/staffs/checkIn_Ticket");
                             } else {
                                 response.sendRedirect("/homepage");
                             }

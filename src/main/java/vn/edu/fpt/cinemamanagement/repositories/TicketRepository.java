@@ -17,6 +17,8 @@ public interface TicketRepository extends JpaRepository<Ticket,String> {
     String findMaxTicketId();
 
     Ticket findByBookingId(String bookingId);
+
+    List<Ticket> findByRedemptionStatusFalse();
     Page<Ticket> findByBooking_UserId(String userId, Pageable pageable);
 
 
