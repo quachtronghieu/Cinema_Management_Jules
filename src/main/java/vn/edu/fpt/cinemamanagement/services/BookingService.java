@@ -162,6 +162,15 @@ public class BookingService {
        return booking;
     }
 
+    public List<BookingDetail> getBookingDetail(String id) {
+        List<BookingDetail> detail = bookingDetailRepository.findByBookingId(id);
+        return detail;
+    }
+    public Booking finBookingById(String id) {
+        Booking booking = bookingRepository.findById(id);
+        return booking;
+    }
+
 
 
 

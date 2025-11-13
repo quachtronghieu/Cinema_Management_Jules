@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Ticket | CGV Cinemas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+    <style>
+        body {
+            background-color: #fff;
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+            padding: 40px 0;
+        }
+
+        .ticket-container {
+            max-width: 700px;
+            margin: auto;
+            background-color: #ffffff;
+            border: 2px solid #e50914;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.15);
+        }
+
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .ticket-header h2 {
+            color: #e50914;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .ticket-header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .ticket-section {
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .info-label {
+            color: #777;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #222;
+            font-weight: 500;
+        }
+
+        .highlight {
+            color: #e50914;
+            font-weight: 700;
+        }
+
+        hr {
+            border-color: #eee;
+        }
+
+        .btn-home {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            background-color: #e50914;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 24px;
+            text-decoration: none;
+        }
+
+        .btn-home:hover {
+            background-color: #ff4040;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .ticket-footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="ticket-container">
+    <div class="ticket-header">
+        <h2>CGV Cinemas</h2>
+        <p>Movie Ticket Receipt</p>
+    </div>
+
+    <div class="ticket-section">
+        <div class="d-flex justify-content-between">
+            <span class="info-label">TicketID:</span>
+            <span class="info-value" th:text="${tickets.id}"></span>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span class="info-label">Redemption Status:</span>
+            <span class="highlight" th:text="${tickets.redemptionStatus ? 'Redeemed' : 'Not Redeem Yet'}"></span>
+        </div>
+    </div>
+
+    <div class="ticket-section">
+        <div class="d-flex justify-content-between">
+            <span class="info-label">Customer:</span>
+            <span class="info-value" th:text="${booking.userId}" ></span>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span class="info-label">Booking ID:</span>
+            <span class="info-value" th:text="${booking.id}"></span>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span class="info-label">Payment Method:</span>
+            <span class="info-value" th:text="${booking.payment.paymentMethod}"></span>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span class="info-label">Payment Status:</span>
+            <span class="highlight" th:text="${booking.payment.paymentStatus}"></span>
+        </div>
+
+    </div>
+
+    <div class="ticket-section">
+        <div class="d-flex justify-content-between">
+            <span class="info-label">Total Price:</span>
+            <span class="highlight" th:text="${#numbers.formatDecimal(tickets.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}" ></span>
+        </div>
+    </div>
+
+    <div class="ticket-footer">
+        <p>Please present this ticket at the redemption counter to redeem to paper ticket.</p>
+        <p>Enjoy your movie!</p>
+    </div>
+
+    <a th:href="@{/homepage}" class="btn-home">Back to Homepage</a>
+</div>
+</body>
+</html>
