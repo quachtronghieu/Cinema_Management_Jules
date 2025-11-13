@@ -47,7 +47,7 @@
                         <option value="">-- Select Room --</option>
                         <option th:each="r : ${rooms}"
                                 th:value="${r.id}"
-                                th:text="${r.template != null ? r.template.name : 'Unnamed Room'}"
+                                th:text="${r.template != null ? 'Room ' + r.template.rooms.id : 'Unnamed Room'}"
                                 th:selected="${r.id == form.roomId}">
                         </option>
                     </select>
