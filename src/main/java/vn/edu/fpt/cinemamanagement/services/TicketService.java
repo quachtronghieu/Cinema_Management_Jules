@@ -2,7 +2,14 @@ package vn.edu.fpt.cinemamanagement.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import vn.edu.fpt.cinemamanagement.entities.Customer;
+import vn.edu.fpt.cinemamanagement.entities.Ticket;
+import vn.edu.fpt.cinemamanagement.repositories.BookingRepository;
+import vn.edu.fpt.cinemamanagement.repositories.CustomerRepository;
 import vn.edu.fpt.cinemamanagement.entities.*;
 import vn.edu.fpt.cinemamanagement.repositories.TicketRepository;
 
@@ -13,11 +20,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.security.Principal;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class TicketService {
 
     @Autowired
     TicketRepository ticketRepository;
+    @Autowired
+    BookingRepository bookingRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     public String generateTicketId() {
         String lastId = ticketRepository.findMaxTicketId(); // ví dụ: "TK000123"
@@ -38,6 +53,13 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    @Transactional
+    public Page<Ticket> findAllTickets(Pageable pageable, Principal principal) {
+        String username = principal.getName();
+        Optional<Customer> customerOpt = customerRepository.findByUsername(username);
+        Customer customer = customerOpt.get();
+        return ticketRepository.findByBooking_UserId(customer.getUser_id(), pageable);
+    }
     public List<Map<String, Object>> displayData() {
         // 🔹 Chỉ lấy vé chưa check-in (đặt online)
         List<Ticket> tickets = ticketRepository.findByRedemptionStatusFalse();

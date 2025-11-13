@@ -76,7 +76,7 @@
         }
 
         .btn-payment:hover {
-            background: #ffffff;
+            background: #c30711;
         }
 
         .text-right {
@@ -102,19 +102,21 @@
     <section class="section" aria-labelledby="receipt-title">
         <div class="container">
             <div class="section__header section-header text-center mb-4">
-                <h2 class="section__title">Receipt</h2>
-                <a th:href="@{/staffs/cashier/showtimes}" class="btn btn-primary">Back</a>
+                <h2 class="section__title">My Ticket</h2>
+                <a th:href="@{/ticket}" class="btn btn-light btn-compact">
+                    <i class="fa fa-arrow-left me-1 "></i> Back
+                </a>
             </div>
 
             <div class="">
                 <div class="ticket-header">
-                    <h2>Booking Information</h2>
+                    <h2>Ticket Information</h2>
                 </div>
 
                 <div class="mb-3">
-                    <p class="mb-1"><strong>Customer:</strong> <span th:text="${walkInCustomer}">Walk-in Customer</span></p>
-                    <p class="mb-1"><strong>Staff:</strong> <span th:text="${staff.fullName}">Staff Name</span></p>
-                    <p class="mb-1"><strong>Booking ID:</strong> <span th:text="${booking.id}">123456</span></p>
+                    <p class="mb-1"><strong>Customer:</strong> <span th:text="${booking.userId}"></span></p>
+                    <p class="mb-1"><strong>Ticket ID:</strong> <span th:text="${tickets.id}"></span></p>
+                    <p class="mb-1"><strong>Booking ID:</strong> <span th:text="${booking.id}"></span></p>
                 </div>
 
 
@@ -158,22 +160,10 @@
                     </tbody>
                 </table>
 
-                <div class="text-center mt-4">
-                    <p><strong>Choose Payment Method:</strong></p>
-                    <a th:href="@{/payments/receive-cash/{bookingId}/{staffId}(bookingId=${booking.id}, staffId=${staff.staffID})}"
-                       class="btn-payment">Pay by Cash</a>
-                    <a th:href="@{/payments/ebanking/{bookingId}/{staffId}(bookingId=${booking.id}, staffId=${staff.staffID})}"
-                       class="btn-payment">
-                        Online Banking
-                    </a>
-                </div>
-
             </div>
         </div>
     </section>
 </main>
-
-<footer th:replace="~{fragment/frag :: footer_homepage}"></footer>
 
 <script th:src="@{/assets/js/hero.js}"></script>
 <script th:src="@{/assets/js/movies.js}"></script>

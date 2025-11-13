@@ -34,6 +34,8 @@ public class ReceiptController {
         List<BookingDetail> bookingDetailList = bookingDetailRepository.findByBookingId(booking.getId());
         if(booking.getUserId().equalsIgnoreCase("KH000000")){
             model.addAttribute("walkInCustomer", "Walk-in Customer");
+        } else {
+
         }
 
         model.addAttribute("booking", booking);
