@@ -124,7 +124,7 @@ public class PaymentController {
         payment.setAmount(booking.getTotalAmount());
 
         paymentRepository.save(payment);
-        String qrContent = "https://unquivering-latrice-semisentimental.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
+        String qrContent = "https://overtensely-communal-greta.ngrok-free.dev/payments/paymentsuccess?pay=" + paymentId;
 
         model.addAttribute("content", qrContent);
         return "/booking/payment";
