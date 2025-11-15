@@ -47,12 +47,21 @@
                             <td th:text="${shift.status}"></td>
                             <td th:text="${shift.status == 'Late' ? shift.lateMinutes : ''}"></td>
                             <td>
-                                <button class="btn btn-primary btn-compact"
-                                        th:if="${shift.shiftDate >= T(java.time.LocalDate).now() and shift.status == ''}"
-                                        th:attr="data-id=${shift.shiftScheduleId}"
-                                        onclick="checkInShift(this.dataset.id)">
-                                    <i class="fa fa-check"></i>Check-in
-                                </button>
+<!--                                <button class="btn btn-primary btn-compact"-->
+<!--                                        th:if="${shift.shiftDate >= T(java.time.LocalDate).now() and shift.status == ''}"-->
+<!--                                        th:attr="data-id=${shift.shiftScheduleId}"-->
+<!--                                        onclick="checkInShift(this.dataset.id)">-->
+<!--                                    <i class="fa fa-check"></i>Check-in-->
+<!--                                </button>-->
+                                <th:block th:with="shiftDateTime=${T(java.time.LocalDateTime).of(shift.shiftDate, shift.shiftStart)}">
+                                    <button class="btn btn-primary btn-compact"
+                                            th:if="${T(java.time.LocalDateTime).now().isAfter(shiftDateTime.minusHours(2))
+                    and T(java.time.LocalDateTime).now().isBefore(shiftDateTime.plusMinutes(30)) and shift.status == ''}"
+                                            th:attr="data-id=${shift.shiftScheduleId}"
+                                            onclick="checkInShift(this.dataset.id)">
+                                        <i class="fa fa-check"></i>Check-in
+                                    </button>
+                                </th:block>
                                 <a class="btn btn-success btn-compact" th:if="${shift.shiftDate >= T(java.time.LocalDate).now()}"
                                    th:href="@{/shift-schedules/edit/{id}(id=${shift.shiftScheduleId})}"><i class="fa fa-edit"></i>Edit</a>
                                 <button class="btn btn-danger btn-compact btn-delete-shift"

@@ -29,7 +29,8 @@
                 </a>
             </div>
             <div class="container-fluid pt-4 px-4">
-                <p>Booking Successfully</p>
+                <h5>Please Scan QR code to pay</h5>
+                <img class="" th:src="@{https://api.qrserver.com/v1/create-qr-code/?size=500x500&data={data}(data=${content})}" />
             </div>
 
         </div>

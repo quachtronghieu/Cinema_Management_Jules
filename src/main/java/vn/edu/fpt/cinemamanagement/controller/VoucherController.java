@@ -20,6 +20,7 @@ public class VoucherController {
         this.voucherService = voucherService;
     }
 
+
     @GetMapping("")
     public String vouchersList(Model model, @RequestParam(name = "page", defaultValue = "1", required = false) int page) {
         int size = 10;
@@ -56,7 +57,6 @@ public class VoucherController {
 
         return "vouchers/voucher_list";
     }
-
     @GetMapping("/create")
     public String newVoucher(Model model) {
         model.addAttribute("voucher", new Voucher());

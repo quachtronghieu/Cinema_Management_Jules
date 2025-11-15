@@ -58,19 +58,20 @@
                             <div class="seat-map__grid .Row">
                                 <!-- Row A -->
                                 <div class="row">
-                                    <div th:each="seats : ${entry.getValue()}" class="seat seat"
-                                         th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                    <div th:each="seats : ${entry.getValue()}" class="seat"
+                                         th:classappend="' seat--' + ${seats.getSeatType()} +
+                                        (${seatStatusMap[seats.id]} == 'unavailable' ? ' seat--booked' : '')"
                                          th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
                                          th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()},
-                                                  data-status=${seatStatusMap[seats.id]},
-                                                  data-id=${seats.id}">
+                                         data-status=${seatStatusMap[seats.id]},
+                                         data-id=${seats.id}">
                                     </div>
                                 </div>
 
                             </div>
                         </div>
                     </div>
-
+F
 
                     <div id="template-2" class="template-section" th:if="${template == 'TM000002'}">
 
@@ -80,11 +81,11 @@
                                 <div th:each="seats, iterStat : ${entry.value}">
                                     <div class="seat"
                                          th:classappend="' seat--' + ${seats.getSeatType()} +
-                                    (${seatStatusMap[seats.id]} == 'unavailable' ? ' seat--booked' : '')"
+     (${seatStatusMap[seats.id]} == 'unavailable' ? ' seat--booked' : '')"
+                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
                                          th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()},
-                                                  data-status=${seatStatusMap[seats.id]},
-                                                  data-id=${seats.id}"
-                                         th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}">
+              data-status=${seatStatusMap[seats.id]},
+              data-id=${seats.id}">
                                     </div>
 
                                     <div class="aisle" th:if="${iterStat.index == 3 or iterStat.index == 6}"></div>
@@ -116,7 +117,8 @@
                             <div class="row" th:each="entry : ${groupSeat}">
 
                                 <div th:each="seats, iterStat : ${entry.value}">
-                                    <div class="seat" th:classappend=" 'seat--' + ${seats.getSeatType()}"
+                                    <div class="seat" th:classappend="' seat--' + ${seats.getSeatType()} +
+                                       (${seatStatusMap[seats.id]} == 'unavailable' ? ' seat--booked' : '')"
                                          th:text="${seats.getRowLabel()} + ${seats.getSeatNumber()}"
                                          th:attr="data-seat=${seats.getRowLabel() + seats.getSeatNumber()},
                                                   data-status=${seatStatusMap[seats.id]},

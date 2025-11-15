@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.cinemamanagement.entities.Movie;
 import vn.edu.fpt.cinemamanagement.entities.Showtime;
 import vn.edu.fpt.cinemamanagement.entities.Voucher;
+import vn.edu.fpt.cinemamanagement.repositories.MovieRatingRepository;
 import vn.edu.fpt.cinemamanagement.services.MovieService;
 import vn.edu.fpt.cinemamanagement.services.ShowtimeService;
 import vn.edu.fpt.cinemamanagement.services.VoucherService;
@@ -52,6 +53,11 @@ public class HomepageController {
         }
         Page<Movie> movie = movieService.getAllMovies(pageable);
         model.addAttribute("movies", movie);
+
+        // 🔹 Lấy Top 5 movies rating cao nhất
+        List<Movie> top5Movies = movieService.getTop5Movies();
+        model.addAttribute("top5Movies", top5Movies);
+
         return "homepage/homepage";
     }
 
@@ -79,7 +85,9 @@ public class HomepageController {
             startPage = ((currentPage - 1) / visiblePages) * visiblePages + 1;
             endPage = Math.min(startPage + visiblePages - 1, totalPages);
         }
-
+        if (voucherPage.isEmpty()){
+            model.addAttribute("voucherEmpty", "Voucher list is empty" );
+        }
         model.addAttribute("voucherPage", voucherPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("startPage", startPage);
@@ -136,6 +144,8 @@ public class HomepageController {
             startPage = ((currentPage - 1) / visiblePages) * visiblePages + 1;
             endPage = Math.min(startPage + visiblePages - 1, totalPages);
         }
+
+
 
         model.addAttribute("comingSoonPage", comingSoonPage);
         model.addAttribute("currentPage", currentPage);
@@ -309,11 +319,12 @@ public String showtimeGuestPage(
             roomData.put("roomName", roomEntry.getKey());
 
             // Lọc slots theo selectedDate
-            List<Map<String, LocalTime>> slots = roomEntry.getValue().stream()
-                    .filter(st -> st.getShowDate().isEqual(selectedDate)) // chỉ show selectedDate
+            List<Map<String, Object>> slots = roomEntry.getValue().stream()
+                    .filter(st -> st.getShowDate().isEqual(selectedDate))
                     .sorted(Comparator.comparing(Showtime::getStartTime))
                     .map(st -> {
-                        Map<String, LocalTime> timeSlot = new HashMap<>();
+                        Map<String, Object> timeSlot = new HashMap<>();
+                        timeSlot.put("showtimeId", st.getShowtimeId());
                         timeSlot.put("startTime", st.getStartTime());
                         timeSlot.put("endTime", st.getEndTime());
                         return timeSlot;

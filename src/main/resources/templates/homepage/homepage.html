@@ -51,7 +51,8 @@
             <div class="swiper homepage-slider">
                 <div class="swiper-wrapper">
                     <!-- Loop Movie -->
-                    <div class="swiper-slide" th:each="movie : ${movies}">
+                    <!-- Loop Movie -->
+                    <div class="swiper-slide" th:each="movie : ${top5Movies}">
                         <div class="movie-card">
                             <div class="movie-card__top">
                                 <img th:src="@{${movie.img}}"

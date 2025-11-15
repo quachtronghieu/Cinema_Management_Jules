@@ -156,6 +156,7 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <a th:each="slot : ${entry.value}"
+                               th:if="${slot['startTime'].isAfter(#temporals.createNow())}"
                                th:text="|${#temporals.format(slot['startTime'],'HH:mm')} - ${#temporals.format(slot['endTime'],'HH:mm')}|"
                                th:href="@{/booking/seatMap/{showtimeId}(showtimeId=${slot['showtimeId']})}"
                                class="showtime-btn">

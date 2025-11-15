@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CGV Movies - Your Movie Experience Begins Here</title>
-    <meta name="description" content="Book movie tickets online at CGV. Watch the latest movies in premium cinemas with the best sound and picture quality.">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description"
+          content="Book movie tickets online at CGV. Watch the latest movies in premium cinemas with the best sound and picture quality.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" th:href="@{/assets/css/style.css}">
     <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+
 </head>
+
 <style>
     body.bg-cream {
         background-color: #0e0e0e;
@@ -154,10 +158,10 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <a th:each="slot : ${room['slots']}"
+                               th:if="${slot['startTime'].isAfter(#temporals.createNow())}"
                                th:text="|${#temporals.format(slot['startTime'],'HH:mm')} - ${#temporals.format(slot['endTime'],'HH:mm')}|"
-                               th:href="@{'/booking/' + ${movie.movieID} + '(time=' + ${#temporals.format(slot['startTime'],'HH:mm')} + ',date=' + ${#temporals.format(selectedDate,'yyyy-MM-dd')} + ')'}"
+                               th:href="@{'/booking/seatMap/' + ${slot['showtimeId']}}"
                                class="showtime-btn">
-                                09:00 - 11:15
                             </a>
                         </div>
                     </div>

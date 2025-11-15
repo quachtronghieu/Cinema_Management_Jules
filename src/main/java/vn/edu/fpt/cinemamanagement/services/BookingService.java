@@ -3,12 +3,14 @@ package vn.edu.fpt.cinemamanagement.services;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import vn.edu.fpt.cinemamanagement.entities.*;
 import vn.edu.fpt.cinemamanagement.repositories.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -24,6 +26,8 @@ public class BookingService {
     private ShowtimeSeatRepository showtimeSeatRepository;
     @Autowired
     TemplateSeatRepository templateSeatRepository;
+    @Autowired
+    private VoucherRepository voucherRepository;
 
     // 🔹 Hàm sinh ID cho BookingDetail
     private String generateBookingDetailId() {
@@ -122,6 +126,52 @@ public class BookingService {
 
         return booking;
     }
+
+    @Transactional
+    public Booking applyVoucherAndUpdateTotal(Booking booking, double finalTotal, String voucherCode) {
+        // cập nhật tổng tiền đã giảm
+        booking.setTotalAmount(BigDecimal.valueOf(finalTotal));
+
+        // nếu muốn lưu thông tin voucher vào booking và tăng used_count
+        if (voucherCode != null && !voucherCode.isBlank()) {
+            booking.setTotalAmount(BigDecimal.valueOf(finalTotal));
+            if (voucherCode != null && !voucherCode.isBlank()) {
+                Voucher v = voucherRepository.findByVoucherCode(voucherCode);
+                if (v != null) {
+                    v.setUsedCount(v.getUsedCount() + 1);
+                    voucherRepository.save(v);
+                }
+            }
+        }
+
+        // lưu lại booking với tổng tiền mới
+        return bookingRepository.save(booking);
+    }
+
+    public List<Voucher> getAvailableVouchers() {
+        return voucherRepository.findAvailableVouchers();
+    }
+    public Booking findById(String id) {
+        return bookingRepository.findById(id);
+    }
+
+
+
+    public Booking getReceipt() {
+       Booking booking = bookingRepository.findTopByOrderByIdDesc();
+       return booking;
+    }
+
+    public List<BookingDetail> getBookingDetail(String id) {
+        List<BookingDetail> detail = bookingDetailRepository.findByBookingId(id);
+        return detail;
+    }
+
+    public Booking findBookingById(String id) {
+        Booking booking = bookingRepository.findById(id);
+        return booking;
+    }
+
 
 
 
