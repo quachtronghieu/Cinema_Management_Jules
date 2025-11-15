@@ -69,6 +69,7 @@
                             <p class="fw-semibold text-light mb-1" th:text="'Room: ' + ${room['roomName']}"></p>
                             <div class="d-flex flex-wrap gap-2">
                                 <a th:each="slot : ${room['slots']}"
+                                   th:if="${slot['startTime'].plusMinutes(15).isAfter(#temporals.createNow())}"
                                    th:text="|${#temporals.format(slot['startTime'],'HH:mm')} - ${#temporals.format(slot['endTime'],'HH:mm')}|"
                                    th:href="@{'/staffs/cashier/booking/' + ${movie.movieID} + '?time=' + ${#temporals.format(slot['startTime'],'HH:mm')} + '&date=' + ${#temporals.format(selectedDate,'yyyy-MM-dd')}}"
                                    class="showtime-btn">
